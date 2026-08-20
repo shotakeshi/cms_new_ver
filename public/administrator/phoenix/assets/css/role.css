@@ -1,0 +1,59 @@
+.card-title {
+    display:flex;
+    border-bottom: 1px solid #dbe0ec;
+}
+.side-tree-control {
+    margin-left: 1rem;
+}
+.side-tree-control span {
+    cursor: pointer;
+    color: #206bc4;
+}
+.d-flex {
+    display: flex;
+    flex-wrap: wrap;
+}
+.bg-primary-lt {
+    background-color: rgba(230, 241, 250, 1) !important;
+    color: rgba(32, 107, 196, 1) !important;
+}
+.badge-custom {
+    background: #eef3f6;
+    border: 1px solid transparent;
+    font-weight: 600 !important;
+    line-height: 1 !important;
+    letter-spacing: .02rem;
+    min-width: 2.25rem;
+    user-select: none;
+    margin: 0;
+}
+.checkbox label.badge-custom {
+    left: 1.25rem;
+    padding: .2rem;
+}
+.checkbox label.badge-custom::before {
+    left: -5px;
+}
+.checkbox input[type="checkbox"]:checked+label.badge-custom::after {
+    left: 2px;
+}
+
+.permissions-tree .permissions-item {
+    background-color: #f6f8fb;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    padding: 0
+}
+.permissions-tree .permissions-item .permissions-header {
+    padding: 10px
+}
+.permissions-tree .permissions-item .permissions-header {
+    background-color: #f2f5f7;
+    border-bottom: 1px solid #cfd7e0;
+}
+.permissions-tree .permissions-item .permissions-body {
+    padding: 10px 20px
+}
+.treeview li {
+    padding: 3px 0 3px 18px;
+}
