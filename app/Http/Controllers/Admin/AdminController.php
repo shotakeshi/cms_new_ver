@@ -36,7 +36,11 @@ class AdminController extends Controller
 
     public function create(): View
     {
-        return view('admin.admin.create');
+        $departments = Department::with('positions')->get();
+        return view('admin.admin.create', [
+            'languages' => Language::pluck('name', 'id'),
+            'departments' => Department::with('positions')->get()
+        ]);
     }
 
     public function show(Admin $admin): View

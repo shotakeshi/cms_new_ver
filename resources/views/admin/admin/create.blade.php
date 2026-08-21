@@ -54,11 +54,6 @@
                                             />
                                         </div>
                                         <div class="col-lg-6">
-                                            <x-admin::forms.select
-                                                    name="locale"
-                                                    label="{{ __('site.admin.locale') }}"
-                                                    placeholder="{{ __('site.admin.locale') }}"
-                                            />
                                         </div>
                                         <div class="col-lg-6">
                                             <x-admin::forms.input
@@ -80,15 +75,36 @@
                                         </div>
                                         <div class="col-lg-6">
                                             <x-admin::forms.select
+                                                    label="{{ __('site.department.title') }}"
+                                                    name="department_id"
+                                                    :options="$departments"
+                                                    option-value="id"
+                                                    option-label="name"
+                                            />
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <x-admin::forms.select
+                                                    label="{{ __('site.department.position') }}"
+                                                    name="position_id"
+                                                    :options="collect()"
+                                                    option-value="id"
+                                                    option-label="name"
+                                            />
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <x-admin::forms.radio-enums
                                                     name="status"
                                                     label="{{ __('site.admin.status') }}"
                                                     :options="\App\Enums\AdminStatus::options()"
-                                                    option-value="value"
-                                                    option-label="label"
-                                                    :selected="old('status')"
                                             />
                                         </div>
-
+                                        <div class="col-lg-6">
+                                            <x-admin::forms.radio-buttons
+                                                    label="{{ __('site.admin.locale') }}"
+                                                    name="language_id"
+                                                    :options="$languages"
+                                            />
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -110,4 +126,62 @@
     <script src="{{ asset('administrator/phoenix/assets/pages/jquery.forms-advanced.js') }}"></script>
     <script src="{{ asset('administrator/phoenix/assets/pages/jquery.form-upload.init.js') }}"></script>
     <script src="{{ asset('administrator/phoenix/assets/js/jquery.core.js') }}"></script>
+    <script>
+        $(document).ready(function () {
+            const departments = @json($departments);
+            const $department = $('#department_id');
+            const $position = $('#position_id');
+            const selectedPosition = @json(old('position_id', $employee->position_id ?? null)
+        );
+            function loadPositions(departmentId, selectedId = null) {
+                $position.empty();
+
+                $position.append(
+                    new Option(
+                        '{{ __("common.filters.all_position") }}',
+                        ''
+                    )
+                );
+
+                if (!departmentId) {
+                    $position.val('').trigger('change');
+                    return;
+                }
+
+                const department = departments.find(
+                    department => String(department.id) === String(departmentId)
+                );
+
+                if (!department || !department.positions) {
+                    $position.val('').trigger('change');
+                    return;
+                }
+
+                department.positions.forEach(function (position) {
+                    const option = new Option(
+                        position.name,
+                        position.id,
+                        false,
+                        String(position.id) === String(selectedId)
+                    );
+
+                    $position.append(option);
+                });
+
+                $position.trigger('change');
+            }
+
+            $department.on('change', function () {
+                loadPositions($(this).val());
+            });
+
+            // Load positions khi Edit / validation error
+            if ($department.val()) {
+                loadPositions(
+                    $department.val(),
+                    selectedPosition
+                );
+            }
+        });
+    </script>
 @endpush

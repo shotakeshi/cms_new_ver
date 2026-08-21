@@ -56,7 +56,7 @@
                                             <td class="text-center">
                                                <span class="{{ $admin->admin_type_class }} w-100 p-1">{{ $admin->admin_type_name  }}</span>
                                             </td>
-                                            <td class="text-right" style="max-width: 120px">
+                                            <td class="text-right">
                                                 <div class="actions">
                                                     @if($admin->rootAdmin)
                                                         <a class="btn btn-outline-info" href="{{ route('admin.remove-root-admin', $admin) }}">{{ __('site.button.remove_root') }}</a>
