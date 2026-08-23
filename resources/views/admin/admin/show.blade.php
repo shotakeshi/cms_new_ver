@@ -57,53 +57,5 @@
     <script src="{{ asset('administrator/phoenix/assets/pages/jquery.forms-advanced.js') }}"></script>
     <script src="{{ asset('administrator/phoenix/assets/pages/jquery.form-upload.init.js') }}"></script>
     <script src="{{ asset('administrator/phoenix/assets/js/jquery.core.js') }}"></script>
-    <script type="text/javascript">
-        $('#btn-change-password').click(function (e){
-            e.preventDefault();
 
-            const _token = $("input[name='_token']");
-            const password = $("input[name='password']");
-            const password_confirmation = $("input[name='password_confirmation']");
-
-            $.ajax({
-                url: $('#form-change-password').attr('action'),
-                type: 'POST',
-                data: {_token:_token.val(), password:password.val(), password_confirmation:password_confirmation.val()},
-                beforeSend: function() {
-                    document.getElementById('btn-change-password').setAttribute('disabled', 'disabled');
-                    removeErrorMessage('password', 'messages-password');
-                },
-                success: function() {
-                    toastr.success('{{ __('site.notification.update_success') }}', "Success");
-                    password.val('');
-                    password_confirmation.val('');
-                    document.getElementById('btn-change-password').removeAttribute('disabled');
-                },
-                complete: function() {
-                    document.getElementById('btn-change-password').removeAttribute('disabled');
-                },
-                error: function(xhr, status, error) {
-                    const errors = xhr.responseJSON?.errors || {};
-                    updateErrorMessage('password', 'messages-password', errors.password?.[0]);
-                }
-            });
-        });
-
-        function updateErrorMessage(inputId, messageId, errorMessage) {
-            const inputElement = document.getElementById(inputId);
-            const messageElement = document.getElementById(messageId);
-
-            if (inputElement && messageElement) {
-                inputElement.classList.add('has-danger');
-                messageElement.innerHTML = errorMessage;
-            }
-        }
-
-        function removeErrorMessage(inputId, messageId){
-            const inputElement = document.getElementById(inputId);
-            const messageElement = document.getElementById(messageId);
-            inputElement.classList.remove('has-danger');
-            messageElement.innerHTML = '';
-        }
-    </script>
 @endpush

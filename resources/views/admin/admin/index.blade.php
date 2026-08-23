@@ -43,8 +43,8 @@
                                             </td>
                                             <td>
                                                 <a href="{{ route('admins.show', $admin) }}">
-                                                    <span>{{ __('site.admin.email') }}: {{ $admin->email }}</span><br>
-                                                    <span>{{ __('site.admin.phone') }}: {{ $admin->phone }}</span><br>
+                                                    <span>{{ __('site.admin.email') }}: <label class="text-danger italic font-italic mb-0"> {{ $admin->email }}</label></span><br>
+                                                    <span>{{ __('site.admin.phone') }}: <label class="text-danger mb-0">{{ $admin->phone }}</label></span><br>
                                                     <span>{{ __('site.department.title') }}: {{ $admin->department?->name }}</span><br>
                                                     <span>{{ __('site.department.position') }}: {{ $admin->position?->name }}</span>
                                                 </a>

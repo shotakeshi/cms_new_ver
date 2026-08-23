@@ -3,7 +3,7 @@
     @method('PUT')
     <div class="row">
         <div class="col-lg-8 mx-auto">
-            <div class="form-group row">
+            <div class="row">
                 <div class="col-lg-3">
                     <x-admin::forms.single_file
                             name="file"
@@ -62,60 +62,99 @@
                     </div>
                     <div class="form-group row">
                         <div class="col-md-6">
-                            <label class="col-form-label">{{ __('site.department.title') }}</label>
-                            <select class="form-control" name="department_id" id="department">
-                                @foreach($departments as $key => $value)
-                                    <option value="{{ $key }}" @selected($admin->department_id == $key)>{{ $value }}</option>
-                                @endforeach
-                            </select>
+                            <x-admin::forms.select
+                                    name="department_id"
+                                    label="{{ __('site.department.title') }}"
+                                    :options="$departments"
+                                    option-value="id"
+                                    option-label="name"
+                                    :selected="$admin->department_id"
+                            />
                         </div>
                         <div class="col-md-6">
-                            <label class="col-form-label">{{ __('site.department.position') }}</label>
-                            <select class="form-control" name="position_id" id='position'></select>
+                            <x-admin::forms.select
+                                    name="position_id"
+                                    label="{{ __('site.department.position') }}"
+                                    :options="collect()"
+                                    option-value="id"
+                                    option-label="name"
+                                    :selected="$admin->position_id"
+                            />
+                        </div>
+                        <div class="col-lg-12 text-right">
+                            <a href="{{ route('admins.index') }}" class="btn btn-sm btn-outline-danger">
+                                <i class="fas fa-arrow-left"></i> {{ __('site.button.back') }}</a>
+                            <button type="submit" name="submitter" value="profile" class="btn btn-sm btn-outline-primary">
+                                <i class="far fa-save"></i> {{ __('site.button.update') }}</button>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="row mt-4">
-                <div class="col-6">
-                    <button type="submit" name="submitter" value="profile" class="btn btn-lg btn-gradient-primary w-100">
-                        <i class="far fa-save"></i> {{ __('site.button.update') }}</button>
-                </div>
-                <div class="col-6">
-                    <a href="{{ route('admins.index') }}" class="btn btn-lg btn-gradient-danger w-100">
-                        <i class="fas fa-arrow-left"></i> {{ __('site.button.back') }}</a>
-                </div>
-            </div>
         </div>
-{{--        <div class="col-4">--}}
-{{--
-{{--        </div>--}}
     </div>
 </form>
 @push('scripts')
-    <script type="text/javascript">
-        $(function () {
-            let positions = {!! Js::from($positions) !!};
-            let selectedPositionId = {!! Js::from($admin->position_id ?? '') !!};
-            let positionDropdown = $("#position");
-            let departmentDropdown = $("#department");
-            let selected = '';
+    <script>
+        $(document).ready(function () {
+            const departments = @json($departments);
 
-            loadPositions(departmentDropdown.val());
+            const $department = $('#department_id');
+            const $position = $('#position_id');
 
-            departmentDropdown.change(function () {
+            // Chỉ có giá trị khi Edit
+            const selectedPosition = @json(
+                old('position_id', $admin->position_id ?? null)
+            );
+
+                function loadPositions(departmentId, selectedId = null) {
+                    $position.empty();
+
+                if (!departmentId) {
+                    $position.val('').trigger('change');
+                    return;
+                }
+
+                const department = departments.find(
+                    item => String(item.id) === String(departmentId)
+                );
+
+                if (!department) {
+                    return;
+                }
+
+                department.positions.forEach(function (position) {
+                    const option = new Option(
+                        position.name,
+                        position.id
+                    );
+
+                    if (
+                        selectedId !== null &&
+                        String(position.id) === String(selectedId)
+                    ) {
+                        option.selected = true;
+                    }
+
+                    $position.append(option);
+                });
+
+                $position.trigger('change');
+            }
+
+            // Department thay đổi → load Position
+            $department.on('change', function () {
                 loadPositions($(this).val());
             });
 
-            function loadPositions(departmentId) {
-                positionDropdown.empty();
-                if (positions[departmentId]) {
-                    positions[departmentId].forEach(function (position) {
-                        selected = (position.id === selectedPositionId) ? "selected" : "";
-                        positionDropdown.append(`<option value="${position.id}" ${selected}>${position.name}</option>`);
-                    });
-                }
+            // ==========================
+            // EDIT: Load position hiện tại
+            // ==========================
+            if ($department.val()) {
+                loadPositions(
+                    $department.val(),
+                    selectedPosition
+                );
             }
-        })
+        });
     </script>
 @endpush

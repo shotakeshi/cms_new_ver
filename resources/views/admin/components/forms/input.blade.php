@@ -28,7 +28,7 @@
     >
 
     @error($name)
-        <div class="form-control-feedback text-danger">
+        <div id="messages-{{ $name }}" class="form-control-feedback text-danger">
             {{ $message }}
         </div>
     @enderror

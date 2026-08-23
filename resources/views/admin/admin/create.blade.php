@@ -136,13 +136,6 @@
             function loadPositions(departmentId, selectedId = null) {
                 $position.empty();
 
-                $position.append(
-                    new Option(
-                        '{{ __("common.filters.all_position") }}',
-                        ''
-                    )
-                );
-
                 if (!departmentId) {
                     $position.val('').trigger('change');
                     return;

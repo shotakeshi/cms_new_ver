@@ -5,139 +5,247 @@ namespace App\Http\Controllers\Admin;
 use App\Enums\AdminType;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admins\AdminChangePasswordRequest;
-use App\Http\Requests\Admins\AdminRequest;
 use App\Http\Requests\Admins\AdminProfileRequest;
+use App\Http\Requests\Admins\AdminRequest;
+use App\Http\Requests\Admins\AdminResetPasswordRequest;
 use App\Models\Admin;
 use App\Models\Department;
 use App\Models\Language;
 use App\Models\Position;
-use App\Services\Image\ImageStorageManager;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\DB;
-use App\Http\Requests\Admins\AdminResetPasswordRequest;
-use Illuminate\Http\JsonResponse;
-use Illuminate\View\View;
 use App\Traits\UploadImage;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 
 class AdminController extends Controller
 {
-    const LIMIT = 1;
-    const SAVE = 'save';
-
+    private const MIN_ADMIN_COUNT = 1;
     use UploadImage;
-    public function __construct(private Admin $admin){
 
-    }
+    /**
+     * @return View
+     */
     public function index(): View
     {
-        $admins = $this->admin->with('department', 'language', 'position')->get();
+        $admins = Admin::query()
+            ->with([
+                'department:id,name',
+                'language:id,name',
+                'position:id,name',
+            ])
+            ->latest()
+            ->get();
         return view('admin.admin.index', compact('admins'));
     }
 
     public function create(): View
     {
-        $departments = Department::with('positions')->get();
         return view('admin.admin.create', [
-            'languages' => Language::pluck('name', 'id'),
-            'departments' => Department::with('positions')->get()
+            'languages' => Language::query()->pluck('name', 'id'),
+            'departments' => Department::query()->select('id', 'name')
+                ->with(['positions:id,name,department_id'])
+                ->get(),
         ]);
     }
 
+    /**
+     * @param AdminRequest $request
+     * @return RedirectResponse
+     */
+    public function store(AdminRequest $request): RedirectResponse
+    {
+        $data = $request->all();
+        $data['avatar'] = $this->uploadImage(
+            $request->file('file'),
+            'avatar',
+        );
+        $admin = Admin::query()->create($data);
+        toastr()->success(
+            __('site.notification.create_success')
+        );
+        return redirect()->route(
+            $request->submitter === 'save'
+                ? 'admins.index'
+                : 'admins.show',
+            $admin->id
+        );
+    }
+
+    /**
+     * @param Admin $admin
+     * @return View
+     */
     public function show(Admin $admin): View
     {
+        $admin->load([
+            'department:id,name',
+            'language:id,name',
+            'position:id,name,department_id',
+        ]);
+
         return view('admin.admin.show', [
             'admin' => $admin,
-            'departments' => Department::pluck('name', 'id'),
-            'activities' => $admin->activities()->latest()->limit(10)->get(),
-            'languages' => Language::pluck('name', 'id'),
-            'positions' => Position::select('id', 'name', 'department_id')->get()->groupBy('department_id')
+
+            'departments' => Department::query()
+                ->select('id', 'name')
+                ->with([
+                    'positions:id,name,department_id',
+                ])
+                ->orderBy('name')
+                ->get(),
+
+            'languages' => $this->getLanguageOptions(),
+
+            'activities' => $admin->activities()
+                ->latest()
+                ->limit(10)
+                ->get(),
         ]);
     }
 
+    /**
+     * @return View
+     */
     public function profile(): View
     {
         return view('admin.admin.personal', [
             'admin' => auth()->guard('admin')->user(),
-            'departments' => Department::pluck('name', 'id'),
-            'languages' => Language::pluck('name', 'id'),
-            'positions' => Position::select('id', 'name', 'department_id')->get()->groupBy('department_id')
+            'departments' => $this->getDepartmentOptions(),
+            'languages' => $this->getLanguageOptions(),
+            'positions' => $this->getPositionOptions(),
         ]);
     }
 
-    public function store(AdminRequest $request) {
-        $request['avatar'] = $this->uploadImage(
-            $request->file('file'),
-            'avatar',
-        );
-        $admin = $this->admin->create($request->all());
-        toastr()->success(__('site.notification.create_success'));
-        return redirect()->route($request->submitter == self::SAVE ? 'admins.index' : 'admins.show', $admin->id);
-    }
 
+
+    /**
+     * @param AdminProfileRequest $request
+     * @param Admin $admin
+     * @return RedirectResponse
+     */
     public function update(AdminProfileRequest $request, Admin $admin): RedirectResponse
     {
-        $request['avatar'] = $this->uploadImage(
-            $request->file('file'),
-            'avatar',
-            $admin->avatar
-        );
-        $admin->fill($request->all());
-
-        DB::transaction(function () use ($admin) {
-            if ($admin->isDirty()) {
-                $admin->save();
-                toastr()->success(__('site.notification.update_success'));
-            } else {
-                toastr()->info(__('site.notification.no_changes_detected'));
-            }
-        });
-
-        return redirect()->back();
-    }
-
-    public function destroy(Admin $admin): JsonResponse
-    {
-        if (Admin::count() <= self::LIMIT) {
-            return response()->json(['success' => false, 'message' => __('site.notification.can_not_delete_with_limit')]);
+        $data = $request->all();
+        if ($request->hasFile('file')) {
+            $data['avatar'] = $this->uploadImage(
+                $request->file('file'),
+                'avatar',
+                $admin->avatar
+            );
         }
-
-        DB::transaction(function () use ($admin) {
-            $admin->delete();
-        });
-
-        return response()->json(['success' => true, 'message' => __('site.notification.delete_success')]);
-    }
-
-    public function resetPassword(AdminResetPasswordRequest $request, $adminId): JsonResponse
-    {
-        $admin = $this->admin->findOrFail($adminId);
-        $admin->update($request->only('password'));
-        return response()->json([
-            'status' => 'success',
-            'data' => [],
-            'message' => __('site.notification.update_success')
-        ]);
-    }
-
-    public function changePassword(): View
-    {
-        $admin = auth()->guard('admin')->user();
-        return view('admin.admin.change-password', compact('admin'));
-    }
-
-    public function updateAdminPassword(AdminChangePasswordRequest $request): RedirectResponse
-    {
-        auth()->guard('admin')->user()->update($request->only('password'));
-        toastr()->success(__('site.notification.change_password_success'));
-        return redirect()->back();
-    }
-
-    public function removeRootAdmin($adminId): RedirectResponse
-    {
-        $admin = $this->admin->findOrFail($adminId);
-        $admin->type = AdminType::NORMAL->value;
+        $admin->fill($data);
+        if (! $admin->isDirty()) {
+            toastr()->info(__('site.notification.no_changes_detected')
+            );
+            return redirect()->back();
+        }
         $admin->save();
         toastr()->success(__('site.notification.update_success'));
         return redirect()->back();
+    }
+
+    /**
+     * @param Admin $admin
+     * @return JsonResponse
+     */
+    public function destroy(Admin $admin): JsonResponse
+    {
+        if (Admin::query()->count() <= self::MIN_ADMIN_COUNT) {
+            return response()->json([
+                'success' => false,
+                'message' => __(
+                    'site.notification.can_not_delete_with_limit'
+                ),
+            ]);
+        }
+
+        $admin->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => __('site.notification.delete_success'),
+        ]);
+    }
+
+    /**
+     * @param AdminResetPasswordRequest $request
+     * @param $admin
+     * @return JsonResponse
+     */
+    public function resetPassword(AdminResetPasswordRequest $request, Admin $admin): JsonResponse {
+        $admin->update(
+            $request->validated()
+        );
+
+        return response()->json([
+            'status' => 'success',
+            'data' => [],
+            'message' => __('site.notification.update_success'),
+        ]);
+    }
+
+    /**
+     * @return View
+     */
+    public function changePassword(): View
+    {
+        return view('admin.admin.change-password', [
+            'admin' => auth()->guard('admin')->user(),
+        ]);
+    }
+
+    /**
+     * @param AdminChangePasswordRequest $request
+     * @return RedirectResponse
+     */
+    public function updateAdminPassword(
+        AdminChangePasswordRequest $request
+    ): RedirectResponse {
+        auth()->guard('admin')
+            ->user()
+            ->update($request->validated());
+
+        toastr()->success(
+            __('site.notification.change_password_success')
+        );
+
+        return redirect()->back();
+    }
+
+    public function removeRootAdmin(Admin $admin): RedirectResponse
+    {
+        $admin->update([
+            'type' => AdminType::NORMAL,
+        ]);
+
+        toastr()->success(
+            __('site.notification.update_success')
+        );
+
+        return redirect()->back();
+    }
+
+    private function getDepartmentOptions()
+    {
+        return Department::query()
+            ->select('id', 'name')->get();
+    }
+
+    private function getLanguageOptions()
+    {
+        return Language::query()
+            ->pluck('name', 'id');
+    }
+
+    private function getPositionOptions()
+    {
+        return Position::query()
+            ->select([
+                'id',
+                'name',
+                'department_id',
+            ])
+            ->get()
+            ->groupBy('department_id');
     }
 }

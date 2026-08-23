@@ -34,12 +34,10 @@ class AdminRequest extends BaseRequest
             'phone' => [
                 'nullable',
                 'string',
-                'max:11'
-            ],
-            'locale' => [
-                'nullable',
-                'string',
-                'max:4'
+                'regex:/^0[1-9]\d{8}(\d{2})?$/',
+                'min:10',
+                'max:11',
+                Rule::unique('admins','phone')->ignore($this->admin, 'id')
             ],
             'password' => [
                 'required',
