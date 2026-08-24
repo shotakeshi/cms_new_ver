@@ -2,8 +2,8 @@ $(function () {
 
   //modify buttons style
   $.fn.editableform.buttons =
-      '<button type="submit" class="btn btn-success editable-submit btn-sm waves-effect waves-light"><i class="mdi mdi-check"></i></button>' +
-      '<button type="button" class="btn btn-danger editable-cancel btn-sm waves-effect waves-light"><i class="mdi mdi-close"></i></button>';
+      '<button type="submit" class="btn btn-outline-success editable-submit btn-sm waves-effect waves-light"><i class="mdi mdi-check"></i></button>' +
+      '<button type="button" class="btn btn-outline-danger editable-cancel btn-sm waves-effect waves-light"><i class="mdi mdi-close"></i></button>';
 
 
   //inline

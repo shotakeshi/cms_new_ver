@@ -1,4 +1,4 @@
-<button type="button" class="btn btn-sm btn-gradient-primary" data-toggle="modal" data-target=".bs-create-position-{{ $department->id }}">
+<button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target=".bs-create-position-{{ $department->id }}">
     <i class="fa fa-plus"></i> {{ __('site.department.create_position') }}
 </button>
 <div class="modal fade bs-create-position-{{ $department->id }}" tabindex="-1" role="dialog" aria-hidden="true">
@@ -17,13 +17,13 @@
                         <label>{{ __('site.department.name') }}</label>
                         <input type="text" name="name" class="form-control" required value="{{ old('name') }}" placeholder="{{ __('site.department.name') }}"/>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group text-right">
                         <div>
-                            <button type="submit" class="btn btn-gradient-primary">
-                                <i class="fa fa-save"></i> {{ __('site.button.create') }}
-                            </button>
-                            <button data-dismiss="modal" aria-label="Close" type="reset" class="btn btn-gradient-danger m-l-5">
+                            <button data-dismiss="modal" aria-label="Close" type="reset" class="btn btn-outline-danger m-l-5">
                                 <i class="ti-close"></i> {{ __('site.button.cancel') }}
+                            </button>
+                            <button type="submit" class="btn btn-outline-primary">
+                                <i class="fa fa-save"></i> {{ __('site.button.create') }}
                             </button>
                         </div>
                     </div>

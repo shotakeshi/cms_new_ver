@@ -8,25 +8,21 @@
 @endpush
 @section('content')
     <div class="container-fluid">
-        @include('admin.layouts.partials.page-title-box', ['name' => __('site.department.title')])
+        <x-admin::page-title
+                :name="__('site.department.title')"
+        />
         <div class="row">
             <div class="col-lg-12">
                 <div class="card m-b-30">
                     <div class="card-body">
-                        <div class="row">
-                            <div class="col-sm-4">
-                                <h4 class="mt-0 header-title">{{ __('site.department.list') }}</h4>
-                                <p class="text-muted mb-3">
-                                    {{ __('site.department.note') }}
-                                </p>
+                        <div class="row mb-3">
+                            <div class="col-lg-8">
                             </div>
-                            <div class="col-sm-8 text-right">
-                                <a class="btn btn-gradient-primary waves-effect waves-light px-5" href="{{ route('departments.create') }}">
-                                    <i class="fa fa-plus"></i> {{ __('site.button.create') }}
-                                </a>
-                                <a class="btn btn-gradient-dark waves-effect waves-light px-5" href="{{ route('departments.index') }}">
-                                    <i class="fas fa-redo"></i> {{ __('site.button.reload') }}
-                                </a>
+                            <div class="col-lg-4 text-right">
+                                <x-admin::page-actions
+                                        :create-url="route('departments.create')"
+                                        :reload-url="route('departments.index')"
+                                />
                             </div>
                         </div>
                         <div class="table-responsive">
@@ -42,8 +38,8 @@
                                 <tbody>
                                 @foreach($departments as $department)
                                     <tr id="row-{{ $department->id }}">
-                                        <td>{{ $loop->iteration }}</td>
-                                        <td>
+                                        <td style="width: 100px">{{ $loop->iteration }}</td>
+                                        <td style="width: 300px">
                                             <span>{{ $department->name }}</span><br>
                                             <span class="font-italic text-black-50">{!! $department->description !!}</span>
                                         </td>
@@ -57,34 +53,23 @@
                                                        data-pk="{{ $v->id }}"
                                                        data-url="{{ route('department.update-position', $v->id) }}"
                                                        data-title="Enter position name">{{ $v->name }}</a>
-                                                       <button class="btn btn-sm btn-gradient-danger btn-delete"
-                                                               href="#"
-                                                               data-toggle="modal"
-                                                               data-target="#deleteModal"
-                                                               data-animation="bounce"
-                                                               data-url="{{ route('department.destroy-position', $v->id) }}"
-                                                               data-name="{{ $v->name }}">
-                                                            <i class="dripicons-trash"></i> {{ __('site.button.label_remove') }}
-                                                       </button>
+                                                        <x-admin::buttons.delete-button
+                                                                :action="route('department.destroy-position',$v->id)"
+                                                                :title="__('site.button.label_remove')"
+                                                        />
                                                 </div>
                                             @endforeach
                                         </td>
                                         <td class="text-right" style="width: 350px">
                                             <div class="actions">
                                                 @include('admin.department.create-position', compact('department'))
-                                                <a class="btn btn-sm btn-gradient-success" style="width: 32px"
+                                                <a class="btn btn-outline-gray"
                                                    href="{{ route('departments.edit', $department) }}">
-                                                    <i class="fa fa-edit"></i>
+                                                    <i class="fas fa-edit"></i>
                                                 </a>
-                                                <button class="btn btn-sm btn-gradient-danger btn-delete"
-                                                        href="#"
-                                                        data-toggle="modal"
-                                                        data-target="#deleteModal"
-                                                        data-animation="bounce"
-                                                        data-url="{{ route('departments.destroy', $department->id) }}"
-                                                        data-name="{{ $department->name }}">
-                                                    <i class="dripicons-trash"></i>
-                                                </button>
+                                                <x-admin::buttons.delete-button
+                                                        :action="route('departments.destroy',$department)"
+                                                />
                                             </div>
                                         </td>
                                     </tr>
@@ -102,8 +87,8 @@
 @push('scripts')
     <!-- XEditable Plugin -->
     <script src="{{ asset('administrator/plugins/moment/moment.js') }}"></script>
-    <script src="{{ asset('administrator/plugins/x-editable/js/bootstrap-editable.min.js') }}"></script>
-    <script src="{{ asset('administrator/phoenix/assets/pages/jquery.form-xeditable.init.js') }}"></script>
+    <script src="{{ asset('administrator/plugins/x-editable/js/bootstrap-editable.min.js') }}?v={{ time() }}"></script>
+    <script src="{{ asset('administrator/phoenix/assets/pages/jquery.form-xeditable.init.js') }}?v={{ time() }}"></script>
     <script>
         $('.edit_position').editable({
             type: 'text',
@@ -122,15 +107,6 @@
                 const errors = response.responseJSON?.errors || {};
                 toastr.error(errors.value?.[0], "Error");
             }
-        });
-
-        $(document).on('click', '.btn-delete', function () {
-            let url = $(this).data('url');
-            let name = $(this).data('name');
-            $('#deleteForm').attr('action', url);
-            $('#deleteMessage').text(
-                "{{ __('site.notification.confirm_delete') }}: " + name + " ?"
-            );
         });
     </script>
 @endpush
