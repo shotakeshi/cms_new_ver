@@ -19,7 +19,7 @@
             </div>
             <h4 class="page-title">
                 @if ($url)
-                    <a href="{{ $url }}" class="btn btn-sm btn-outline-warning waves-effect waves-light ml-2">
+                    <a href="{{ $url }}" class="btn btn-sm btn-outline-gray waves-effect waves-light ml-2">
                         <i class="fas fa-arrow-left mr-2"></i>
                         {{ __('site.button.back') }}
                     </a>

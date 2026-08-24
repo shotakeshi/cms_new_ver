@@ -2,6 +2,8 @@
     @csrf
     <div class="row">
         <div class="col-6 mx-auto">
+            <h5 class="mt-0 card-title">{{ $admin->email }}</h5>
+            <hr>
             <x-admin::forms.input
                     name="password"
                     type="password"

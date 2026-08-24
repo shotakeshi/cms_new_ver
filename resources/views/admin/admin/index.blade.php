@@ -65,9 +65,9 @@
                                                        href="{{ route('admins.show', $admin) }}">
                                                         <i class="fa fa-eye"></i>
                                                     </a>
-                                                    <button class="btn btn-outline-danger" onclick="confirmDelete( {{ $admin->id }}, '{{ route('admins.destroy', $admin) }}' )">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
+                                                    <x-admin::buttons.delete-button
+                                                            :action="route('admins.destroy',$admin)"
+                                                    />
                                                 </div>
                                             </td>
                                         </tr>

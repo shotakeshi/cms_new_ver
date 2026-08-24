@@ -80,6 +80,7 @@ return [
         'save_setting' => 'Save Setting',
         'add' => 'Add',
         'reset' => 'Reset',
+        'confirm_delete' => 'Confirm Delete',
     ],
     'notification' => [
         'publish' => 'Publish',
@@ -100,6 +101,11 @@ return [
         'move_to_trash_fail' => 'Value move to trash fail!',
         'no_changes_detected' => 'No changes detected!',
         'title_delete' => 'Notice of deletion?',
+        'can_not_delete_self' => 'Cannot delete self!',
+        'can_not_delete_root_admin' => 'Cannot delete root admin!',
+        'admin_is_not_root' => 'Admin is not root!',
+        'can_not_remove_yourself' => 'Cannot remove yourself!',
+        'can_not_remove_last_root_admin' => 'Cannot remove last root admin!',
     ],
     'login' => [
         'title' => 'Administrator Login',
@@ -254,4 +260,9 @@ return [
     'common' => [
         'choose' => '-- Choose --',
     ],
+    'activity' => [
+        'timeline' => 'Timeline',
+        'no_activity' => 'No activity',
+        'activity' => 'Activity',
+    ]
 ];

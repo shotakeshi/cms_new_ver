@@ -32,7 +32,7 @@
                 $optionLabel = data_get($option, 'label');
 
                 $checked = $selected !== null
-                    ? $selected === $value
+                    ? (int) $selected === (int) $value
                     : $loop->first;
             @endphp
 

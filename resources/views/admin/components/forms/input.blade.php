@@ -27,9 +27,9 @@
             {{ $attributes }}
     >
 
-    @error($name)
-        <div id="messages-{{ $name }}" class="form-control-feedback text-danger">
-            {{ $message }}
+        <div id="messages-{{ $name }}" class="form-control-feedback text-danger" @if (!$errors->has($name)) style="display: none;" @endif>
+            @error($name)
+                {{ $message }}
+            @enderror
         </div>
-    @enderror
 </div>

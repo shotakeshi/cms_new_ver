@@ -16,6 +16,7 @@ use App\Traits\UploadImage;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller
 {
@@ -148,23 +149,28 @@ class AdminController extends Controller
      * @param Admin $admin
      * @return JsonResponse
      */
-    public function destroy(Admin $admin): JsonResponse
+    public function destroy(Admin $admin): RedirectResponse
     {
+        $this->authorize('destroy', $admin);
+        if ($admin->id === auth()->id()) {
+            toastr()->error(__('site.notification.can_not_delete_self'));
+            return redirect()->back();
+        }
+        if ($admin->root_admin) {
+            toastr()->error(__('site.notification.can_not_delete_root_admin'));
+            return redirect()->back();
+        }
         if (Admin::query()->count() <= self::MIN_ADMIN_COUNT) {
-            return response()->json([
-                'success' => false,
-                'message' => __(
-                    'site.notification.can_not_delete_with_limit'
-                ),
-            ]);
+            toastr()->error(__('site.notification.can_not_delete_with_limit'));
+            return redirect()->back();
         }
 
-        $admin->delete();
+        DB::transaction(function () use ($admin) {
+            $admin->delete();
+        });
 
-        return response()->json([
-            'success' => true,
-            'message' => __('site.notification.delete_success'),
-        ]);
+        toastr()->success(__('site.notification.delete_success'));
+        return redirect()->back();
     }
 
     /**
@@ -214,15 +220,32 @@ class AdminController extends Controller
 
     public function removeRootAdmin(Admin $admin): RedirectResponse
     {
+        $this->authorize('removeRootAdmin', $admin);
+        if (!$admin->root_admin) {
+            toastr()->error(__('site.notification.admin_is_not_root'));
+            return back();
+        }
+
+        if ($admin->id === auth()->id()) {
+            toastr()->error(__('site.notification.can_not_remove_yourself'));
+            return back();
+        }
+
+        $rootAdminCount = Admin::query()
+            ->where('type', AdminType::ROOT)
+            ->count();
+
+        if ($rootAdminCount <= 1) {
+            toastr()->error(__('site.notification.can_not_remove_last_root_admin'));
+            return back();
+        }
+
         $admin->update([
             'type' => AdminType::NORMAL,
         ]);
 
-        toastr()->success(
-            __('site.notification.update_success')
-        );
-
-        return redirect()->back();
+        toastr()->success(__('site.notification.update_success'));
+        return back();
     }
 
     private function getDepartmentOptions()

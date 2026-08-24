@@ -18,6 +18,7 @@
         <div class="loader"></div>
     </div>
     <!-- /Main Wrapper -->
+    @include('admin.layouts.partials.preloader')
     @include('admin.layouts.script')
 </body>
 </html>
