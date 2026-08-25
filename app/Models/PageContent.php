@@ -32,10 +32,9 @@ class PageContent extends Model
     {
         parent::boot();
 
-        $locale = Setting::where('key','locale')->pluck('value')->first();
         static::creating(
             function ($model) {
-                $model->language_code = $locale ?? config('app.locale');
+                $model->language_code = config('app.locale');
             }
         );
     }

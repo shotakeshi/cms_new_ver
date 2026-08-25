@@ -181,6 +181,8 @@ return [
         'language_does_not_exists' => 'Language does not exist in the system',
         'another_lang' => 'Another Language',
         'search_pages' => 'Search pages',
+        'input_name_search' => 'E.g. title',
+        'detail' => 'Article Detail',
     ],
     'filter' => [
         'all' => 'All',

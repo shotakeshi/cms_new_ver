@@ -21,4 +21,15 @@ enum DefaultStatus: int
             self::ACTIVE => 'badge badge-soft-primary p-2',
         };
     }
+
+    public static function options(): array
+    {
+        return collect(self::cases())
+            ->map(fn (self $status) => [
+                'value' => $status->value,
+                'label' => $status->getName(),
+            ])
+            ->values()
+            ->toArray();
+    }
 }

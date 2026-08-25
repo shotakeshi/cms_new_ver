@@ -32,7 +32,6 @@ class AppServiceProvider extends ServiceProvider
         });
 
         Image::observe(ImageObserver::class);
-        Page::observe(PageObserver::class);
     }
 
     /**
@@ -64,10 +63,9 @@ class AppServiceProvider extends ServiceProvider
                 View::share('globalLanguages', Language::active()->get()); // Shared data globally
                 View::share('currentLanguage', Language::active()->slug(app()->getLocale()));
             }
-            $locale = Setting::where('key','locale')->pluck('value')->first();
+//            $locale = Setting::where('key','locale')->pluck('value')->first();
             View::composer('*', function ($view) {
                 $view->with('appLocale', app()->getLocale());
-                $view->with('websiteLocale', Language::slug($locale ?? config('app.locale')));
             });
         } catch (\Exception $e) {
             // Database not available, skip setting globalLanguages

@@ -1,11 +1,10 @@
 {{-- How to use --}}
 {{--
-<x-form.textarea
-    name="description"
-    label="{{ __('site.department.description') }}"
-    placeholder="{{ __('site.department.description') }}"
-    :value="$department->description ?? null"
-    rows="5"
+<x-form.datetime
+    name="published_at"
+    label="{{ __('site.page.published_at') }}"
+    :value="$page->published_at ?? null"
+    placeholder="dd/mm/yyyy - hh:mm"
 />
 --}}
 
@@ -13,11 +12,9 @@
     'name',
     'label' => null,
     'value' => null,
-    'placeholder' => null,
-    'rows' => 5,
+    'placeholder' => 'dd/mm/yyyy - hh:mm',
     'required' => false,
     'disabled' => false,
-    'ckeditor' => false,
 ])
 
 @php
@@ -39,24 +36,25 @@
         </label>
     @endif
 
-    <textarea
+    <input
+            type="text"
             id="{{ $name }}"
             name="{{ $name }}"
-            rows="{{ $rows }}"
-            placeholder="{{ $placeholder ?? $label }}"
+            value="{{ $fieldValue }}"
+            placeholder="{{ $placeholder }}"
             @class([
                 'form-control',
                 'is-invalid' => $errors->has($name),
-                'ckeditor' => $ckeditor,
             ])
             @if ($required) required @endif
             @if ($disabled) disabled @endif
             {{ $attributes }}
-    >{{ $fieldValue }}</textarea>
+    >
 
     @error($name)
-        <div class="form-control-feedback text-danger">
-            {{ $message }}
-        </div>
+    <div class="invalid-feedback d-block">
+        {{ $message }}
+    </div>
     @enderror
+
 </div>

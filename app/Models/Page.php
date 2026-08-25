@@ -112,21 +112,19 @@ class Page extends Model
         return $this->belongsTo(Admin::class);
     }
 
-    protected static function boot()
+    protected static function boot(): void
     {
         parent::boot();
 
-        static::creating(
-            function ($model) {
-                $model->slug = Str::slug($model->slug);
-                $model->admin_id = Auth::id();
-            }
-        );
+        static::creating(function (Page $page) {
+            $page->slug = Str::slug(
+                $page->slug ?: $page->title
+            );
+            $page->admin_id = Auth::id();
+        });
 
-        static::updating(
-            function ($model) {
-                $model->slug = Str::slug($model->slug);
-            }
-        );
+        self::updating(function (Page $page) {
+            $page->slug = Str::slug($page->slug);
+        });
     }
 }

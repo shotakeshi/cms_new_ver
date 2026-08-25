@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\PageContent;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
@@ -12,6 +11,7 @@ use App\Models\Page;
 use App\Filters\Filterable\PagesFilterable;
 use App\Traits\UploadImage;
 use App\Services\TagService;
+use Illuminate\Support\Facades\Auth;
 
 class PageController extends BaseController
 {
@@ -25,7 +25,7 @@ class PageController extends BaseController
     {
         $statusCounts = Page::withTrashed()
             ->selectRaw("
-                CASE 
+                CASE
                     WHEN deleted_at IS NOT NULL THEN 'trashed'
                     ELSE status
                 END as status_group,
