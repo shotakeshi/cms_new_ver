@@ -34,7 +34,7 @@ class PageContent extends Model
 
         static::creating(
             function ($model) {
-                $model->language_code = config('app.locale');
+                $model->language_code ??= config('app.locale');
             }
         );
     }

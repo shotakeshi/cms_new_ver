@@ -16,8 +16,7 @@ use Illuminate\Support\Facades\Auth;
 class PageController extends BaseController
 {
     use UploadImage;
-    const SAVE = 'save';
-    const SAVE_AND_EXIT = 'save_and_exit';
+    const SAVE_AND_EXIT = 'save';
     const IMAGE_PATH = 'pages';
     const REMOVE_IMAGE = 1;
     protected array $languageSlugs; // Explicitly define the type as an array
@@ -75,7 +74,7 @@ class PageController extends BaseController
             $page = $this->page->create($request->input());
             // sync Image and request
             $request['image'] = $this->uploadImage(
-                $request->file('image'),
+                $request->file('file'),
                 self::IMAGE_PATH
             );
             $pageContent = $page->contents()->create($request->except('tags'));
@@ -109,17 +108,20 @@ class PageController extends BaseController
         // Returns 'en' if present, null if not
         $refLang = request('ref_lang') ?? config('app.locale');
         $languageVersionName = LanguageHelper::getLanguageNameBySlug($refLang);
+        $tagNames = '';
         if($languageVersionName) //check ref_lang
         {
             $pageContent = $page->content($refLang);
-            $tags = $pageContent->tags()
-                ->with(['translations' => fn($q) => $q->locale($refLang)])
-                ->get();
-
-            $tagNames = $tags->pluck('translations.0.name')
-                        ->filter()
-                        ->implode(',');
-
+            if ($pageContent) {
+                $tags = $pageContent->tags()
+                    ->with([
+                        'translations' => fn ($q) => $q->locale($refLang),
+                    ])
+                    ->get();
+                $tagNames = $tags->pluck('translations.0.name')
+                    ->filter()
+                    ->implode(',');
+            }
             return view('admin.page.edit', compact('page', 'pageContent', 'languageVersionName', 'refLang', 'tagNames'));
         }
         toastr()->error(__('site.page.language_does_not_exists'));
@@ -139,7 +141,7 @@ class PageController extends BaseController
                 $request['image'] = null;
             }
             $request['image'] = $this->uploadImage(
-                $request->file('image'),
+                $request->file('file'),
                 self::IMAGE_PATH,
                 $page->image
             );

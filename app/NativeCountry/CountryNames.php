@@ -136,4 +136,15 @@ class CountryNames
             'zu' => 'South Africa',
         ];
     }
+
+    public static function options(): array
+    {
+        return collect(self::getName())
+            ->map(fn (string $name, string $code) => [
+                'value' => $code,
+                'label' => "[{$code}] | {$name}",
+            ])
+            ->values()
+            ->toArray();
+    }
 }

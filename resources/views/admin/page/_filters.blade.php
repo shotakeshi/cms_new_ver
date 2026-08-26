@@ -17,7 +17,7 @@
         {{-- All --}}
         <a href="{{ route('pages.index') }}" class="btn btn-sm btn-outline-{{ (!request()->routeIs('pages.trash') && request('status') === null) ? 'primary' : 'gray' }} pl-3 pr-3 mr-2">
             {{ __('site.filter.all') }}
-            ({{ $statusCounts['all'] ?? 0 }})
+            ({{ collect($statusCounts)->sum() ?? 0 }})
         </a>
         {{-- Status --}}
         @foreach (\App\Enums\DefaultStatus::cases() as $status)

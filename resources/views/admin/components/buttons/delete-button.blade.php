@@ -1,6 +1,7 @@
 @props([
     'action',
-    'title' => null
+    'title' => null,
+    'asText' => false,
 ])
 @php
     use Illuminate\Support\Str;
@@ -14,11 +15,24 @@
 >
     @csrf
     @method('DELETE')
-    <button type="button"
-            class="btn btn-outline-danger"
-            onclick="confirmDelete('{{ $formId }}')"
-            title="{{ __('common.button.delete') }}"
-    >
-        <i class="fas fa-trash"></i> {{ $title }}
-    </button>
+    @if ($asText)
+        <a
+                href="javascript:void(0)"
+                class="text-danger"
+                onclick="confirmDelete('{{ $formId }}')"
+                title="{{ __('site.button.delete_permanently') }}"
+        >
+            {{ $title ?? __('site.button.delete_permanently') }}
+        </a>
+
+    @else
+        <button
+                type="button"
+                class="btn btn-outline-danger"
+                onclick="confirmDelete('{{ $formId }}')"
+                title="{{ __('site.button.delete') }}"
+        >
+            <i class="fas fa-trash"></i>
+        </button>
+    @endif
 </form>

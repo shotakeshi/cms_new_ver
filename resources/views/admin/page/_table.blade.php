@@ -35,14 +35,11 @@
                         <div class="row-action hidden-div">
                             @if(isset($pageTrash) || $page->trashed())
                                 <a class="border-right text-primary border-gray pr-2 mr-1" href="{{ route('pages.restore', $page) }}">{{ __('site.button.restore') }}</a>
-                                <a class="text-danger border-gray pr-2 mr-1 btn-delete"
-                                   href="#"
-                                   data-toggle="modal"
-                                   data-target="#deleteModal"
-                                   data-animation="bounce"
-                                   data-url="{{ route('pages.force-delete', $page) }}"
-                                   data-name="{{ $page->name }}">{{ __('site.button.delete_permanently') }}
-                                </a>
+                                <x-admin::buttons.delete-button
+                                        :action="route('pages.force-delete',$page)"
+                                        asText
+                                        :title="__('site.button.delete_permanently')"
+                                />
                             @else
                                 <a class="border-right text-primary border-gray pr-2 mr-1" href="{{ route('pages.edit', $page) }}">{{ __('site.button.edit') }}</a>
                                 <a href="javascript:void(0)" onclick="event.preventDefault(); document.getElementById('delete-form-{{ $page->id }}').submit();" class="border-right text-danger border-gray pr-2 mr-1" >{{ __('site.button.trash') }}</a>

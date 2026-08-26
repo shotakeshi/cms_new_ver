@@ -8,7 +8,9 @@
 @endpush
 @section('content')
     <div class="container-fluid">
-        @include('admin.layouts.partials.page-title-box', ['name' => __('site.translation.title'), 'url' => route('settings.index')])
+        <x-admin::page-title
+                :name="__('site.translation.title')"
+        />
         <div class="row">
             <div class="col-lg-12">
                 <div class="card m-b-30">
@@ -21,10 +23,10 @@
                                 </p>
                             </div>
                             <div class="col-sm-8 text-right">
-                                <a class="btn btn-gradient-primary waves-effect waves-light px-5" href="{{ route('translation.create') }}">
+                                <a class="btn btn-outline-primary waves-effect waves-light px-5" href="{{ route('translation.create') }}">
                                     <i class="fa fa-plus"></i> {{ __('site.button.create') }}
                                 </a>
-                                <a class="btn btn-gradient-dark waves-effect waves-light px-5" href="{{ route('translation.index') }}">
+                                <a class="btn btn-outline-danger waves-effect waves-light px-5" href="{{ route('translation.index') }}">
                                     <i class="fas fa-redo"></i> {{ __('site.button.reload') }}
                                 </a>
                             </div>

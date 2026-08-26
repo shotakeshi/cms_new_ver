@@ -43,7 +43,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="meta_title" class="col-form-label">{{ __('site.setting.admin_email') }} </label>
-                                <input type="email" name="admin_email" class="form-control" placeholder="{{ __('site.setting.admin_email') }}" value="{{ $settings['admin_email'] ? $settings['admin_email'] : '' }}">
+                                <input type="email" name="admin_email" class="form-control" placeholder="{{ __('site.setting.admin_email') }}" value="{{ isset($settings['admin_email']) ? $settings['admin_email'] : '' }}">
                             </div>
                             <div class="form-group">
                                 <label for="meta_title" class="col-form-label">{{ __('site.setting.time_zone') }} </label>
@@ -75,7 +75,7 @@
                             </div>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-lg btn-gradient-primary waves-effect waves-light">
+                    <button type="submit" class="btn btn-outline-primary waves-effect waves-light">
                         <i class="far fa-save mr-2"></i>{{ __('site.button.save_setting') }}
                     </button>
                 </div> <!-- end col -->

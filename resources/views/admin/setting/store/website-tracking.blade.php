@@ -51,7 +51,7 @@
                             </div>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-gradient-primary waves-effect waves-light mb-3">
+                    <button type="submit" class="btn btn-outline-primary waves-effect waves-light mb-3">
                         <i class="far fa-save mr-2"></i>{{ __('site.button.save_setting') }}
                     </button>
                 </div> <!-- end col -->

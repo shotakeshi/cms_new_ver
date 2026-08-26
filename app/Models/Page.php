@@ -124,7 +124,9 @@ class Page extends Model
         });
 
         self::updating(function (Page $page) {
-            $page->slug = Str::slug($page->slug);
+            if ($page->isDirty('slug')) {
+                $page->slug = Str::slug($page->slug);
+            }
         });
     }
 }

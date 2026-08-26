@@ -1,7 +1,8 @@
 <div class="card m-b-30">
+    <div class="card-header">
+        {{ __('site.language.list') }}
+    </div>
     <div class="card-body">
-        <h4 class="mt-0 header-title">{{ __('site.language.list') }}</h4>
-        <p class="text-muted mb-3"> {{ __('site.language.note') }}</p>
         <div class="table-responsive">
             <table class="table table-bordered mb-0">
                 <thead>
@@ -26,13 +27,13 @@
                             </td>
                             <td class="text-right">
                                 <div class="actions">
-                                    <a class="btn btn-sm btn-gradient-success" style="width: 32px"
+                                    <a class="btn btn-outline-info"
                                        href="{{ route('languages.edit', $language) }}">
                                         <i class="fa fa-edit"></i>
                                     </a>
-                                    <button class="btn btn-sm btn-gradient-danger" style="width: 32px" onclick="confirmDelete( {{ $language->id }}, '{{ route('languages.destroy', $language) }}' )">
-                                        <i class="dripicons-trash"></i>
-                                    </button>
+                                    <x-admin::buttons.delete-button
+                                            :action="route('languages.destroy',$language)"
+                                    />
                                 </div>
                             </td>
                         </tr>

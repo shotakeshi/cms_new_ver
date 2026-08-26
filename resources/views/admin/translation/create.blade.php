@@ -41,7 +41,7 @@
                             @endforeach
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-lg btn-gradient-primary"><i class="far fa-save"></i> {{ __('site.button.save') }}</button>
+                    <button type="submit" class="btn btn-outline-primary"><i class="far fa-save"></i> {{ __('site.button.save') }}</button>
                 </div>
             </div>
         </form>

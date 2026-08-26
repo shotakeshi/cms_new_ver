@@ -85,7 +85,7 @@
                         </div>
                         <div class="card-body">
                             <x-admin::forms.single_file
-                                    name="image"
+                                    name="file"
                                     label="{{ __('site.page.avatar') }}"
                                     accept="image/jpeg,image/png,image/webp"
                             />
