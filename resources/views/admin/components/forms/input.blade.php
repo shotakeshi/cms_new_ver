@@ -5,6 +5,7 @@
     'placeholder' => null,
     'value' => null,
     'required' => false,
+    'small' => null
 ])
 
 <div class="form-group">
@@ -26,10 +27,12 @@
             @class([ 'form-control','is-invalid' => $errors->has($name) ])
             {{ $attributes }}
     >
-
-        <div id="messages-{{ $name }}" class="form-control-feedback text-danger" @if (!$errors->has($name)) style="display: none;" @endif>
-            @error($name)
-                {{ $message }}
-            @enderror
-        </div>
+    @if ($small)
+        <small class="form-text text-muted">{{ $small }}</small>
+    @endif
+    <div id="messages-{{ $name }}" class="form-control-feedback text-danger" @if (!$errors->has($name)) style="display: none;" @endif>
+        @error($name)
+            {{ $message }}
+        @enderror
+    </div>
 </div>

@@ -3,15 +3,19 @@
     <div class="row">
         <div class="col-lg-12">
             <div class="card">
+                <div class="card-header">
+                    {{ __('site.language_default') . ': ' . $currentLanguage->name }}
+                </div>
                 <div class="card-body">
-                    <strong class="italic">{{ __('site.language_default') . ': ' . $websiteLocale->name }}</strong>
-                    <div class="form-group">
-                        <label for="name">{{ __('site.blog.category.name') }} <span class="text-danger">*</span></label>
-                        <input type="text" id="name" name="name" class="form-control @error('name') is-invalid @enderror"
-                               onkeyup="generateSlug(this)"
-                               value="{{ old('name') }}" placeholder="{{ __('site.blog.category.name') }}">
-                        <small class="form-text text-muted">{{ __('site.blog.name.note') }}</small>
-                    </div>
+                    <x-admin::forms.input
+                            name="name"
+                            :label="__('site.blog.category.name')"
+                            :placeholder="__('site.blog.category.name')"
+                            required
+                            onkeyup="generateSlug(this)"
+                            :small="__('site.blog.name.note')"
+                    />
+
                     <div class="form-group">
                         <label for="slug">{{ __('site.page.slug') }} <span class="text-danger">*</span></label>
                         <input type="text" id="slug" name="slug" class="form-control @error('slug') is-invalid @enderror"
