@@ -4,22 +4,20 @@
 @endsection
 @section('content')
     <div class="container-fluid">
-        @include('admin.layouts.partials.page-title-box', ['name' => __('site.permission_group.title'), 'url' => route('settings.index')])
+        <x-admin::page-title
+                :name="__('site.permission_group.title')"
+        />
         <div class="row">
             <div class="col-lg-12">
                 <div class="card m-b-30">
                     <div class="card-body">
-                        <div class="row">
-                            <div class="col-sm-4">
-                                <h4 class="mt-0 header-title">{{ __('site.permission_group.list') }}</h4>
-                                <p class="text-muted mb-3">
-                                    {{ __('site.permission_group.note') }}
-                                </p>
+                        <div class="row mb-3">
+                            <div class="col-lg-8">
                             </div>
-                            <div class="col-sm-8 text-right">
-                                <a class="btn btn-gradient-primary waves-effect waves-light px-5" href="{{ route('permission-groups.create') }}">
-                                    <i class="fa fa-plus"></i> {{ __('site.button.create') }}
-                                </a>
+                            <div class="col-lg-4 text-right">
+                                <x-admin::page-actions
+                                        :create-url="route('permission-groups.create')"
+                                />
                             </div>
                         </div>
                         <div class="table-responsive">
@@ -40,13 +38,13 @@
                                         <td>
                                             <ol class="mb-0">
                                                 @foreach($permissionGroup->permission_id as $permissionId)
-                                                    <li>{{ $permissions[$permissionId] }}</li>
+                                                    <li>{{ $permissions[$permissionId]?->name }}</li>
                                                 @endforeach
                                             </ol>
                                         </td>
                                         <td class="text-right">
                                             <div class="actions">
-                                                <a class="btn btn-sm btn-gradient-success" style="width: 32px;"
+                                                <a class="btn btn-outline-gray"
                                                    href="{{ route('permission-groups.edit', $permissionGroup) }}">
                                                     <i class="fa fa-edit"></i>
                                                 </a>

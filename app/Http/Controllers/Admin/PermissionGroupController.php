@@ -18,9 +18,8 @@ class PermissionGroupController extends Controller
     const SAVE = 'save';
 
     public function __construct(private PermissionGroup $permissionGroup, private Permission $permission) {
-        $permissionGroupExists = Arr::flatten($this->permissionGroup->pluck('permission_id')->all());
-        $permissions = $this->permission->pluck('name', 'id')->all();
-        view()->share(compact('permissions','permissionGroupExists'));
+        $permissions = $this->permission->select('id','name')->get();
+        view()->share(compact('permissions'));
     }
 
     /**

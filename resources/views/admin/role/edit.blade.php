@@ -7,37 +7,36 @@
 @endpush
 @section('content')
     <div class="container-fluid">
-        @include('admin.layouts.partials.page-title-box', ['name' => __('site.role.edit_title'), 'url' => route('roles.index')])
+        <x-admin::page-title
+                :name="__('site.role.edit_title')"
+                :url="route('roles.index')"
+        />
         <form action="{{ route('roles.update', $role) }}" method="POST">
             @csrf
             @method('PUT')
             <div class="row">
-                <div class="col-lg-8">
+                <div class="col-lg-8 mx-auto">
                     <div class="card mb-3">
                         <div class="card-body">
-                            <div class="form-group @error('name') is-invalid @enderror">
-                                <label>{{ __('site.role.name') }} <span class="text-danger">*</span></label>
-                                <input type="text" name="name" class="form-control @error('name') is-invalid @enderror"
-                                       value="{{ old('name', $role->name) }}" placeholder="{{ __('site.role.name') }}">
-                                @error('name')
-                                <div class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
-                                @enderror
-                            </div>
+                            <x-admin::forms.input
+                                    name="name"
+                                    :label="__('site.role.name')"
+                                    :placeholder="__('site.role.name')"
+                                    :value="$role->name"
+                                    required
+                            />
                         </div>
                     </div>
                     <div class="card mb-3">
+                        <div class="card-header">
+                            {{ __('site.role.permissions') }}
+                        </div>
                         <div class="card-body">
                             <div class="card-title pb-3">
-                                <h4 class="m-0 header-title">{{ __('site.role.permissions') }}</h4>
-                                <div class="d-flex ml-auto">
+                                <div class="d-flex ml-auto pr-2">
                                     <div class="checkbox checkbox-primary form-check-inline">
                                         <input type="checkbox" id="allTreeChecked">
                                         <label class="badge-custom badge bg-primary-lt" for="allTreeChecked">{{ __('All Permissions') }}</label>
-                                    </div>
-                                    <div id="sideTreeControl" class="side-tree-control ml-3">
-                                        <span id="collapseAll">{{ __('site.role.collapse_all') }}</span> | <span id="expandAll">{{ __('site.role.expand_all') }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -80,18 +79,9 @@
                                     </ul>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-4">
-                            <button type="submit" name="submitter" value="apply" class="btn btn-lg btn-gradient-primary w-100">
-                                <i class="far fa-save"></i> {{ __('site.button.save') }}
-                            </button>
-                        </div>
-                        <div class="col-4">
-                            <button type="submit" name="submitter" value="save" class="btn btn-lg btn-gradient-purple w-100">
-                                <i class="fas fa-sign-out-alt"></i> {{ __('site.button.save_and_exit') }}
-                            </button>
+                            <x-admin::forms.actions
+                                    :back-url="route('permissions.index')"
+                            />
                         </div>
                     </div>
                 </div>

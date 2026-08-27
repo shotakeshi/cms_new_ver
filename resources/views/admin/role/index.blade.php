@@ -4,22 +4,20 @@
 @endsection
 @section('content')
     <div class="container-fluid">
-        @include('admin.layouts.partials.page-title-box', ['name' => __('site.role.title'), 'url' => route('settings.index')])
+        <x-admin::page-title
+                :name="__('site.role.title')"
+        />
         <div class="row">
             <div class="col-lg-12">
                 <div class="card m-b-30">
                     <div class="card-body">
-                        <div class="row">
-                            <div class="col-4">
-                                <h4 class="mt-0 header-title">{{ __('site.role.list') }}</h4>
-                                <p class="text-muted mb-3">
-                                    {{ __('site.role.note') }}
-                                </p>
+                        <div class="row mb-3">
+                            <div class="col-lg-8">
                             </div>
-                            <div class="col-8 text-right">
-                                <a class="btn btn-gradient-primary waves-effect waves-light px-5" href="{{ route('roles.create') }}">
-                                    <i class="fa fa-plus"></i> {{ __('site.button.create') }}
-                                </a>
+                            <div class="col-lg-4 text-right">
+                                <x-admin::page-actions
+                                        :create-url="route('roles.create')"
+                                />
                             </div>
                         </div>
                          <div class="table-responsive">
@@ -46,7 +44,7 @@
                                             </td>
                                             <td class="text-right">
                                                 <div class="actions">
-                                                    <a class="btn btn-sm btn-gradient-success" style="width: 32px"
+                                                    <a class="btn btn-outline-gray"
                                                        href="{{ route('roles.edit', $role) }}">
                                                         <i class="fa fa-edit"></i>
                                                     </a>

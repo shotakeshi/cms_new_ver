@@ -7,48 +7,37 @@
 @endpush
 @section('content')
     <div class="container-fluid">
-        @include('admin.layouts.partials.page-title-box', ['name' => __('site.permission_group.create_title'), 'url' => route('permission-groups.index')])
+        <x-admin::page-title
+                :name="__('site.permission_group.create_title')"
+                :url="route('permission-groups.index')"
+        />
         <form action="{{ route('permission-groups.store') }}" method="POST">
             @csrf
             <div class="row">
-                <div class="col-lg-6">
+                <div class="col-lg-6 mx-auto">
                     <div class="card mb-3">
+                        <div class="card-header">
+                            {{ __('site.permission_group.create_title') }}
+                        </div>
                         <div class="card-body">
-                            <div class="form-group">
-                                <label for="name" class="col-form-label">{{ __('site.permission_group.name') }} <span class="text-danger">*</span></label>
-                                <input type="text" id="name" name="name" class="form-control @error('name') is-invalid @enderror"
-                                       value="{{ old('name') }}" placeholder="{{ __('site.permission_group.name') }}">
-                                @error('name')
-                                    <div class="form-control-feedback text-danger">
-                                        {{ $message }}
-                                    </div>
-                                @enderror
-                            </div>
-                            <div class="form-group">
-                                <label for="name" class="col-form-label">{{ __('site.permission.choose_permission') }} <span class="text-danger">*</span></label>
-                                <div class="row d-flex justify-content-center">
-                                    <div class="col-md-12">
-                                        <select  name="permission_id[]"  class="select2 mb-3 select2-multiple" style="width: 100%" multiple="multiple" data-placeholder="{{ __('site.permission.choose') }}">
-                                            @foreach($permissions as $id => $permissionName)
-                                                <option value="{{ $id }}" @disabled(in_array($id, $permissionGroupExists))>{{ $permissionName }}</option>
-                                            @endforeach
-                                        </select>
-                                        @error('permission_id')
-                                            <div class="form-control-feedback text-danger">
-                                                {{ $message }}
-                                            </div>
-                                        @enderror
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-6">
-                            <button type="submit" name="submitter" value="apply" class="btn btn-lg btn-gradient-primary w-100"><i class="far fa-save"></i> {{ __('site.button.save') }}</button>
-                        </div>
-                        <div class="col-6">
-                            <button type="submit" name="submitter" value="save" class="btn btn-lg btn-gradient-purple w-100"><i class="fas fa-sign-out-alt"></i> {{ __('site.button.save_and_exit') }}</button>
+                            <x-admin::forms.input
+                                    name="name"
+                                    :label="__('site.permission_group.name')"
+                                    :placeholder="__('site.permission_group.name')"
+                                    required
+                            />
+                            <x-admin::forms.multiple-select
+                                    name="permission_id[]"
+                                    label="{{ __('site.permission.choose_permission') }}"
+                                    :options="$permissions"
+                                    option-label="name"
+                                    option-value="id"
+                                    placeholder="{{ __('site.permission.choose') }}"
+                            />
+                            <x-admin::forms.actions
+                                    :back-url="route('permission-groups.index')"
+                                    show-reset
+                            />
                         </div>
                     </div>
                 </div>
