@@ -6,10 +6,15 @@
 ])
 <hr>
 <div class="row g-2">
-    {{-- Reset --}}
-
-    {{-- Save --}}
-    <div class="col-lg-12 text-right">
+    <div class="col-lg-4 text-left">
+        @if ($backUrl)
+            <a href="{{ $backUrl }}" class="btn btn-sm btn-outline-warning waves-effect waves-light">
+                <i class="fas fa-arrow-left"></i>
+                {{ __('site.button.back') }}
+            </a>
+        @endif
+    </div>
+    <div class="col-lg-8 text-right">
         @if ($showReset)
             <button type="reset" class="btn btn-sm btn-outline-danger waves-effect waves-light">
                 <i class="fas fa-redo mr-1"></i>

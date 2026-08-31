@@ -18,13 +18,6 @@ class BlogCategoryController extends BaseController
     public function __construct(protected BlogCategory $blogCategory)
     {
         $this->languageSlugs = Language::active()->pluck('slug')->toArray();
-    }
-
-    /**
-     * Display a listing of the resource.
-     */
-    public function index(Request $request): View
-    {
         $blogCategoryContents = [];
 
         $blogCategories = $this->blogCategory
@@ -37,16 +30,18 @@ class BlogCategoryController extends BaseController
             ->get();
 
         $this->buildCategoryContents($blogCategories, $blogCategoryContents);
-
-        return view('admin.blog.category.index', compact('blogCategories', 'blogCategoryContents'));
+        view()->share([
+            'blogCategories' => $blogCategories,
+            'blogCategoryContents' => $blogCategoryContents
+        ]);
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Display a listing of the resource.
      */
-    public function create(): View
+    public function index(Request $request): View
     {
-        return view('admin.blog.category.create');
+        return view('admin.blog.category.index');
     }
 
     /**
@@ -71,17 +66,111 @@ class BlogCategoryController extends BaseController
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(BlogCategoryRequest $blogCategoryRequest): View|RedirectResponse
-    {
-//        $refLang = request('ref_lang') ?? config('app.locale'); // Returns 'en' if present, null if not
-//        $languageVersionName = LanguageHelper::getLanguageNameBySlug($refLang);
-//        if($languageVersionName) //check ref_lang
-//        {
-//            $pageContent = $page->content($refLang);
-//            return view('admin.page.edit', compact('page', 'pageContent', 'languageVersionName', 'refLang'));
-//        }
-//        toastr()->error(__('site.page.language_does_not_exists'));
-        return redirect()->route('pages.index');
+    public function edit(
+        BlogCategory $blogCategory
+    ): View|RedirectResponse {
+        $refLang = request('ref_lang') ?: config('app.locale');
+        $languageVersionName = LanguageHelper::getLanguageNameBySlug($refLang);
+        if (!$languageVersionName) {
+            toastr()->error(
+                __('site.page.language_does_not_exists')
+            );
+            return redirect()->route('blog-categories.index');
+        }
+
+        /*
+         * Load toàn bộ category chỉ 1 query.
+         */
+        $allCategories = $this->blogCategory
+            ->with('contents')
+            ->orderBy('parent_id')
+            ->orderBy('id')
+            ->get();
+
+        /*
+         * Tìm current category + toàn bộ descendants
+         * hoàn toàn trong memory.
+         */
+        $excludedIds = collect([$blogCategory->id]);
+
+        $findChildren = function (int $parentId) use (
+            &$findChildren,
+            $allCategories,
+            &$excludedIds
+        ): void {
+            $allCategories
+                ->where('parent_id', $parentId)
+                ->each(function ($child) use (
+                    &$findChildren,
+                    &$excludedIds
+                ): void {
+                    $excludedIds->push($child->id);
+
+                    $findChildren($child->id);
+                });
+        };
+
+        $findChildren($blogCategory->id);
+
+        /*
+         * Build category tree.
+         */
+        $buildTree = function (
+            $categories,
+            int $parentId = 0
+        ) use (&$buildTree) {
+            return $categories
+                ->where('parent_id', $parentId)
+                ->map(function ($category) use (
+                    &$buildTree,
+                    $categories
+                ) {
+                    $category->setRelation(
+                        'children',
+                        $buildTree($categories, $category->id)
+                    );
+
+                    return $category;
+                })
+                ->values();
+        };
+
+        /*
+         * Loại current category + descendants
+         * ngay trên dataset.
+         */
+        $availableCategories = $allCategories
+            ->reject(
+                fn ($category) => $excludedIds->contains($category->id)
+            );
+
+        $availableCategories = $buildTree($availableCategories);
+
+        /*
+         * Build contents map.
+         */
+        $availableCategoryContents = [];
+
+        foreach ($allCategories as $category) {
+            foreach ($category->contents as $content) {
+                $availableCategoryContents[$category->id][$content->language_code] = [
+                    'name' => $content->name,
+                ];
+            }
+        }
+        /*
+         * Current language content.
+         */
+        $blogCategoryContent = $blogCategory->content($refLang);
+
+        return view('admin.blog.category.index', compact(
+            'blogCategory',
+            'availableCategories',
+            'availableCategoryContents',
+            'blogCategoryContent',
+            'languageVersionName',
+            'refLang',
+        ));
     }
 
     /**
@@ -116,17 +205,15 @@ class BlogCategoryController extends BaseController
      */
     public function destroy(BlogCategory $blogCategory): RedirectResponse
     {
-        DB::beginTransaction();
         try {
-            $blogCategory->contents()->delete();
-            $blogCategory->delete();
+            DB::transaction(fn () => $blogCategory->delete());
             toastr()->success(__('site.notification.delete_success'));
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollBack();
+            return back();
+        } catch (\Throwable $e) {
+            report($e);
             toastr()->error(__('site.notification.delete_fail'));
+            return back()->withInput();
         }
-        return redirect()->back()->withInput();
     }
 
     private function buildCategoryContents($categories, &$blogCategoryContents)

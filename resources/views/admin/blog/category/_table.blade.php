@@ -22,15 +22,15 @@
                     </div>
                     <div style="height: 22px">
                         <div class="row-action hidden-div">
-                            <a class="border-right text-primary border-gray pr-2 mr-1" href="{{ route('blog-categories.edit', $blogCategory) }}">{{ __('site.button.edit') }}</a>
-                            <a class="text-danger border-gray pr-2 mr-1 btn-delete"
-                               href="#"
-                               data-toggle="modal"
-                               data-target="#deleteModal"
-                               data-animation="bounce"
-                               data-url="{{ route('blog-categories.destroy', $blogCategory) }}"
-                               data-name="{{ $blogCategoryContents[$blogCategory->id][$appLocale]['name'] ?? '[ ' . array_key_first($blogCategoryContents[$blogCategory->id]) . ' ] ' . collect($blogCategoryContents[$blogCategory->id])->first()['name'] }}">{{ __('site.button.delete_permanently') }}
+                            <a class="border-right text-primary border-gray pr-2 mr-1"
+                                href="{{ route('blog-categories.edit', $blogCategory) }}?ref_lang={{ app()->getLocale() }}">
+                                {{ __('site.button.edit') }}
                             </a>
+                            <x-admin::buttons.delete-button
+                                    :action="route('blog-categories.destroy', $blogCategory)"
+                                    asText
+                                    :title="__('site.button.delete_permanently')"
+                            />
                         </div>
                     </div>
                 </td>

@@ -18,7 +18,7 @@
     <link href="{{ asset('administrator/phoenix/assets/css/jquery-ui.min.css') }}" rel="stylesheet" type="text/css">
     <link href="{{ asset('administrator/phoenix/assets/css/icons.min.css') }}" rel="stylesheet" type="text/css">
     <link href="{{ asset('administrator/phoenix/assets/css/metisMenu.min.css') }}" rel="stylesheet" type="text/css">
-    <link href="{{ asset('administrator/phoenix/assets/css/app.min.css') }}" rel="stylesheet" type="text/css">
+    <link href="{{ asset('administrator/phoenix/assets/css/app.min.css') }}?v={{ time() }}" rel="stylesheet" type="text/css">
     <link href="{{ asset('administrator/phoenix/assets/css/toastr.min.css') }}" rel="stylesheet" type="text/css">
     <link href="{{ asset('administrator/phoenix/assets/css/custom.css') }}?v={{ time() }}" rel="stylesheet" type="text/css">
     <script>
