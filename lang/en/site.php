@@ -226,6 +226,7 @@ return [
     'blog' => [
         'categories' => [
             'title' => 'Blog categories',
+            'list' => 'Blog categories list',
         ],
         'create_category_title' => 'Add Category',
         'general_information' => 'General infomation',
@@ -258,6 +259,7 @@ return [
         'search_title' => 'Search translation',
     ],
     'language_default' => 'The system\'s default language',
+    'language_used_update' => 'Edit by language',
     'tags' => 'Tags',
     'common' => [
         'choose' => '-- Choose --',

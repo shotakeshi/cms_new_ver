@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Auth;
 use TheJano\LaravelFilterable\Traits\HasFilterableTrait;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class BlogCategory extends Model
 {
@@ -51,6 +52,38 @@ class BlogCategory extends Model
         ]);
     }
 
+    public function posts(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            BlogPost::class,
+            'blog_post_category',
+            'blog_category_id',
+            'blog_post_id'
+        );
+    }
+
+    public function content(string $languageCode = '') : ?BlogCategoryContent
+    {
+        $languageCode = $languageCode ?: config('app.locale');
+        return $this->contents()->where('language_code', $languageCode)->first();
+    }
+
+    public function getDescendantIds(): array
+    {
+        $ids = [];
+
+        foreach ($this->children as $child) {
+            $ids[] = $child->id;
+
+            $ids = array_merge(
+                $ids,
+                $child->getDescendantIds()
+            );
+        }
+
+        return $ids;
+    }
+
     protected static function boot()
     {
         parent::boot();
@@ -60,5 +93,15 @@ class BlogCategory extends Model
                 $model->admin_id = Auth::id();
             }
         );
+
+        static::deleting(function (BlogCategory $blogCategory) {
+            // Move children to the nearest parent
+            $blogCategory->children()->update([
+                'parent_id' => $blogCategory->parent_id,
+            ]);
+
+            // Remove post-category relationships
+            $blogCategory->posts()->detach();
+        });
     }
 }
