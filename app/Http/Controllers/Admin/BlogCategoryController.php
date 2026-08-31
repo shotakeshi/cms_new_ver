@@ -66,10 +66,10 @@ class BlogCategoryController extends BaseController
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(
-        BlogCategory $blogCategory
-    ): View|RedirectResponse {
+    public function edit(BlogCategory $blogCategory): View|RedirectResponse
+    {
         $refLang = request('ref_lang') ?: config('app.locale');
+        //check ref_lang
         $languageVersionName = LanguageHelper::getLanguageNameBySlug($refLang);
         if (!$languageVersionName) {
             toastr()->error(
@@ -79,14 +79,13 @@ class BlogCategoryController extends BaseController
         }
 
         /*
-         * Load toàn bộ category chỉ 1 query.
+         * Get all Blog Category.
          */
         $allCategories = $this->blogCategory
             ->with('contents')
             ->orderBy('parent_id')
             ->orderBy('id')
             ->get();
-
         /*
          * Tìm current category + toàn bộ descendants
          * hoàn toàn trong memory.
@@ -109,7 +108,6 @@ class BlogCategoryController extends BaseController
                     $findChildren($child->id);
                 });
         };
-
         $findChildren($blogCategory->id);
 
         /*
@@ -129,7 +127,6 @@ class BlogCategoryController extends BaseController
                         'children',
                         $buildTree($categories, $category->id)
                     );
-
                     return $category;
                 })
                 ->values();
@@ -143,14 +140,12 @@ class BlogCategoryController extends BaseController
             ->reject(
                 fn ($category) => $excludedIds->contains($category->id)
             );
-
         $availableCategories = $buildTree($availableCategories);
 
         /*
          * Build contents map.
          */
         $availableCategoryContents = [];
-
         foreach ($allCategories as $category) {
             foreach ($category->contents as $content) {
                 $availableCategoryContents[$category->id][$content->language_code] = [
@@ -162,7 +157,7 @@ class BlogCategoryController extends BaseController
          * Current language content.
          */
         $blogCategoryContent = $blogCategory->content($refLang);
-
+        $isEditMode = true;
         return view('admin.blog.category.index', compact(
             'blogCategory',
             'availableCategories',
@@ -170,14 +165,16 @@ class BlogCategoryController extends BaseController
             'blogCategoryContent',
             'languageVersionName',
             'refLang',
+            'isEditMode'
         ));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(PageRequest $request, Page $page): RedirectResponse
+    public function update(BlogCategoryRequest $request, BlogCategory $blogCategory): RedirectResponse
     {
+        dd($request->all());
         DB::beginTransaction();
         try {
             $page->update($request->all());

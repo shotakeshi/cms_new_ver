@@ -29,8 +29,8 @@
                                     required
                             />
                             <x-admin::forms.select
-                                    name="name"
-                                    label="{{ __('site.language.name') }}"
+                                    name="slug"
+                                    label="{{ __('site.language.slug') }}"
                                     :options="\App\NativeCountry\CountryNames::options()"
                                     option-value="value"
                                     option-label="label"

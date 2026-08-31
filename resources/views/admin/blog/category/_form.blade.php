@@ -1,5 +1,15 @@
-<form id="blog-category" action="{{ route('blog-categories.store') }}" method="POST">
+<form
+        id="blog-category"
+        method="POST"
+        action="{{ isset($isEditMode)
+        ? route('blog-categories.update', $blogCategory)
+        : route('blog-categories.store')
+    }}"
+>
     @csrf
+    @if (isset($isEditMode))
+        @method('PUT')
+    @endif
     <div class="row">
         <div class="col-lg-12">
             <div class="card">

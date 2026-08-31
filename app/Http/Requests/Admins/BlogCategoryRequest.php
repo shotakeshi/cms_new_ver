@@ -34,7 +34,7 @@ class BlogCategoryRequest extends FormRequest
                 'string',
                 'alpha_dash:ascii',
                 Rule::unique('blog_category_contents', 'slug')
-                    ->ignore($this->route('page'))
+                    ->ignore($this->route('blogCategory')->id, 'id')
             ]
         ];
     }
