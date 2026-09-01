@@ -21,6 +21,7 @@
                     @endif
                 </div>
                 <div class="card-body">
+                    <input type="hidden" name="language_code" value="{{ request('ref_lang') }}">
                     <x-admin::forms.input
                             name="name"
                             :label="__('site.blog.category.name')"

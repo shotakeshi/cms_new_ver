@@ -8,34 +8,45 @@ use Illuminate\Validation\Rule;
 
 class BlogCategoryRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
     {
+        $blogCategory = $this->route('blog_category');
+        $content = $blogCategory?->contents()
+            ->where('language_code', $this->input('language_code'))
+            ->first();
         return [
             'name' => [
                 'required',
                 'string',
-                'max:255'
+                'max:255',
             ],
+
             'slug' => [
                 'required',
                 'string',
+                'max:255',
                 'alpha_dash:ascii',
+
                 Rule::unique('blog_category_contents', 'slug')
-                    ->ignore($this->route('blogCategory')->id, 'id')
-            ]
+                    ->where(
+                        fn ($query) => $query->where(
+                            'language_code',
+                            $this->input('language_code')
+                        )
+                    )
+                    ->ignore($content?->id),
+            ],
+
+            'parent_id' => [
+                'nullable',
+                'integer',
+                'exists:blog_categories,id',
+            ],
         ];
     }
 }

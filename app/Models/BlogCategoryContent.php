@@ -33,11 +33,10 @@ class BlogCategoryContent extends Model
     {
         parent::boot();
 
-        $locale = Setting::where('key','locale')->pluck('value')->first();
         static::creating(
             function ($model) {
                 $model->slug = Str::slug($model->slug);
-                $model->language_code = $locale ?? config('app.locale');
+                $model->language_code ??= config('app.locale');
             }
         );
 

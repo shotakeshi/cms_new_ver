@@ -174,21 +174,15 @@ class BlogCategoryController extends BaseController
      */
     public function update(BlogCategoryRequest $request, BlogCategory $blogCategory): RedirectResponse
     {
-        dd($request->all());
         DB::beginTransaction();
         try {
-            $page->update($request->all());
-            // sync Image and request
-            $request['image'] = $this->handleImageUpload($request, $request->image);
-            $page->contents()->updateOrCreate(
-                ['language_code' => $request->language_code, 'page_id' => $page->id],
+            $blogCategory->update($request->input());
+            $blogCategory->contents()->updateOrCreate(
+                ['language_code' => $request->language_code, 'blog_category_id' => $blogCategory->id],
                 $request->all()
             );
             DB::commit();
             toastr()->success(__('site.notification.update_success'));
-            if($request->submitter == self::SAVE) {
-                return redirect()->route('pages.index');
-            }
             return redirect()->back();
         } catch (\Exception $e) {
             DB::rollBack();

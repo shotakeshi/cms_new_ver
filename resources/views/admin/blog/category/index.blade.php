@@ -9,6 +9,14 @@
         />
         <div class="row">
             <div class="col-4">
+                @if (isset($isEditMode))
+                    <div class="alert icon-custom-alert alert-outline-primary alert-primary-shadow" role="alert">
+                        <i class="fas fa-exclamation alert-icon font-18"></i>
+                        <div class="alert-text">
+                            {!!  __('site.page.note_update', ['locale' => $languageVersionName]) !!}
+                        </div>
+                    </div>
+                @endif
                 @include('admin.blog.category._form')
             </div>
             <div class="col-8">
