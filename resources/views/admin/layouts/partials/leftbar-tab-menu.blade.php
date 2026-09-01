@@ -52,6 +52,7 @@
                     <li class="nav-item"><a class="nav-link" href="{{ route('admins.index') }}">Admins</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('settings.index') }}">Settings</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('blog-categories.index') }}">Blog Categories</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('blog-posts.index') }}">Blog Posts</a></li>
                 </ul>
             </div><!-- end Dashboards -->
 

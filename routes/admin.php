@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\WidgetController;
 use App\Http\Controllers\Admin\BlogCategoryController;
+use App\Http\Controllers\Admin\BlogPostController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('admin')->middleware('guest:admin')->group(function () {
@@ -38,7 +39,8 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
         'pages' => PageController::class,
         'widgets' => WidgetController::class,
         'settings' => SettingController::class,
-        'blog-categories' => BlogCategoryController::class
+        'blog-categories' => BlogCategoryController::class,
+        'blog-posts' => BlogPostController::class
     ]);
     Route::controller(AdminController::class)->group(function () {
         Route::get('profile', 'profile')->name('admin.profile');
@@ -65,7 +67,6 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
         Route::get('create', 'create')->name('translation.create');
         Route::post('store', 'store')->name('translation.store');
         Route::post('update/{locale}', 'update')->name('translation.update');
-
     });
 });
 Route::get('/change-language/{locale}', [LanguageController::class, 'changeLanguage'])->name('change-language');

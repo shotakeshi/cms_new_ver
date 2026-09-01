@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Enums\ActivityModule;
 use App\Enums\DefaultStatus;
+use App\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Auth;
@@ -13,6 +15,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 class BlogCategory extends Model
 {
     use HasFilterableTrait;
+    use LogsActivity;
+
+    public const ACTIVITY_MODULE = ActivityModule::BLOG_CATEGORY->value;
 
     protected $casts = [
         'status' => 'boolean'

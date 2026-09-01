@@ -2,14 +2,19 @@
 
 namespace App\Models;
 
+use App\Enums\ActivityModule;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
 use TheJano\LaravelFilterable\Traits\HasFilterableTrait;
+use App\Traits\LogsActivity;
 
 class BlogCategoryContent extends Model
 {
     use HasFilterableTrait;
+    use LogsActivity;
+
+    public const ACTIVITY_MODULE = ActivityModule::BLOG_CATEGORY_CONTENT->value;
 
     protected $fillable = [
         'language_code',
