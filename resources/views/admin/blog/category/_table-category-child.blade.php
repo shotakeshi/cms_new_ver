@@ -40,9 +40,9 @@
             <span class="text-beanred">{{ $blogCategory->updated_at }}</span>
         </td>
     </tr>
-    @if($blogCategory->children->count())
+    @if($blogCategory->children()->count())
         @include('admin.blog.category._table-category-child', [
-            'blogCategoryChildrens' => $blogCategory->children,
+            'blogCategoryChildrens' => $blogCategory->children()->get(),
             'blogCategoryContents' => $blogCategoryContents,
             'line' => $line.$line
         ])

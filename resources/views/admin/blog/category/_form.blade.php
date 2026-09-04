@@ -2,7 +2,7 @@
         id="blog-category"
         method="POST"
         action="{{ isset($isEditMode)
-        ? route('blog-categories.update', $blogCategory)
+        ? route('blog-categories.update', $category)
         : route('blog-categories.store')
     }}"
 >
@@ -29,7 +29,7 @@
                             required
                             onkeyup="generateSlug(this)"
                             :small="__('site.blog.name.note')"
-                            :value="isset($blogCategoryContent) ? $blogCategoryContent->name : old('name')"
+                            :value="isset($categoryContent) ? $categoryContent->name : old('name')"
                     />
                     <x-admin::forms.input
                             name="slug"
@@ -37,7 +37,7 @@
                             :placeholder="__('site.page.slug')"
                             required
                             :small="__('site.blog.slug.note')"
-                            :value="isset($blogCategoryContent) ? $blogCategoryContent->slug : old('slug')"
+                            :value="isset($categoryContent) ? $categoryContent->slug : old('slug')"
                     />
                     <x-admin::forms.select-has-child
                             name="parent_id"
@@ -45,7 +45,7 @@
                             :options="$availableCategories ?? $blogCategories"
                             :contents="$availableCategoryContents ?? $blogCategoryContents"
                             :locale="$refLang ?? $appLocale"
-                            :selected="old('parent_id', $blogCategory->parent_id ?? 0)"
+                            :selected="old('parent_id', $category->parent_id ?? 0)"
                             select2
                     />
                     <x-admin::forms.textarea
@@ -53,13 +53,19 @@
                             label="{{ __('site.page.description') }}"
                             placeholder="{{ __('site.page.description') }}"
                             rows="5"
-                            :value="isset($blogCategoryContent) ? $blogCategoryContent->description : old('name')"
+                            :value="isset($categoryContent) ? $categoryContent->description : old('name')"
                     />
-                    <x-admin::forms.actions
-                            :back-url="route('blog-categories.index')"
-                            show-reset
-                            :showSaveExit="false"
-                    />
+                    @if (isset($isEditMode))
+                        <x-admin::forms.actions
+                                :back-url="route('blog-categories.index')"
+                                :showSaveExit="false"
+                        />
+                    @else
+                        <x-admin::forms.actions
+                                show-reset
+                                :showSaveExit="false"
+                        />
+                    @endif
                 </div>
             </div>
         </div>

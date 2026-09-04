@@ -65,8 +65,7 @@ class BlogCategoryController extends BaseController
 
         $availableCategories = $this->blogCategoryService
             ->getAvailableParentCategories(
-                $blogCategory,
-                $categoryData['blogCategories']
+                $blogCategory
             );
 
         $blogCategoryContent = $blogCategory->content($refLang);
@@ -78,8 +77,8 @@ class BlogCategoryController extends BaseController
             'availableCategories' => $availableCategories,
             'availableCategoryContents' => $categoryData['blogCategoryContents'],
 
-            'blogCategory' => $blogCategory,
-            'blogCategoryContent' => $blogCategoryContent,
+            'category' => $blogCategory,
+            'categoryContent' => $blogCategoryContent,
 
             'languageVersionName' => $languageVersionName,
             'refLang' => $refLang,

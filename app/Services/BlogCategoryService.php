@@ -13,18 +13,26 @@ class BlogCategoryService
     }
 
     /**
-     * Get all categories and build tree in memory.
+     * Get all categories as flat collection.
      */
-    public function getCategoryTree(): Collection
+    public function getAllCategories(): Collection
     {
-        $categories = $this->blogCategory
+        return $this->blogCategory
             ->newQuery()
             ->with('contents')
             ->orderBy('parent_id')
             ->orderBy('id')
             ->get();
+    }
 
-        return $this->buildTree($categories);
+    /**
+     * Get all categories and build tree in memory.
+     */
+    public function getCategoryTree(): Collection
+    {
+        return $this->buildTree(
+            $this->getAllCategories()
+        );
     }
 
     /**
@@ -32,7 +40,7 @@ class BlogCategoryService
      */
     public function buildTree(
         Collection $categories,
-        int $parentId = 0
+        int $parentId = 0,
     ): Collection {
         $grouped = $categories->groupBy('parent_id');
 
@@ -40,21 +48,18 @@ class BlogCategoryService
             &$build,
             $grouped
         ): Collection {
-            $children = $grouped->get($parentId);
+            return $grouped
+                ->get($parentId, collect())
+                ->map(
+                    function (BlogCategory $category) use (&$build): BlogCategory {
+                        $category->setRelation(
+                            'children',
+                            $build($category->id)
+                        );
 
-            if (!$children) {
-                return collect();
-            }
-
-            return $children
-                ->map(function (BlogCategory $category) use (&$build): BlogCategory {
-                    $category->setRelation(
-                        'children',
-                        $build($category->id)
-                    );
-
-                    return $category;
-                })
+                        return $category;
+                    }
+                )
                 ->values();
         };
 
@@ -111,14 +116,14 @@ class BlogCategoryService
      */
     public function getExcludedIds(
         BlogCategory $currentCategory,
-        Collection $categories
+        Collection $categories,
     ): array {
         $grouped = $categories->groupBy('parent_id');
 
         $excluded = [$currentCategory->id];
         $stack = [$currentCategory->id];
 
-        while ($stack) {
+        while ($stack !== []) {
             $parentId = array_pop($stack);
 
             foreach ($grouped->get($parentId, collect()) as $child) {
@@ -135,8 +140,10 @@ class BlogCategoryService
      */
     public function getAvailableParentCategories(
         BlogCategory $currentCategory,
-        Collection $categories
     ): Collection {
+        // Always use flat collection here.
+        $categories = $this->getAllCategories();
+
         $excludedIds = $this->getExcludedIds(
             $currentCategory,
             $categories
