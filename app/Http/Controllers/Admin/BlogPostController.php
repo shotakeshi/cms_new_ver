@@ -32,7 +32,11 @@ class BlogPostController extends Controller
     }
 
     public function index(){
-        $blogPosts = BlogPost::with(['admin', 'childrenRecursive']);
+        $statusCounts = 0;
+        return view(
+            'admin.blog.posts.index',
+            compact('statusCounts')
+        );
     }
 
     private function buildCategoryContents($categories, &$blogCategoryContents)
