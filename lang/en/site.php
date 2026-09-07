@@ -244,6 +244,11 @@ return [
         'category' => [
             'name' => 'Category name',
         ],
+        'posts' => [
+            'title' => 'Blog posts',
+            'filter' => 'Filter',
+            'search_posts' => 'Search Posts'
+        ]
     ],
     'translation' => [
         'title' => 'Translations',
