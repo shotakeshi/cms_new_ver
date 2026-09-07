@@ -12,9 +12,7 @@
                 <div class="card m-b-30">
                     <div class="card-body">
                         <div class="row mb-3">
-                            <div class="col-lg-8">
-                            </div>
-                            <div class="col-lg-4 text-right">
+                            <div class="col-lg-12 text-right">
                                 <x-admin::page-actions
                                     :create-url="route('admins.create')"
                                     :reload-url="route('admins.index')"

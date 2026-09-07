@@ -247,7 +247,10 @@ return [
         'posts' => [
             'title' => 'Blog posts',
             'filter' => 'Filter',
-            'search_posts' => 'Search Posts'
+            'search_posts' => 'Search Posts',
+            'categories' => 'Categories',
+            'excerpt' => 'Excerpt',
+            'post_password' => 'Post Password',
         ]
     ],
     'translation' => [

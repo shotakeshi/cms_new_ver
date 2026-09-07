@@ -1,6 +1,6 @@
 @extends('admin.layouts.app')
 @section('title')
-    {{ __('site.page.title') }}
+    {{ __('site.blog.posts.title') }}
 @endsection
 @push('styles')
     <link href="{{ asset('administrator/phoenix/plugins/dropify/css/dropify.min.css') }}" rel="stylesheet">
@@ -12,9 +12,9 @@
 @section('content')
     <div class="container-fluid">
         <x-admin::page-title
-                :name="__('site.page.create_title')"
+                :name="__('site.blog.posts.title')"
         />
-        <form id="page" action="{{ route('pages.store') }}" method="POST" enctype="multipart/form-data">
+        <form id="page" action="{{ route('blog-posts.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="row">
                 <div class="col-lg-8">
@@ -37,10 +37,11 @@
                                     required
                             />
                             <x-admin::forms.textarea
-                                    name="description"
-                                    label="{{ __('site.page.description') }}"
-                                    placeholder="{{ __('site.page.description') }}"
+                                    name="excerpt"
+                                    label="{{ __('site.blog.posts.excerpt') }}"
+                                    placeholder="{{ __('site.blog.posts.excerpt') }}"
                                     rows="5"
+                                    required
                             />
                             <x-admin::forms.textarea
                                     name="content"
@@ -87,55 +88,16 @@
                     </div>
                     <div class="card">
                         <div class="card-header">
-                            List Blog Categories
+                            {{ __('site.blog.posts.categories') }}
                         </div>
-                        <div class="card-body">
-                            @foreach($blogCategories as $blogCategory)
-                                <div class="checkbox">
-                                    <input id="checkbox0" type="checkbox">
-                                    <label for="checkbox0">
-                                        Default
-                                    </label>
-                                </div>
-                            @endforeach
-
-
-                            <div class="checkbox checkbox-primary ml-2">
-                                <input id="checkbox2" type="checkbox" checked="">
-                                <label for="checkbox2">
-                                    Primary
-                                </label>
-                            </div>
-                            <div class="checkbox checkbox-success">
-                                <input id="checkbox3" type="checkbox">
-                                <label for="checkbox3">
-                                    Success
-                                </label>
-                            </div>
-                            <div class="checkbox checkbox-info">
-                                <input id="checkbox4" type="checkbox">
-                                <label for="checkbox4">
-                                    Info
-                                </label>
-                            </div>
-                            <div class="checkbox checkbox-warning">
-                                <input id="checkbox5" type="checkbox" checked="">
-                                <label for="checkbox5">
-                                    Warning
-                                </label>
-                            </div>
-                            <div class="checkbox checkbox-danger">
-                                <input id="checkbox6" type="checkbox" checked="">
-                                <label for="checkbox6">
-                                    Danger
-                                </label>
-                            </div>
-                            <div class="checkbox checkbox-purple">
-                                <input id="checkbox6a" type="checkbox">
-                                <label for="checkbox6a">
-                                    Purple
-                                </label>
-                            </div>
+                        <div class="card-body overflow-auto" style="max-height: 250px;">
+                            <x-admin::forms.checkbox-has-child
+                                    name="blog_category_id"
+                                    :options="$blogCategories"
+                                    :contents="$blogCategoryContents"
+                                    :locale="$refLang ?? $appLocale"
+                                    :selected="old('blog_category_id')"
+                            />
                         </div>
                     </div>
                     <div class="card">
@@ -143,11 +105,29 @@
                             <strong class="italic">{{ __('site.language_default') . ': ' . $currentLanguage->name }}</strong>
                         </div>
                         <div class="card-body">
-                            <x-admin::forms.single_file
-                                    name="file"
-                                    label="{{ __('site.page.avatar') }}"
-                                    accept="image/jpeg,image/png,image/webp"
-                            />
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <x-admin::forms.single_file
+                                            name="file"
+                                            label="{{ __('site.page.avatar') }}"
+                                            accept="image/jpeg,image/png,image/webp"
+                                    />
+                                </div>
+                                <div class="col-lg-6">
+                                    <x-admin::forms.input
+                                            name="post_password"
+                                            type="text"
+                                            label="{{ __('site.blog.posts.post_password') }}"
+                                            placeholder="{{ __('site.blog.posts.post_password') }}"
+                                            required
+                                    />
+                                    <x-admin::forms.radio-enums
+                                            name="status_comment"
+                                            label="{{ __('site.page.status_comment') }}"
+                                            :options="\App\Enums\DefaultStatus::options()"
+                                    />
+                                </div>
+                            </div>
                             <x-admin::forms.tagsinput
                                     name="tags"
                                     label="{{ __('site.tags') }}"
@@ -158,26 +138,8 @@
                                     label="{{ __('site.page.published_at') }}"
                                     placeholder="dd/mm/yyyy - hh:mm"
                             />
-                            <div class="row">
-                                <div class="col-6">
-                                    <x-admin::forms.radio-enums
-                                            name="status"
-                                            label="{{ __('site.admin.status') }}"
-                                            :options="\App\Enums\DefaultStatus::options()"
-                                            :selected="\App\Enums\DefaultStatus::ACTIVE->value"
-                                    />
-                                </div>
-                                <div class="col-6">
-                                    <x-admin::forms.radio-enums
-                                            name="status_comment"
-                                            label="{{ __('site.page.status_comment') }}"
-                                            :options="\App\Enums\DefaultStatus::options()"
-                                    />
-                                </div>
-                            </div>
                             <x-admin::forms.actions
                                     :back-url="route('admins.index')"
-                                    show-reset
                             />
                         </div>
                     </div>

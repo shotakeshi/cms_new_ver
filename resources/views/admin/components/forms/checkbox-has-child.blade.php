@@ -1,17 +1,20 @@
+{{-- resources/views/components/admin/forms/checkbox-has-child.blade.php --}}
+
 {{-- How to use --}}
 {{--
-<x-admin::forms.category-checkbox
+<x-admin::forms.checkbox-has-child
     name="category_ids"
-    label="{{ __('site.blog.categories') }}"
+    :label="__('site.blog.categories')"
     :options="$blogCategories"
     :contents="$blogCategoryContents"
     :locale="$appLocale"
-    :selected="old('category_ids', $selectedCategoryIds ?? [])"
+    :selected="$selectedCategoryIds ?? []"
+    :required="true"
 />
 --}}
 
 @props([
-    'name' => 'category_ids',
+    'name' => null,
     'label' => null,
     'options' => [],
     'contents' => [],
@@ -22,92 +25,107 @@
 
 @php
     /*
-     * Make sure selected is always an array.
+     * Normalize selected values.
      */
     $selected = old($name, $selected);
-
     if (!is_array($selected)) {
         $selected = [$selected];
     }
-
     $selected = array_map('strval', $selected);
-
     /*
-     * Get category name by locale.
+     * Get item label by locale.
      */
-    $getCategoryName = function ($category) use ($contents, $locale) {
-        $categoryContents = $contents[$category->id] ?? [];
+    $getItemLabel = function ($item) use ($contents, $locale): string {
+        $itemContents = $contents[$item->id] ?? [];
 
-        if (!$categoryContents) {
-            return $category->name ?? '';
+        /*
+         * No translated content.
+         */
+        if (empty($itemContents)) {
+            return $item->name ?? '';
         }
 
-        return $categoryContents[$locale]['name']
-            ?? (
-                !empty($categoryContents)
-                    ? '[ ' . array_key_first($categoryContents) . ' ] '
-                        . collect($categoryContents)->first()['name']
-                    : ($category->name ?? '')
-            );
+        /*
+         * Current locale.
+         */
+        if (
+            $locale !== null &&
+            isset($itemContents[$locale]['name'])
+        ) {
+            return $itemContents[$locale]['name'];
+        }
+
+        /*
+         * Fallback to first available locale.
+         */
+        $fallbackLocale = array_key_first($itemContents);
+
+        if ($fallbackLocale !== null) {
+            return '[ ' . $fallbackLocale . ' ] '
+                . ($itemContents[$fallbackLocale]['name'] ?? '');
+        }
+
+        return $item->name ?? '';
     };
 
     /*
-     * Generate unique checkbox ID.
-     */
-    $getCheckboxId = function ($category) use ($name) {
-        return $name . '_' . $category->id;
-    };
-
-    /*
-     * Render category tree.
+     * Render recursive options.
      */
     $renderOptions = function (
-        $categories,
-        $level = 0
+        $items,
+        int $level = 0
     ) use (
         &$renderOptions,
-        $getCategoryName,
-        $getCheckboxId,
-        $selected
-    ) {
-        foreach ($categories as $category) {
-            $id = $getCheckboxId($category);
-            $value = (string) $category->id;
-            $label = $getCategoryName($category);
+        $getItemLabel,
+        $selected,
+        $name
+    ): void {
+        foreach ($items as $item) {
+            $id = $name . '_' . $item->id;
+            $value = (string) $item->id;
 
-            $isChecked = in_array($value, $selected, true);
+            $isChecked = in_array(
+                $value,
+                $selected,
+                true
+            );
 
-            $hasChildren = $category->children->isNotEmpty();
+            $hasChildren = $item->children->isNotEmpty();
 
             $class = match ($level) {
                 1 => 'checkbox-primary',
-                2 => 'checkbox-success',
-                default => '',
+                2 => 'checkbox-primary',
+                default => 'checkbox-primary',
             };
-            ?>
 
-            <div
-                class="checkbox {{ $class }}"
-                style="margin-left: {{ $level * 24 }}px;"
-            >
-                <input
-                    id="{{ $id }}"
-                    type="checkbox"
-                    name="{{ $name }}[]"
-                    value="{{ $value }}"
-                    @checked($isChecked)
-                    @if($required) required @endif
-                >
+            $marginLeft = $level * 12;
 
-                <label for="{{ $id }}">
-                    {{ $label }}
-                </label>
-            </div>
+            echo '<div class="checkbox '
+                . e($class)
+                . '" style="margin-left: '
+                . $marginLeft
+                . 'px;">';
 
-            <?php
+            echo '<input
+                id="' . e($id) . '"
+                type="checkbox"
+                name="' . e($name) . '[]"
+                value="' . e($value) . '"
+                ' . ($isChecked ? 'checked' : '') . '
+            >';
+
+            echo '<label for="' . e($id) . '">'
+                . e($getItemLabel($item))
+                . '</label>';
+
+            echo '</div>';
+
+            /*
+             * Render children recursively.
+             */
             if ($hasChildren) {
                 $renderOptions(
-                    $category->children,
+                    $item->children,
                     $level + 1
                 );
             }
@@ -116,27 +134,22 @@
 @endphp
 
 <div class="form-group">
-
     @if ($label)
         <label class="col-form-label">
             {{ $label }}
-
             @if ($required)
                 <span class="text-danger">*</span>
             @endif
         </label>
     @endif
-
     <div class="category-checkbox-list">
         @php
             $renderOptions($options);
         @endphp
     </div>
-
     @error($name)
-    <div class="form-control-feedback text-danger">
-        {{ $message }}
-    </div>
+        <div class="form-control-feedback text-danger">
+            {{ $message }}
+        </div>
     @enderror
-
 </div>

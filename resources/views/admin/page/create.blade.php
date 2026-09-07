@@ -17,7 +17,7 @@
         <form id="page" action="{{ route('pages.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="row">
-                <div class="col-lg-8">
+                <div class="col-lg-7">
                     <div class="card">
                         <div class="card-header">
                             {{ __('site.page.detail') }}
@@ -78,7 +78,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-4">
+                <div class="col-lg-5">
                     <div class="card">
                         <div class="card-header">
                             <strong class="italic">{{ __('site.language_default') . ': ' . $currentLanguage->name }}</strong>

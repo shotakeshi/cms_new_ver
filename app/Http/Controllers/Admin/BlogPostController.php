@@ -21,7 +21,8 @@ class BlogPostController extends Controller
         $statusCounts = 0;
         return view(
             'admin.blog.posts.index',
-            compact('statusCounts')
+            compact('statusCounts'),
+            $this->blogCategoryService->getIndexData()
         );
     }
 

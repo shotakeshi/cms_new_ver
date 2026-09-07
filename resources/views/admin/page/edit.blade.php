@@ -26,7 +26,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-8">
+                <div class="col-lg-7">
                     <div class="card">
                         <div class="card-header">
                             {{ __('site.page.detail') }}
@@ -95,7 +95,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-4">
+                <div class="col-lg-5">
                     <div class="card">
                         <div class="card-header">
                             {{ __('site.page.detail') }}

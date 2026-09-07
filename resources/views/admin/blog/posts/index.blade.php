@@ -137,3 +137,14 @@
         </div>
     </div>
 @endsection
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('administrator/phoenix/plugins/select2/select2.min.css') }}">
+@endpush
+@push('scripts')
+    <!-- Plugins js -->
+    <script src="{{ asset('administrator/phoenix/plugins/moment/moment.js') }}"></script>
+    <script src="{{ asset('administrator/phoenix/plugins/daterangepicker/daterangepicker.js') }}"></script>
+    <script src="{{ asset('administrator/phoenix/plugins/select2/select2.min.js') }}"></script>
+    <script src="{{ asset('administrator/phoenix/assets/js/jquery.core.js') }}"></script>
+    <script src="{{ asset('administrator/phoenix/assets/pages/jquery.forms-advanced.js') }}"></script>
+@endpush
