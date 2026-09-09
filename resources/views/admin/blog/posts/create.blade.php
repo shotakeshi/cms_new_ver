@@ -20,13 +20,13 @@
                 <div class="col-lg-8">
                     <div class="card">
                         <div class="card-header">
-                            {{ __('site.page.detail') }}
+                            {{ __('site.blog.posts.detail') }}
                         </div>
                         <div class="card-body">
                             <x-admin::forms.input
                                     name="name"
-                                    label="{{ __('site.page.name') }}"
-                                    placeholder="{{ __('site.page.name') }}"
+                                    label="{{ __('site.blog.posts.name') }}"
+                                    placeholder="{{ __('site.blog.posts.name') }}"
                                     required
                                     onkeyup="generateSlug(this)"
                             />
@@ -109,7 +109,7 @@
                                 <div class="col-lg-6">
                                     <x-admin::forms.single_file
                                             name="file"
-                                            label="{{ __('site.page.avatar') }}"
+                                            label="{{ __('site.blog.posts.future_image') }}"
                                             accept="image/jpeg,image/png,image/webp"
                                     />
                                 </div>
@@ -119,7 +119,6 @@
                                             type="text"
                                             label="{{ __('site.blog.posts.post_password') }}"
                                             placeholder="{{ __('site.blog.posts.post_password') }}"
-                                            required
                                     />
                                     <x-admin::forms.radio-enums
                                             name="status_comment"
@@ -139,7 +138,7 @@
                                     placeholder="dd/mm/yyyy - hh:mm"
                             />
                             <x-admin::forms.actions
-                                    :back-url="route('admins.index')"
+                                    :back-url="route('blog-posts.index')"
                             />
                         </div>
                     </div>

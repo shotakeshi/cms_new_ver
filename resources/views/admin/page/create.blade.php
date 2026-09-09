@@ -117,7 +117,7 @@
                                 </div>
                             </div>
                             <x-admin::forms.actions
-                                    :back-url="route('admins.index')"
+                                    :back-url="route('pages.index')"
                                     show-reset
                             />
                         </div>

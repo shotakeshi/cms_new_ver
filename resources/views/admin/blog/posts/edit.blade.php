@@ -11,191 +11,198 @@
 @endpush
 @section('content')
     <div class="container-fluid">
-        @include('admin.layouts.partials.page-title-box', ['name' => __('site.page.update_title')])
-        <form id="page" action="{{ route('pages.update', $page) }}?ref_lang={{ $refLang }}" method="POST" enctype="multipart/form-data">
+        <x-admin::page-title
+                :name="__('site.page.update_title')"
+        />
+        <form id="page" action="{{ route('blog-posts.update', $blogPost) }}?ref_lang={{ $refLang }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')
             <div class="row">
                 <div class="col-lg-8">
                     <div class="card">
+                        <div class="card-header">
+                            {{ __('site.blog.posts.detail') }}
+                        </div>
                         <div class="card-body">
-                            <div class="alert icon-custom-alert alert-outline-primary alert-primary-shadow" role="alert">
-                                <i class="fas fa-exclamation alert-icon font-18"></i>
-                                <div class="alert-text">
-                                    {!!  __('site.page.note_update', ['locale' => $languageVersionName]) !!}
-                                </div>
-                            </div>
                             <input type="hidden" name="language_code" readonly value="{{ $refLang }}">
-                            <h4 class="mt-0 header-title"><span class="text-danger">{{ __('site.page.general_information') }}</h4>
-                            <p class="text-muted mb-3">{{ __('site.page.general_information_note') }}</p>
-                            <div class="form-group">
-                                <label for="name">{{ __('site.page.name') }} <span class="text-danger">*</span></label>
-                                <input type="text" id="name" name="name" class="form-control @error('name') is-invalid @enderror"
-                                       value="{{ old('name', $pageContent->name ?? '') }}" placeholder="{{ __('site.page.name') }}">
-                                @error('name')
-                                <div class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
-                                @enderror
-                            </div>
-                            <div class="form-group">
-                                <label for="slug">{{ __('site.page.slug') }} <span class="text-danger">*</span></label>
-                                <input type="text" id="slug" name="slug" class="form-control @error('slug') is-invalid @enderror"
-                                       value="{{ old('slug', $page->slug ?? '') }}" placeholder="{{ __('site.page.slug') }}">
-                                @error('slug')
-                                <div class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
-                                @enderror
-                            </div>
-                            <div class="form-group">
-                                <label for="description">{{ __('site.page.description') }}</label>
-                                <textarea class="form-control" id="description" name="description" placeholder="{{ __('site.page.description') }}" rows="5">{{ old('description', $pageContent->description ?? '') }}</textarea>
-                            </div>
-                            <div class="form-group">
-                                <label for="content">{{ __('site.page.content') }} <span class="text-danger">*</span></label>
-                                <textarea class="form-control @error('content') is-invalid @enderror"
-                                          name="content" placeholder="{{ __('site.page.content') }}" rows="5">{{ old('content', $pageContent->content ?? '') }}</textarea>
-                                @error('content')
-                                <div class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
-                                @enderror
-                            </div>
-                            <hr>
-                            {{--  SEO --}}
-                            <h4 class="mt-0 header-title">{{ __('site.page.seo') }}</h4>
-                            <p class="text-muted mb-3">{{ __('site.page.seo_config') }}</p>
-                            <div class="form-group">
-                                <label for="meta_title" class="col-form-label">{{ __('site.page.meta_title') }} </label>
-                                @include('admin.layouts.seo.meta_title')
-                                <input type="text" id="meta_title" name="meta_title" class="form-control @error('meta_title') is-invalid @enderror" maxlength="60"
-                                       value="{{ old('meta_title', $pageContent->meta_title ?? '') }}" placeholder="{{ __('site.page.meta_title') }}">
-                                @error('meta_title')
-                                    <div class="invalid-feedback">
-                                        {{ $message }}
-                                    </div>
-                                @enderror
-                            </div>
-                            <div class="form-group">
-                                <label for="meta_description" class="col-form-label">{{ __('site.page.meta_description') }} </label>
-                                @include('admin.layouts.seo.meta_description')
-                                <textarea id="meta_description" name="meta_description" class="form-control @error('meta_description') is-invalid @enderror" maxlength="150" placeholder="{{ __('site.page.meta_description') }}" rows="5">{{ old('meta_description', $pageContent->meta_description ?? '') }}</textarea>
-                                @error('meta_description')
-                                    <div class="invalid-feedback">
-                                        {{ $message }}
-                                    </div>
-                                @enderror
-                            </div>
-                            <div class="form-group">
-                                <label for="meta_keywords" class="col-form-label">{{ __('site.page.meta_keywords') }}</label>
-                                @include('admin.layouts.seo.meta_keyword')
-                                <div class="u-tagsinput">
-                                    <input name="meta_keywords" class="form-control w-100 @error('meta_keywords') is-invalid @enderror" type="text" data-role="tagsinput" value="{{ old('meta_keywords', $pageContent->meta_keywords ?? '') }}" placeholder="{{ __('site.page.meta_keywords') }}">
-                                    @error('meta_keywords')
-                                        <div class="invalid-feedback">
-                                            {{ $message }}
-                                        </div>
-                                    @enderror
-                                </div>
-                            </div>
+                            <x-admin::forms.input
+                                    name="name"
+                                    label="{{ __('site.blog.posts.name') }}"
+                                    placeholder="{{ __('site.blog.posts.name') }}"
+                                    :value="$blogPostContent?->name"
+                                    required
+                                    onkeyup="generateSlug(this)"
+                            />
+                            <x-admin::forms.input
+                                    name="slug"
+                                    label="{{ __('site.page.slug') }}"
+                                    placeholder="{{ __('site.page.slug') }}"
+                                    :value="$blogPostContent?->slug"
+                                    required
+                            />
+                            <x-admin::forms.textarea
+                                    name="excerpt"
+                                    label="{{ __('site.blog.posts.excerpt') }}"
+                                    placeholder="{{ __('site.blog.posts.excerpt') }}"
+                                    :value="$blogPostContent?->excerpt"
+                                    rows="5"
+                                    required
+                            />
+                            <x-admin::forms.textarea
+                                    name="content"
+                                    label="{{ __('site.page.content') }}"
+                                    placeholder="{{ __('site.page.content') }}"
+                                    rows="5"
+                                    :value="$blogPostContent?->content"
+                                    required
+                                    ckeditor
+                            />
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            {{ __('site.page.seo') }} | {{ __('site.page.seo_config') }}
+                        </div>
+                        <div class="card-body">
+                            <x-admin::forms.input
+                                    name="meta_title"
+                                    label="{{ __('site.page.meta_title') }}"
+                                    placeholder="{{ __('site.page.meta_title') }}"
+                                    :value="$blogPostContent?->meta_title"
+                                    maxlength="60"
+                            />
+                            <x-admin::forms.textarea
+                                    name="meta_description"
+                                    label="{{ __('site.page.meta_description') }}"
+                                    placeholder="{{ __('site.page.meta_description') }}"
+                                    rows="5"
+                                    maxlength="150"
+                                    :value="$blogPostContent?->meta_description"
+                            />
+                            <x-admin::forms.tagsinput
+                                    name="meta_keywords"
+                                    label="{{ __('site.page.meta_keywords') }}"
+                                    placeholder="{{ __('site.page.meta_keywords') }}"
+                                    :value="$blogPostContent?->meta_keywords"
+                            />
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-4">
+                    <div class="alert icon-custom-alert alert-outline-primary alert-primary-shadow" role="alert">
+                        <i class="fas fa-exclamation alert-icon font-18"></i>
+                        <div class="alert-text">
+                            {!!  __('site.page.note_update', ['locale' => $languageVersionName]) !!}
+                        </div>
+                    </div>
                     <div class="card">
-                        <div class="card-body mb-3">
-                            <h4 class="mt-0 header-title">{{ __('site.page.another_lang') }}</h4>
+                        <div class="card-header">
+                            {{ __('site.page.another_lang') }}
+                        </div>
+                        <div class="card-body">
                             @foreach($globalLanguages as $language)
                                 @if($language->slug != $refLang)
                                     <div>
-                                        <a href="{{ route('pages.edit', $page) }}?ref_lang={{ $language->slug }}">
-                                            <img alt="{{ $language->name }}" style="max-width: 35px" src="{{ asset('flags/'.$language->slug.'.png') }}">
+                                        <a href="{{ route('blog-posts.edit', $blogPost) }}?ref_lang={{ $language->slug }}">
+                                            <img alt="{{ $language->name }}" style="max-width: 20px" src="{{ asset('flags/'.$language->slug.'.png') }}">
                                             <span>{{ $language->name }}</span>
-                                            <i class="font-18 far fa-edit text-primary pt-2"></i>
+                                            <i class="font-16 far fa-edit text-primary pt-2"></i>
                                         </a>
                                     </div>
                                 @endif
                             @endforeach
                         </div>
                     </div>
-                    <div class="card m-b-30">
+                    <div class="card">
+                        <div class="card-header">
+                            {{ __('site.blog.posts.categories') }}
+                        </div>
+                        <div class="card-body overflow-auto" style="max-height: 250px;">
+                            <x-admin::forms.checkbox-has-child
+                                    name="blog_category_id"
+                                    :options="$blogCategories"
+                                    :contents="$blogCategoryContents"
+                                    :locale="$refLang ?? $appLocale"
+                                    :selected="$blogPost?->categories()->pluck('blog_categories.id')->all() ?? []"
+                            />
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            {{ __('site.blog.posts.status_change') }}
+                        </div>
                         <div class="card-body">
-                            <h4 class="mt-0 header-title">{{ __('site.page.config') }}</h4>
-                            <div class="row">
-                                <div class="col-12">
-                                    <div class="form-group">
-                                        <label class="col-form-label">{{ __('site.page.avatar') }}</label>
-                                        <input type="file" name="file" @if(isset($pageContent->image)) data-default-file="{{  asset('storage/uploads/'.$pageContent->image)  }}" @endif class="dropify @error('file') is-invalid @enderror" />
-                                        <input type="hidden" name="image" id="image" value="{{ isset($pageContent->image) ?? $pageContent->image }}" >
-                                        @error('file')
-                                            <div class="invalid-feedback">
-                                                {{ $message }}
-                                            </div>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <div class="form-group">
-                                        <label class="col-form-label">{{ __('site.page.published_at') }}</label>
-                                        <input type="text" id="date-publish-at" name="published_at"
-                                               class="form-control @error('published_at') is-invalid @enderror" value="{{ old('published_at', $page->published_at) }}" placeholder="dd/mm/yyyy - hh:mm">
-                                        @error('published_at')
-                                            <div class="invalid-feedback">
-                                                {{ $message }}
-                                            </div>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="form-group">
-                                        <div>
-                                            <label for="name" class="col-form-label">{{ __('site.page.status') }}</label>
-                                        </div>
-                                        <div class="btn-group btn-group-toggle w-100" data-toggle="buttons">
-                                            @foreach(\App\Enums\DefaultStatus::cases() as $status)
-                                                <label class="btn btn-outline-beanred active">
-                                                    <input type="radio" value="{{ $status->value }}" name="status" @checked($status->value == $page->status)> {{ \App\Enums\DefaultStatus::from($status->value)->getName() }}
-                                                </label>
-                                            @endforeach
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="form-group">
-                                        <div>
-                                            <label for="name" class="col-form-label">{{ __('site.page.status_comment') }}</label>
-                                        </div>
-                                        <div class="btn-group btn-group-toggle w-100" data-toggle="buttons">
-                                            @foreach(\App\Enums\DefaultStatus::cases() as $status)
-                                                <label class="btn btn-outline-beanred active">
-                                                    <input type="radio" value="{{ $status->value }}" name="status_comment" @checked($status->value == $page->status_comment)> {{ \App\Enums\DefaultStatus::from($status->value)->getName() }}
-                                                </label>
-                                            @endforeach
-                                        </div>
-                                    </div>
-                                </div>
+                            <x-admin::forms.select
+                                    name="status"
+                                    :options="\App\Enums\BlogPostStatus::options()"
+                                    selected="{{ $blogPost->status }}"
+                            />
+                            <div id="published-at-wrapper">
+                                <x-admin::forms.datetime
+                                        name="published_at"
+                                        label="{{ __('site.page.published_at') }}"
+                                        placeholder="dd/mm/yyyy - hh:mm"
+                                        :value="$blogPost->published_at"
+                                />
                             </div>
                         </div>
                     </div>
                     <div class="card">
+                        <div class="card-header">
+                            {{ __('site.page.detail') }}
+                        </div>
                         <div class="card-body">
-                            <h4 class="mt-0 header-title">{{ __('site.notification.publish') }}</h4>
                             <div class="row">
-                                <div class="col-sm-6">
-                                    <button type="button" onclick="$('#page').submit()" name="submitter" value="apply" class="btn btn-lg btn-gradient-primary w-100"><i class="far fa-save"></i> {{ __('site.button.save') }}</button>
+                                <div class="col-lg-6">
+                                    <x-admin::forms.single_file
+                                            name="file"
+                                            label="{{ __('site.blog.posts.future_image') }}"
+                                            accept="image/jpeg,image/png,image/webp"
+                                            :default-file="$blogPostContent?->image
+                                                ? asset('storage/' . $blogPostContent->image)
+                                                : null"
+                                    />
+                                    <input type="hidden" name="remove_image" id="remove_image" value="0" >
                                 </div>
-                                <div class="col-sm-6">
-                                    <button type="button" onclick="$('#page').submit()" name="submitter" value="save" class="btn btn-lg btn-gradient-purple w-100"><i class="fas fa-sign-out-alt"></i> {{ __('site.button.save_and_exit') }}</button>
+                                <div class="col-lg-6">
+                                    <x-admin::forms.input
+                                            name="post_password"
+                                            type="text"
+                                            label="{{ __('site.blog.posts.post_password') }}"
+                                            placeholder="{{ __('site.blog.posts.post_password') }}"
+                                            value="{{ old('post_password') }}"
+                                    />
+                                    @if ($blogPost->post_password)
+                                        <div class="checkbox checkbox-primary">
+                                            <input id="remove_post_password" type="checkbox" name="remove_post_password">
+                                            <label for="remove_post_password">
+                                                {{ __('site.blog.posts.remove_post_password') }}
+                                            </label>
+                                        </div>
+                                    @endif
+                                    <x-admin::forms.radio-enums
+                                            name="status_comment"
+                                            label="{{ __('site.page.status_comment') }}"
+                                            :options="\App\Enums\DefaultStatus::options()"
+                                            :selected="$blogPost->status_comment"
+                                    />
                                 </div>
                             </div>
+                            <x-admin::forms.tagsinput
+                                    name="tags"
+                                    label="{{ __('site.tags') }}"
+                                    placeholder="{{ __('site.tags') }}"
+                                    :value="$tagNames ?? ''"
+                            />
+                            <x-admin::forms.actions
+                                    :back-url="route('blog-posts.index')"
+                            />
                         </div>
                     </div>
                 </div>
             </div>
         </form>
     </div>
-    <div id="chart"></div>
 @endsection
 @push('scripts')
     <!-- Plugins js -->
@@ -212,8 +219,26 @@
     <script src="{{ asset('administrator/assets/ckeditor/ckeditor.js') }}"></script>
     <script>
         $('.dropify').dropify().on('dropify.afterClear', function(event, element) {
-            document.getElementById('image').value = '';
+            document.getElementById('remove_image').value = 1;
         });
+
+        function generateSlug(input){
+            const slug = document.getElementById("slug");
+            slug.value = createSlug(input.value);
+        }
+
+        function createSlug(string) {
+            return string
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .replace(/đ/g, "d")
+                .replace(/Đ/g, "D")
+                .replace(/[^a-zA-Z0-9\s-]/g, "")
+                .trim()
+                .replace(/\s+/g, "-")
+                .replace(/-+/g, "-")
+                .toLowerCase();
+        }
 
         $('input#meta_title, textarea#meta_description').maxlength({
             alwaysShow: true,
@@ -225,21 +250,43 @@
             validate: true
         });
 
-        $('#date-publish-at').bootstrapMaterialDatePicker({
-            format : 'DD/MM/Y - HH:mm'
+        $('#published_at').bootstrapMaterialDatePicker({
+            format : 'DD/MM/Y - HH:mm',
+            minDate: new Date()
         });
 
-        var route_prefix = "/admin/laravel-filemanager";
-        CKEDITOR.replace('content', {
-            language: 'en',
-            htmlEncodeOutput: false,
-            entities: false,
-            entities_latin: false,
-            ForceSimpleAmpersand: true,
-            filebrowserImageBrowseUrl: route_prefix + '?type=Images&iframe=1',
-            filebrowserImageUploadUrl: route_prefix + '/upload?type=Images&iframe=1&_token={{ csrf_token() }}',
-            filebrowserBrowseUrl: route_prefix + '?type=Files&iframe=1',
-            filebrowserUploadUrl: route_prefix + '/upload?type=Files&iframe=1&_token={{ csrf_token() }}'
-        });
+        const $status = $('#status');
+        const $publishedAtWrapper = $('#published-at-wrapper');
+        const $publishedAt = $('#published_at');
+
+        function togglePublishedAt() {
+            const status = $status.val();
+
+            switch (status) {
+                case 'schedule':
+                    $publishedAtWrapper.removeClass('d-none');
+                    $publishedAt.prop('disabled', false);
+                    $publishedAt.prop('required', true);
+                    break;
+
+                case 'published':
+                    $publishedAtWrapper.removeClass('d-none');
+                    $publishedAt.prop('disabled', true);
+                    $publishedAt.prop('required', false);
+                    break;
+
+                case 'draft':
+                case 'private':
+                default:
+                    $publishedAtWrapper.addClass('d-none');
+                    $publishedAt.prop('disabled', true);
+                    $publishedAt.prop('required', false);
+                    break;
+            }
+        }
+
+        $status.on('change', togglePublishedAt);
+
+        togglePublishedAt();
     </script>
 @endpush

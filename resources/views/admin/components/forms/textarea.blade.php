@@ -49,7 +49,6 @@
                 'is-invalid' => $errors->has($name),
                 'ckeditor' => $ckeditor,
             ])
-            @if ($required) required @endif
             @if ($disabled) disabled @endif
             {{ $attributes }}
     >{{ $fieldValue }}</textarea>

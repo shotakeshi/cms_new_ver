@@ -120,6 +120,11 @@ return [
     'status' => [
         'active' => 'Active',
         'inactive' => 'Inactive',
+        'draft' => 'Draft',
+        'pending' => 'Pending',
+        'private' => 'Private',
+        'schedule' => 'Schedule',
+        'publish' => 'Publish',
     ],
     'permission' => [
         'title' => 'Permission',
@@ -251,6 +256,13 @@ return [
             'categories' => 'Categories',
             'excerpt' => 'Excerpt',
             'post_password' => 'Post Password',
+            'name' => 'Blog post name',
+            'detail' => 'Blog post detail',
+            'future_image' => 'Future image',
+            'remove_post_password' => 'Remove post password',
+            'status_change' => 'Status Change',
+            'published_at_scheduled' => 'Published At is required for scheduled posts.',
+            'published_at_ltd' => 'Published At must be a future date.'
         ]
     ],
     'translation' => [
@@ -276,5 +288,5 @@ return [
         'timeline' => 'Timeline',
         'no_activity' => 'No activity',
         'activity' => 'Activity',
-    ]
+    ],
 ];

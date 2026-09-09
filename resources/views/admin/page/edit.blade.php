@@ -154,7 +154,7 @@
                                 </div>
                             </div>
                             <x-admin::forms.actions
-                                    :back-url="route('admins.index')"
+                                    :back-url="route('pages.index')"
                             />
                         </div>
                     </div>
@@ -181,6 +181,11 @@
             document.getElementById('remove_image').value = 1;
         });
 
+        function generateSlug(input){
+            const slug = document.getElementById("slug");
+            slug.value = createSlug(input.value);
+        }
+
         function createSlug(string) {
             return string
                 .normalize("NFD")
@@ -204,7 +209,7 @@
             validate: true
         });
 
-        $('#date-publish-at').bootstrapMaterialDatePicker({
+        $('#published_at').bootstrapMaterialDatePicker({
             format : 'DD/MM/Y - HH:mm',
             minDate: new Date()
         });

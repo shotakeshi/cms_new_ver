@@ -31,6 +31,22 @@ enum BlogPostStatus: string
         };
     }
 
+    public static function options(): array
+    {
+        return collect([
+            self::DRAFT,
+            self::PRIVATE,
+            self::SCHEDULE,
+            self::PUBLISH,
+        ])
+            ->map(fn (self $status) => [
+                'value' => $status->value,
+                'label' => $status->getName(),
+            ])
+            ->values()
+            ->toArray();
+    }
+
     public static function values(): array
     {
         return array_column(self::cases(), 'value');

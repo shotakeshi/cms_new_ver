@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Str;
 
 class BlogPostContent extends Model
 {
@@ -24,5 +25,26 @@ class BlogPostContent extends Model
     public function blogPost(): BelongsTo
     {
         return $this->belongsTo(BlogPost::class);
+    }
+
+    public function tags()
+    {
+        return $this->morphToMany(Tag::class, 'taggable');
+    }
+
+    protected static function boot(): void
+    {
+        parent::boot();
+
+        static::creating(function (BlogPostContent $blogPostContent) {
+            $blogPostContent->language_code ??= config('app.locale');
+            $blogPostContent->slug = Str::slug($blogPostContent->slug ?: $blogPostContent->title);
+        });
+
+        self::updating(function (BlogPostContent $blogPostContent) {
+            if ($blogPostContent->isDirty('slug')) {
+                $blogPostContent->slug = Str::slug($blogPostContent->slug);
+            }
+        });
     }
 }
