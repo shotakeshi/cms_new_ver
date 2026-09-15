@@ -2,20 +2,31 @@
 
 namespace App\Models;
 
+use App\Enums\ActivityModule;
+use App\Enums\BlogPostStatus;
+use App\Enums\DefaultStatus;
 use App\Traits\LogsActivity;
+
 use Carbon\Carbon;
+
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Enums\BlogPostStatus;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+
+use TheJano\LaravelFilterable\Traits\HasFilterableTrait;
 
 class BlogPost extends Model
 {
+    use HasFilterableTrait;
     use SoftDeletes;
     use LogsActivity;
+
+    public const ACTIVITY_MODULE = ActivityModule::BLOG_POSTS->value;
 
     protected $fillable = [
         'status',
@@ -86,6 +97,44 @@ class BlogPost extends Model
     public function getUpdatedAtAttribute($updatedAt)
     {
         return Carbon::parse($updatedAt)->format('d/m/Y - H:i');
+    }
+
+    public function getStatusNameAttribute(): string
+    {
+        return $this->status->getName();
+    }
+
+    public function getStatusClassAttribute(): string
+    {
+        return $this->status->getClass();
+    }
+
+    public function getStatusCommentClassAttribute(): string
+    {
+        return DefaultStatus::from($this->status_comment)->getClass();
+    }
+
+    public function getStatusCommentNameAttribute(): string
+    {
+        return DefaultStatus::from($this->status_comment)->getName();
+    }
+
+    public function admin(): BelongsTo
+    {
+        return $this->belongsTo(Admin::class);
+    }
+
+    public function scopeCategory(
+        Builder $query,
+        ?int $categoryId
+    ): Builder {
+        return $query->when(
+            filled($categoryId),
+            fn (Builder $query) => $query->whereHas(
+                'categories',
+                fn (Builder $query) => $query->whereKey($categoryId)
+            )
+        );
     }
 
     protected static function boot(): void

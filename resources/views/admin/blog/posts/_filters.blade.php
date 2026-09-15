@@ -17,7 +17,7 @@
                             :options="$availableCategories ?? $blogCategories"
                             :contents="$availableCategoryContents ?? $blogCategoryContents"
                             :locale="$refLang ?? $appLocale"
-                            :selected="old('blog_category_id', $category->parent_id ?? 0)"
+                            :selected="old('blog_category_id',request('blog_category_id') ?? 0)"
                             select2
                     />
                 </div>
@@ -34,13 +34,13 @@
         />
     </div>
     <div class="col-lg-12">
-        <a href="{{ route('pages.index') }}" class="btn btn-sm btn-outline-{{ (!request()->routeIs('pages.trash') && request('status') === null) ? 'primary' : 'gray' }} pl-3 pr-3 mr-2">
+        <a href="{{ route('blog-posts.index') }}" class="btn btn-sm btn-outline-{{ (!request()->routeIs('blog-posts.trash') && request('status') === null) ? 'primary' : 'gray' }} pl-3 pr-3 mr-2">
             {{ __('site.filter.all') }}
             ({{ collect($statusCounts)->sum() ?? 0 }})
         </a>
-        @foreach (\App\Enums\DefaultStatus::cases() as $status)
+        @foreach (\App\Enums\BlogPostStatus::cases() as $status)
             <a
-                    href="{{ route('pages.index', ['status' => $status->value]) }}"
+                    href="{{ route('blog-posts.index', ['status' => $status->value]) }}"
                     class="btn btn-sm btn-outline-{{ request('status') !== null
                     && (string) request('status') === (string) $status->value ? 'primary' : 'gray' }} pl-3 pr-3 mr-2"
             >
@@ -49,8 +49,8 @@
             </a>
         @endforeach
         <a
-                href="{{ route('pages.trash') }}"
-                class="btn btn-sm btn-outline-{{ request()->routeIs('pages.trash') ? 'primary' : 'gray' }} pl-3 pr-3"
+                href="{{ route('blog-posts.trash') }}"
+                class="btn btn-sm btn-outline-{{ request()->routeIs('blog-posts.trash') ? 'primary' : 'gray' }} pl-3 pr-3"
         >
             {{ __('site.filter.trash') }}
             ({{ $statusCounts['trashed'] ?? 0 }})

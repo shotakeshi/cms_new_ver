@@ -62,6 +62,11 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
         Route::get('trash/restore/{page_id}', 'restore')->name('pages.restore');
         Route::delete('trash/force-delete/{page_id}', 'forceDelete')->name('pages.force-delete');
     });
+    Route::controller(BlogPostController::class)->prefix('blog-posts')->group(function () {
+        Route::get('trash/list', 'trash')->name('blog-posts.trash');
+        Route::get('trash/restore/{page_id}', 'restore')->name('blog-posts.restore');
+        Route::delete('trash/force-delete/{page_id}', 'forceDelete')->name('blog-posts.force-delete');
+    });
     Route::controller(TranslationController::class)->prefix('translations')->group(function () {
         Route::get('list', 'index')->name('translation.index');
         Route::get('create', 'create')->name('translation.create');

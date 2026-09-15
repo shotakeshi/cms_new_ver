@@ -26,7 +26,7 @@ enum BlogPostStatus: string
             self::DRAFT => 'badge badge-soft-danger p-2',
             self::PENDING => 'badge badge-soft-warning p-2',
             self::PRIVATE => 'badge badge-soft-success p-2',
-            self::SCHEDULE => 'badge badge-soft-danger p-2',
+            self::SCHEDULE => 'badge badge-soft-pink p-2',
             self::PUBLISH => 'badge badge-soft-primary p-2'
         };
     }

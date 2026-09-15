@@ -2,40 +2,72 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\BlogPostStatus;
+use App\Filters\Filterable\BlogPostsFilterable;
 use App\Helpers\LanguageHelper;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admins\BlogPostRequest;
 use App\Models\BlogPost;
 use App\Models\Language;
 use App\Services\BlogCategoryService;
 use App\Services\TagService;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\DB;
-use Illuminate\View\View;
-use App\Http\Requests\Admins\BlogPostRequest;
 use App\Traits\UploadImage;
-use App\Enums\BlogPostStatus;
 use Carbon\Carbon;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
+use Illuminate\View\View;
 
 class BlogPostController extends Controller
 {
     use UploadImage;
+
     const SAVE_AND_EXIT = 'save';
     const IMAGE_PATH = 'blog';
     const REMOVE_IMAGE = 1;
 
     public function __construct(
         protected BlogCategoryService $blogCategoryService,
-        protected BlogPost $blogPost
-    ){
+        protected BlogPost            $blogPost
+    )
+    {
         $this->languageSlugs = Language::active()->pluck('slug')->toArray();
+        $statusCounts = BlogPost::withTrashed()
+            ->selectRaw("
+                CASE
+                    WHEN deleted_at IS NOT NULL THEN 'trashed'
+                    ELSE status
+                END as status_group,
+                COUNT(*) as total_count
+            ")
+            ->groupBy('status_group')
+            ->pluck('total_count', 'status_group');
+        view()->share(['statusCounts' => $statusCounts]);
     }
 
-    public function index(){
-        $statusCounts = 0;
+    public function index(Request $request){
+        // Initialize the pageContents array
+        $blogPostContents = [];
+        // Get pages with contents
+        $blogPosts = $this->blogPost
+            ->withTrashed()
+            ->category($request->input('blog_category_id'))
+            ->filterable(BlogPostsFilterable::class)
+            ->with(['contents', 'admin'])
+            ->get();        // Iterate over pages and their associated contents
+        $blogPosts->each(function ($blogPost) use (&$blogPostContents) {
+            $blogPost->contents->each(function ($content) use (&$blogPostContents) {
+                $blogPostContents[$content->blog_post_id][$content->language_code] = [
+                    'name' => $content->name,
+                    'image' => $content->image,
+                    'excerpt' => $content->excerpt
+                ];
+            });
+        });
         return view(
             'admin.blog.posts.index',
-            compact('statusCounts'),
+            compact('blogPosts', 'blogPostContents'),
             $this->blogCategoryService->getIndexData()
         );
     }
@@ -66,10 +98,10 @@ class BlogPostController extends Controller
             $this->makeTags($blogPostContent, $request->tags);
             DB::commit();
             toastr()->success(__('site.notification.create_success'));
-            if($request['submitter'] == self::SAVE_AND_EXIT) {
+            if ($request['submitter'] == self::SAVE_AND_EXIT) {
                 return redirect()->route('blog-posts.index');
             }
-            return redirect()->route('blog-posts.edit',$blogPost);
+            return redirect()->route('blog-posts.edit', $blogPost);
         } catch (\Exception $e) {
             DB::rollBack();
             toastr()->error(__('site.notification.create_fail'));
@@ -86,13 +118,13 @@ class BlogPostController extends Controller
         $refLang = request('ref_lang') ?? config('app.locale');
         $languageVersionName = LanguageHelper::getLanguageNameBySlug($refLang);
         $tagNames = '';
-        if($languageVersionName) //check ref_lang
+        if ($languageVersionName) //check ref_lang
         {
             $blogPostContent = $blogPost->content($refLang);
             if ($blogPostContent) {
                 $tags = $blogPostContent->tags()
                     ->with([
-                        'translations' => fn ($q) => $q->locale($refLang),
+                        'translations' => fn($q) => $q->locale($refLang),
                     ])
                     ->get();
                 $tagNames = $tags->pluck('translations.0.name')
@@ -112,8 +144,9 @@ class BlogPostController extends Controller
      */
     public function update(
         BlogPostRequest $request,
-        BlogPost $blogPost
-    ): RedirectResponse {
+        BlogPost        $blogPost
+    ): RedirectResponse
+    {
         DB::beginTransaction();
         try {
             $data = $request->all();
@@ -168,7 +201,7 @@ class BlogPostController extends Controller
             );
 
             // Sync categories
-            $blogPost->categories()->sync( $data['blog_category_id'] );
+            $blogPost->categories()->sync($data['blog_category_id']);
 
             // Sync tags
             $this->makeTags(
@@ -187,10 +220,75 @@ class BlogPostController extends Controller
         } catch (\Throwable $e) {
             DB::rollBack();
             report($e);
-            toastr()->error(  __('site.notification.update_fail') );
+            toastr()->error(__('site.notification.update_fail'));
 
             return redirect()->back()->withInput();
         }
+    }
+
+    public function destroy(BlogPost $blogPost): RedirectResponse
+    {
+        DB::beginTransaction();
+        try {
+            $blogPost->delete();
+            toastr()->success(__('site.notification.move_to_trash_success'));
+            DB::commit();
+            return redirect()->route('blog-posts.index');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            toastr()->error(__('site.notification.move_to_trash_fail'));
+            return redirect()->back()->withInput();
+        }
+    }
+
+    public function trash(): View
+    {
+        $blogPostTrash = true;
+        $blogPostContents = [];
+        $blogPosts = $this->blogPost->onlyTrashed()->with('contents','admin')->get();
+        // Initialize the pageContents array
+        // Iterate over pages and their associated contents
+        $blogPosts->each(function ($blogPost) use (&$blogPostContents) {
+            $blogPost->contents->each(function ($content) use (&$blogPostContents) {
+                $blogPostContents[$content->blog_post_id][$content->language_code] = [
+                    'name'  => $content->name,
+                    'image' => $content->image,
+                    'excerpt' => $content->excerpt
+                ];
+            });
+        });
+        return view('admin.blog.posts.index',
+            compact('blogPosts', 'blogPostContents','blogPostTrash'),
+            $this->blogCategoryService->getIndexData()
+        );
+    }
+
+    // Restore a soft-deleted item
+    public function restore($blogPostId): RedirectResponse
+    {
+        $blogPost = BlogPost::withTrashed()->find($blogPostId);
+        if ($blogPost) {
+            $blogPost->restore();
+            toastr()->success(__('site.notification.restored'));
+        } else {
+            toastr()->error(__('site.notification.restore_fail'));
+        }
+        return redirect()->back();
+    }
+
+    // Permanently delete a soft-deleted item
+    public function forceDelete($id): RedirectResponse
+    {
+        try {
+            DB::transaction(function () use ($id) {
+                $blogPost = BlogPost::withTrashed()->findOrFail($id);
+                $blogPost->forceDelete();
+            });
+            toastr()->success(__('site.notification.delete_success'));
+        } catch (\Throwable $e) {
+            toastr()->error(__('site.notification.delete_fail'));
+        }
+        return redirect()->back();
     }
 
     private function makeTags($blogPostContent, $tags): void
@@ -206,8 +304,9 @@ class BlogPostController extends Controller
 
     protected function preparePublicationData(
         BlogPost $blogPost,
-        array $data
-    ): array {
+        array    $data
+    ): array
+    {
         $status = BlogPostStatus::from($data['status']);
 
         switch ($status) {

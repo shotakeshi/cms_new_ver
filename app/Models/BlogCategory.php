@@ -14,7 +14,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class BlogCategory extends Model
 {
-    use HasFilterableTrait;
     use LogsActivity;
 
     public const ACTIVITY_MODULE = ActivityModule::BLOG_CATEGORY->value;

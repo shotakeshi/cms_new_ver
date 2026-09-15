@@ -18,4 +18,6 @@ enum ActivityModule: string
     case BLOG_CATEGORY = 'blog_category';
 
     case BLOG_CATEGORY_CONTENT = 'blog_category_content';
+    case BLOG_POSTS   = 'blog_posts';
+    case BLOG_POSTS_CONTENT = 'blog_posts_content';
 }

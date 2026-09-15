@@ -289,4 +289,5 @@ return [
         'no_activity' => 'No activity',
         'activity' => 'Activity',
     ],
+    'no_data' => 'No data',
 ];

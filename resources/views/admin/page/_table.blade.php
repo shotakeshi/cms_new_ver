@@ -16,35 +16,89 @@
         </tr>
         </thead>
         <tbody>
-        @foreach($pages as $page)
-            <tr class="hover-target" id="row-{{ $page->id}}" >
+        @forelse($pages as $page)
+            @php
+                $contents = $pageContents[$page->id] ?? [];
+                $fallbackContent = collect($contents)->first();
+                $currentContent = $contents[$appLocale] ?? $fallbackContent;
+                $pageName = $currentContent['name'] ?? '';
+                if (!isset($contents[$appLocale]) && $fallbackContent) {
+                    $pageName = '[ ' . array_key_first($contents) . ' ] ' . $fallbackContent['name'];
+                }
+                $isTrash = $page->trashed();
+                $isTrashPage = isset($pageTrash) || $isTrash;
+            @endphp
+            <tr
+                    class="hover-target"
+                    id="row-{{ $page->id }}"
+            >
+                {{-- No --}}
                 <td class="text-center">
                     <strong>{{ $loop->iteration }}</strong>
                 </td>
+
+                {{-- Page --}}
                 <td>
                     <div class="mb-1">
-                        @if(!$page->trashed())
-                            <a href="{{ route('pages.edit', $page) }}?ref_lang={{ app()->getLocale() }}">
-                                <span class="font-14 text-primary">{{ $pageContents[$page->id][$appLocale]['name'] ?? '[ ' . array_key_first($pageContents[$page->id]) . ' ] ' . collect($pageContents[$page->id])->first()['name'] }}</span>
-                            </a>
+                        @if($isTrash)
+                            <span class="font-14 text-gray font-italic">
+                        {{ $pageName }}
+                    </span>
                         @else
-                            <span class="font-14 text-gray font-italic">{{ $pageContents[$page->id][$appLocale]['name'] ?? '[ ' . array_key_first($pageContents[$page->id]) . ' ] ' . collect($pageContents[$page->id])->first()['name'] }}</span>
+                            <a href="{{ route('pages.edit', $page) }}?ref_lang={{ $appLocale }}">
+                        <span class="font-14 text-primary">
+                            {{ $pageName }}
+                        </span>
+                            </a>
                         @endif
                     </div>
+
                     <div style="height: 22px">
                         <div class="row-action hidden-div">
-                            @if(isset($pageTrash) || $page->trashed())
-                                <a class="border-right text-primary border-gray pr-2 mr-1" href="{{ route('pages.restore', $page) }}">{{ __('site.button.restore') }}</a>
+                            @if($isTrashPage)
+                                {{-- Restore --}}
+                                <a
+                                        class="border-right text-primary border-gray pr-2 mr-1"
+                                        href="{{ route('pages.restore', $page) }}"
+                                >
+                                    {{ __('site.button.restore') }}
+                                </a>
+
+                                {{-- Permanent Delete --}}
                                 <x-admin::buttons.delete-button
-                                        :action="route('pages.force-delete',$page)"
+                                        :action="route('pages.force-delete', $page)"
                                         asText
                                         :title="__('site.button.delete_permanently')"
                                 />
                             @else
-                                <a class="border-right text-primary border-gray pr-2 mr-1" href="{{ route('pages.edit', $page) }}">{{ __('site.button.edit') }}</a>
-                                <a href="javascript:void(0)" onclick="event.preventDefault(); document.getElementById('delete-form-{{ $page->id }}').submit();" class="border-right text-danger border-gray pr-2 mr-1" >{{ __('site.button.trash') }}</a>
-                                <a href="{{ route('pages.show', $page) }}">{{ __('site.button.preview') }}</a>
-                                <form id="delete-form-{{ $page->id }}" action="{{ route('pages.destroy', $page) }}" method="POST">
+                                {{-- Edit --}}
+                                <a
+                                        class="border-right text-primary border-gray pr-2 mr-1"
+                                        href="{{ route('pages.edit', $page) }}"
+                                >
+                                    {{ __('site.button.edit') }}
+                                </a>
+
+                                {{-- Trash --}}
+                                <a
+                                        href="javascript:void(0)"
+                                        onclick="event.preventDefault(); document.getElementById('delete-form-{{ $page->id }}').submit();"
+                                        class="border-right text-danger border-gray pr-2 mr-1"
+                                >
+                                    {{ __('site.button.trash') }}
+                                </a>
+
+                                {{-- Preview --}}
+                                <a href="{{ route('pages.show', $page) }}">
+                                    {{ __('site.button.preview') }}
+                                </a>
+
+                                <form
+                                        id="delete-form-{{ $page->id }}"
+                                        action="{{ route('pages.destroy', $page) }}"
+                                        method="POST"
+                                        class="d-none"
+                                >
                                     @csrf
                                     @method('DELETE')
                                 </form>
@@ -52,42 +106,92 @@
                         </div>
                     </div>
                 </td>
+
+                {{-- Status --}}
                 <td class="text-center">
-                    @if($page->trashed())
-                        <span class="badge badge-soft-danger p-2" style="width: 100px">{{ __('site.filter.trash') }}</span>
+                    @if($isTrash)
+                        <span
+                                class="badge badge-soft-danger p-2"
+                                style="width: 100px"
+                        >
+                    {{ __('site.filter.trash') }}
+                </span>
                     @else
-                        <span class="{{ $page->status_class }} p-1" style="width: 100px">{{ $page->status_name  }}</span>
+                        <span
+                                class="{{ $page->status_class }} p-1"
+                                style="width: 100px"
+                        >
+                    {{ $page->status_name }}
+                </span>
                     @endif
                 </td>
+
+                {{-- Comment Status --}}
                 <td class="text-center">
-                    <span class="{{ $page->status_comment_class }} p-1" style="width: 100px">{{ $page->status_comment_name  }}</span>
+            <span
+                    class="{{ $page->status_comment_class }} p-1"
+                    style="width: 100px"
+            >
+                {{ $page->status_comment_name }}
+            </span>
                 </td>
+
+                {{-- Admin --}}
                 <td class="text-center">
-                    <span style="width: 100px">{{ $page->admin->name ?? '' }}</span>
+            <span style="width: 100px">
+                {{ $page->admin->name ?? '' }}
+            </span>
                 </td>
+
+                {{-- Languages --}}
                 <td class="text-center">
-                    @if(!$page->trashed())
+                    @unless($isTrash)
                         @foreach($globalLanguages as $language)
-                            @if(!empty($pageContents[$page->id][$language->slug]))
-                                <a href="{{ route('pages.edit', $page) }}?ref_lang={{ $language->slug }}">
+                            @if(isset($contents[$language->slug]))
+                                <a
+                                        href="{{ route('pages.edit', $page) }}?ref_lang={{ $language->slug }}"
+                                >
                                     <i class="font-20 mdi mdi-square-edit-outline text-success"></i>
                                 </a>
                             @else
-                                <a href="{{ route('pages.edit', $page) }}?ref_lang={{ $language->slug }}">
+                                <a
+                                        href="{{ route('pages.edit', $page) }}?ref_lang={{ $language->slug }}"
+                                >
                                     <i class="font-20 mdi mdi-shape-square-plus text-primary"></i>
                                 </a>
                             @endif
                         @endforeach
-                    @endif
+                    @endunless
                 </td>
+
+                {{-- Dates --}}
                 <td class="text-right">
-                    <span class="text-gray font-italic">{{ __('site.page.created_at') }}: </span>
-                    <span class="text-primary">{{ $page->created_at }}</span><br/>
-                    <span class="text-gray font-italic">{{ __('site.button.last_modified') }}: </span>
-                    <span class="text-beanred">{{ $page->updated_at }}</span>
+            <span class="text-gray font-italic">
+                {{ __('site.page.created_at') }}:
+            </span>
+
+                    <span class="text-primary">
+                {{ $page->created_at }}
+            </span>
+
+                    <br>
+
+                    <span class="text-gray font-italic">
+                {{ __('site.button.last_modified') }}:
+            </span>
+
+                    <span class="text-beanred">
+                {{ $page->updated_at }}
+            </span>
                 </td>
             </tr>
-        @endforeach
+        @empty
+            <tr>
+                <td colspan="7" class="text-center">
+                    {{ __('site.no_data') }}
+                </td>
+            </tr>
+        @endforelse
         </tbody>
     </table>
 </div>

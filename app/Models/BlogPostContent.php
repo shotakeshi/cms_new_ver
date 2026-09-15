@@ -2,12 +2,20 @@
 
 namespace App\Models;
 
+use App\Enums\ActivityModule;
+use App\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use TheJano\LaravelFilterable\Traits\HasFilterableTrait;
 use Illuminate\Support\Str;
 
 class BlogPostContent extends Model
 {
+    use HasFilterableTrait;
+    use LogsActivity;
+
+    public const ACTIVITY_MODULE = ActivityModule::BLOG_POSTS_CONTENT->value;
+
     protected $fillable = [
         'blog_post_id',
         'name',
