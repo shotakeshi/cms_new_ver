@@ -8,7 +8,7 @@
         <div class="row">
             <div class="col-lg-12">
                 <div class="card m-b-30">
-                    <div class="card-header bg-light font-16">
+                    <div class="card-header bg-light">
                         {{ __('site.setting.common') }}
                     </div>
                     <div class="card-body">
@@ -69,7 +69,7 @@
                     </div>
                 </div>
                 <div class="card m-b-30">
-                    <div class="card-header bg-light font-16">
+                    <div class="card-header bg-light">
                         {{ __('site.setting.localization') }}
                     </div>
                     <div class="card-body">
@@ -104,7 +104,7 @@
                     </div>
                 </div>
                 <div class="card m-b-30">
-                    <div class="card-header bg-light font-16">
+                    <div class="card-header bg-light">
                         Roles
                     </div>
                     <div class="card-body">

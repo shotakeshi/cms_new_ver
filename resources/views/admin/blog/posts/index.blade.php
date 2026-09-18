@@ -108,6 +108,16 @@
                                 </tbody>
                             </table>
                         </div>
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <div class="text-muted">
+                                Showing {{ $blogPosts->firstItem() ?? 0 }}
+                                to {{ $blogPosts->lastItem() ?? 0 }}
+                                of {{ $blogPosts->total() }} results
+                            </div>
+                            <div>
+                                {{ $blogPosts->links('pagination::bootstrap-4') }}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div> <!-- end col -->

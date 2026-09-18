@@ -55,7 +55,10 @@ class BlogPostController extends Controller
             ->category($request->input('blog_category_id'))
             ->filterable(BlogPostsFilterable::class)
             ->with(['contents', 'admin'])
-            ->get();        // Iterate over pages and their associated contents
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
         $blogPosts->each(function ($blogPost) use (&$blogPostContents) {
             $blogPost->contents->each(function ($content) use (&$blogPostContents) {
                 $blogPostContents[$content->blog_post_id][$content->language_code] = [

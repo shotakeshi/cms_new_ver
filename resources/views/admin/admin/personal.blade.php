@@ -45,7 +45,7 @@
                         </h4>
                         <div class="slimscroll activity-scroll">
                             <div class="activity">
-                                @forelse($admin->activities()->get() as $log)
+                                @forelse($admin->activities()->orderBy('created_at', 'desc')->get() as $log)
                                     @php
                                         $icon = match ($log->action) {
                                             'create' => [

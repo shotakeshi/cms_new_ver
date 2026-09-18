@@ -15,12 +15,26 @@ return new class extends Migration
         Schema::create('widgets', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('slug');
+            $table->string('slug')->unique();
+
+            /**
+             * Widget type:
+             * hero
+             * banner
+             * text
+             * image
+             * button
+             * blog_posts
+             * gallery
+             * contact
+             * html
+             */
             $table->string('type');
-            $table->longText('content')->nullable();
-            $table->tinyInteger('status')->default(DefaultStatus::INACTIVE->value);
-            $table->tinyInteger('status_lock')->default(DefaultStatus::INACTIVE->value);
+            $table->json('settings')->nullable();
+            $table->boolean('status')->default(true);
+            $table->boolean('status_lock')->default(false);
             $table->timestamps();
+            $table->index(['type', 'status']);
         });
     }
 

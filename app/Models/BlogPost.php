@@ -129,7 +129,7 @@ class BlogPost extends Model
         ?int $categoryId
     ): Builder {
         return $query->when(
-            filled($categoryId),
+            filled($categoryId) && $categoryId > 0,
             fn (Builder $query) => $query->whereHas(
                 'categories',
                 fn (Builder $query) => $query->whereKey($categoryId)

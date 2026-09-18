@@ -289,5 +289,14 @@ return [
         'no_activity' => 'No activity',
         'activity' => 'Activity',
     ],
+    'widget' => [
+        'title' => 'Widget',
+        'title_create' => 'Create a new widget',
+        'main_information' => 'Main information',
+        'official_information' => 'Official information',
+        'name' => 'Name',
+        'code' => 'Code',
+        'type' => 'Type',
+    ],
     'no_data' => 'No data',
 ];
