@@ -2,7 +2,7 @@
     'name',
     'url' => null,
 ])
-<div class="row mb-3">
+<div class="row{{ $url ? '' : ' mb-3' }}">
     <div class="col-sm-12">
         <div class="page-title-box">
             <div class="float-right">

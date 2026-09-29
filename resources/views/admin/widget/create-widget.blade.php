@@ -61,7 +61,33 @@
                             {{ __('site.widget.official_information') }}
                         </div>
                         <div class="card-body">
-                            @include('admin.widget.type.' . request('type'))
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <ul class="nav nav-pills mb-0" id="pills-tab" role="tablist">
+                                        @foreach($globalLanguages as $language)
+                                            <li class="nav-item mr-3">
+                                                <a class="btn btn-outline-danger" id="widget_tab" data-toggle="pill" href="#{{ $language->slug }}">
+                                                    {{ $language->name }}
+                                                </a>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                                <div class="col-lg-12">
+                                    <div class="tab-content detail-list" id="pills-tabContent">
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                @foreach($globalLanguages as $language)
+                                                    <div class="tab-pane fade" id="{{ $language->slug }}">
+                                                        @include('admin.widget.type.' . request('type'),
+                                                                    [ 'languageSlug' => $language->slug ])
+                                                    </div><!--end general detail-->
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
