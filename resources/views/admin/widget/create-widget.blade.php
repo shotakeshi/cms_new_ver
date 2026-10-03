@@ -63,10 +63,10 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-lg-12">
-                                    <ul class="nav nav-pills mb-0" id="pills-tab" role="tablist">
-                                        @foreach($globalLanguages as $language)
-                                            <li class="nav-item mr-3">
-                                                <a class="btn btn-outline-danger" id="widget_tab" data-toggle="pill" href="#{{ $language->slug }}">
+                                    <ul class="nav mb-3" id="pills-tab" role="tablist">
+                                        @foreach($globalLanguages as $key => $language)
+                                            <li class="nav-item mr-3 {{ $key === 0 ? 'show active' : '' }}">
+                                                <a class="btn btn-outline-danger {{ $key === 0 ? 'active' : '' }}" id="widget_tab" data-toggle="pill" href="#{{ $language->slug }}">
                                                     {{ $language->name }}
                                                 </a>
                                             </li>
@@ -74,17 +74,13 @@
                                     </ul>
                                 </div>
                                 <div class="col-lg-12">
-                                    <div class="tab-content detail-list" id="pills-tabContent">
-                                        <div class="row">
-                                            <div class="col-lg-12">
-                                                @foreach($globalLanguages as $language)
-                                                    <div class="tab-pane fade" id="{{ $language->slug }}">
-                                                        @include('admin.widget.type.' . request('type'),
-                                                                    [ 'languageSlug' => $language->slug ])
-                                                    </div><!--end general detail-->
-                                                @endforeach
-                                            </div>
-                                        </div>
+                                    <div class="tab-content detail-list border p-3" id="pills-tabContent">
+                                        @foreach($globalLanguages as $key => $language)
+                                            <div class="tab-pane fade mt-0 {{ $key === 0 ? 'show active' : '' }}" id="{{ $language->slug }}">
+                                                @include('admin.widget.type.' . request('type'),
+                                                            [ 'languageSlug' => $language->slug ])
+                                            </div><!--end general detail-->
+                                        @endforeach
                                     </div>
                                 </div>
                             </div>
