@@ -61,29 +61,7 @@
                             {{ __('site.widget.official_information') }}
                         </div>
                         <div class="card-body">
-                            <div class="row">
-                                <div class="col-lg-12">
-                                    <ul class="nav mb-3" id="pills-tab" role="tablist">
-                                        @foreach($globalLanguages as $key => $language)
-                                            <li class="nav-item mr-3 {{ $key === 0 ? 'show active' : '' }}">
-                                                <a class="btn btn-outline-danger {{ $key === 0 ? 'active' : '' }}" id="widget_tab" data-toggle="pill" href="#{{ $language->slug }}">
-                                                    {{ $language->name }}
-                                                </a>
-                                            </li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                                <div class="col-lg-12">
-                                    <div class="tab-content detail-list border p-3" id="pills-tabContent">
-                                        @foreach($globalLanguages as $key => $language)
-                                            <div class="tab-pane fade mt-0 {{ $key === 0 ? 'show active' : '' }}" id="{{ $language->slug }}">
-                                                @include('admin.widget.type.' . request('type'),
-                                                            [ 'languageSlug' => $language->slug ])
-                                            </div><!--end general detail-->
-                                        @endforeach
-                                    </div>
-                                </div>
-                            </div>
+                            @include('admin.widget.type.' . request('type'),['globalLanguages' => $globalLanguages])
                         </div>
                     </div>
                 </div>
@@ -91,34 +69,3 @@
         </form>
     </div>
 @endsection
-@push('scripts')
-    <!-- Plugins js -->
-    <script src="{{ asset('administrator/phoenix/plugins/moment/moment.js') }}"></script>
-    <script src="{{ asset('administrator/phoenix/plugins/select2/select2.min.js') }}"></script>
-    <script src="{{ asset('administrator/phoenix/plugins/bootstrap-colorpicker/js/bootstrap-colorpicker.min.js') }}"></script>
-    <script src="{{ asset('administrator/phoenix/plugins/timepicker/bootstrap-material-datetimepicker.js') }}"></script>
-    <script src="{{ asset('administrator/phoenix/plugins/dropify/js/dropify.min.js') }}"></script>
-    <script src="{{ asset('administrator/phoenix/assets/pages/jquery.forms-advanced.js') }}"></script>
-    <script src="{{ asset('administrator/phoenix/assets/pages/jquery.form-upload.init.js') }}"></script>
-    <script src="{{ asset('administrator/phoenix/assets/js/jquery.core.js') }}"></script>
-    <script src="{{ asset('administrator/assets/ckeditor/ckeditor.js') }}"></script>
-    <script>
-        function generateSlug(input){
-            const slug = document.getElementById("slug");
-            slug.value = createSlug(input.value);
-        }
-
-        function createSlug(string) {
-            return string
-                .normalize("NFD")
-                .replace(/[\u0300-\u036f]/g, "")
-                .replace(/đ/g, "d")
-                .replace(/Đ/g, "D")
-                .replace(/[^a-zA-Z0-9\s-]/g, "")
-                .trim()
-                .replace(/\s+/g, "-")
-                .replace(/-+/g, "-")
-                .toLowerCase();
-        }
-    </script>
-@endpush
