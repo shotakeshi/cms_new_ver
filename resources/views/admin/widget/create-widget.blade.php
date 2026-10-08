@@ -62,6 +62,10 @@
                         </div>
                         <div class="card-body">
                             @include('admin.widget.type.' . request('type'),['globalLanguages' => $globalLanguages])
+                            <x-admin::forms.actions
+                                    :back-url="route('widgets.index')"
+                                    show-reset
+                            />
                         </div>
                     </div>
                 </div>
@@ -69,3 +73,25 @@
         </form>
     </div>
 @endsection
+@push('scripts')
+    <!-- Plugins js -->
+    <script>
+        function generateSlug(input){
+            const slug = document.getElementById("slug");
+            slug.value = `[code]${createSlug(input.value)}[/code]`;
+        }
+
+        function createSlug(string) {
+            return string
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .replace(/đ/g, "d")
+                .replace(/Đ/g, "D")
+                .replace(/[^a-zA-Z0-9\s-]/g, "")
+                .trim()
+                .replace(/\s+/g, "-")
+                .replace(/-+/g, "-")
+                .toLowerCase();
+        }
+    </script>
+@endpush

@@ -18,38 +18,30 @@
                         <div class="col-lg-2">
                             <x-admin::forms.single_file
                                     name="{{ $language->slug }}[file]"
-                                    label="{{ __('site.page.avatar') }}"
+                                    label="{{ __('site.widget.image') }}"
+                                    accept="image/jpeg,image/png,image/webp"
+                            />
+                            <hr>
+                            <x-admin::forms.single_file
+                                    name="{{ $language->slug }}[file_mobile]"
+                                    label="{{ __('site.widget.image_mobile') }}"
                                     accept="image/jpeg,image/png,image/webp"
                             />
                         </div>
                         <div class="col-lg-10">
                             <x-admin::forms.input
-                                    small="{{ __('site.widget.alt_description') }}"
-                                    name="{{ $language->slug }}[alt]"
-                                    label="{{ __('site.widget.alt') }}"
-                                    placeholder="{{ __('site.widget.alt') }}"
+                                    name="{{ $language->slug }}[title]"
+                                    label="{{ __('site.widget.text_title') }}"
+                                    placeholder="{{ __('site.widget.text_title') }}"
                             />
-                            <div class="row">
-                                <div class="col-lg-8">
-                                    <x-admin::forms.input
-                                            small="{{ __('site.widget.http_example') }}"
-                                            name="{{ $language->slug }}[url]"
-                                            label="{{ __('site.widget.url') }}"
-                                            placeholder="{{ __('site.widget.url') }}"
-                                    />
-                                </div>
-                                <div class="col-lg-4">
-                                    <label for="{{ $language->slug }}[target]" class="col-form-label">
-                                        {{ __('site.widget.target') }}
-                                    </label>
-                                    <select name="{{ $language->slug }}[target]" class="form-control">
-                                        <option value="_blank">Blank (_blank)</option>
-                                        <option value="_self">Self (_self)</option>
-                                        <option value="_parent">Parent (_parent)</option>
-                                    </select>
-                                    <small class="form-text text-muted">{{ __('site.widget.target_example') }}</small>
-                                </div>
-                            </div>
+                            <x-admin::forms.textarea
+                                    name="{{ $language->slug }}[content]"
+                                    label="{{ __('site.page.content') }}"
+                                    placeholder="{{ __('site.page.content') }}"
+                                    rows="10"
+                                    required
+                                    ckeditor
+                            />
                         </div>
                     </div>
                 </div><!--end general detail-->
@@ -68,4 +60,5 @@
     <script src="{{ asset('administrator/phoenix/assets/pages/jquery.forms-advanced.js') }}"></script>
     <script src="{{ asset('administrator/phoenix/assets/pages/jquery.form-upload.init.js') }}"></script>
     <script src="{{ asset('administrator/phoenix/assets/js/jquery.core.js') }}"></script>
+    <script src="{{ asset('administrator/assets/ckeditor/ckeditor.js') }}"></script>
 @endpush
