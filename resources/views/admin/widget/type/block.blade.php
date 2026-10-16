@@ -14,18 +14,28 @@
         <div class="tab-content detail-list border p-3" id="pills-tabContent">
             @foreach($globalLanguages as $key => $language)
                 <div class="tab-pane fade mt-0 {{ $key === 0 ? 'show active' : '' }}" id="{{ $language->slug }}">
+                    @php
+                        $content = $widget?->contents()->where('language_code', $language->slug )->first() ?? [];
+                        $contentLang = $content?->data ?? [];
+                    @endphp
                     <div class="row">
                         <div class="col-lg-2">
                             <x-admin::forms.single_file
                                     name="{{ $language->slug }}[file]"
                                     label="{{ __('site.widget.image') }}"
                                     accept="image/jpeg,image/png,image/webp"
+                                    :default-file="!empty($contentLang['file'])
+                                                ? asset('storage/' . $contentLang['file'])
+                                                : null"
                             />
                             <hr>
                             <x-admin::forms.single_file
                                     name="{{ $language->slug }}[file_mobile]"
                                     label="{{ __('site.widget.image_mobile') }}"
                                     accept="image/jpeg,image/png,image/webp"
+                                    :default-file="!empty($contentLang['file_mobile'])
+                                                ? asset('storage/' . $contentLang['file_mobile'])
+                                                : null"
                             />
                         </div>
                         <div class="col-lg-10">
@@ -33,6 +43,7 @@
                                     name="{{ $language->slug }}[title]"
                                     label="{{ __('site.widget.text_title') }}"
                                     placeholder="{{ __('site.widget.text_title') }}"
+                                    :value="old($language->slug . '.title', $contentLang['title'] ?? '')"
                             />
                             <x-admin::forms.textarea
                                     name="{{ $language->slug }}[content]"
@@ -41,6 +52,7 @@
                                     rows="10"
                                     required
                                     ckeditor
+                                    :value="old($language->slug . '.content', $contentLang['content'] ?? '')"
                             />
                         </div>
                     </div>

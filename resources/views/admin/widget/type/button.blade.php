@@ -14,21 +14,49 @@
         <div class="tab-content detail-list border p-3" id="pills-tabContent">
             @foreach($globalLanguages as $key => $language)
                 <div class="tab-pane fade mt-0 {{ $key === 0 ? 'show active' : '' }}" id="{{ $language->slug }}">
+                    @php
+                        $content = $widget?->contents()->where('language_code', $language->slug )->first() ?? [];
+                        $contentLang = $content?->data ?? [];
+                    @endphp
                     <div class="row">
                         <div class="col-lg-12">
                             <x-admin::forms.input
-                                    name="{{ $language->slug }}[title]"
-                                    label="{{ __('site.widget.text_title') }}"
-                                    placeholder="{{ __('site.widget.text_title') }}"
+                                    name="{{ $language->slug }}[name]"
+                                    label="{{ __('site.widget.button_name') }}"
+                                    placeholder="{{ __('site.widget.button_name') }}"
+                                    :value="old($language->slug . '.name', $contentLang['name'] ?? '')"
                             />
-                            <x-admin::forms.textarea
-                                    name="{{ $language->slug }}[content]"
-                                    label="{{ __('site.page.content') }}"
-                                    placeholder="{{ __('site.page.content') }}"
-                                    rows="5"
-                                    required
-                                    ckeditor
+                            <x-admin::forms.input
+                                    name="{{ $language->slug }}[display]"
+                                    label="{{ __('site.widget.display_name') }}"
+                                    placeholder="{{ __('site.widget.display_name') }}"
+                                    :value="old($language->slug . '.display', $contentLang['display'] ?? '')"
                             />
+                            <x-admin::forms.input
+                                    name="{{ $language->slug }}[url]"
+                                    label="{{ __('site.widget.link_url') }}"
+                                    placeholder="/contact"
+                                    :value="old($language->slug . '.url', $contentLang['url'] ?? '')"
+                            />
+                        </div>
+                        <div class="col-lg-4">
+                            <label>
+                                {{ __('site.widget.open_link') }}
+                            </label>
+                            <div class="radio">
+                                <input type="radio" name="{{ $language->slug }}[target]" id="radio" value="_parent"
+                                       checked="{{ ($contentLang['target'] ?? '_parent') === '_parent' ? 'checked' : '' }}">
+                                <label for="radio">
+                                    {{ __('site.widget.open_in_parent') }}
+                                </label>
+                            </div>
+                            <div class="radio radio-primary">
+                                <input type="radio" name="{{ $language->slug }}[target]" id="radio1" value="_blank"
+                                       checked="{{ ($contentLang['target'] ?? '_blank') === '_blank' ? 'checked' : '' }}">
+                                <label for="radio1">
+                                    {{ __('site.widget.open_in_new_tab') }}
+                                </label>
+                            </div>
                         </div>
                     </div>
                 </div><!--end general detail-->

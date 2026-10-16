@@ -11,66 +11,98 @@
             <div class="col-lg-12">
                 <div class="card m-b-30">
                     <div class="card-body">
-                        <div class="row mb-3">
-                            <div class="col-lg-12 text-right">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="d-flex justify-content-between align-items-center mt-2 text-muted">
+                                    {{ __('site.widget.total') }}: {{ $widgets->total() }} Widget
+                                </div>
+                            </div>
+                            <div class="col-lg-6 text-right">
                                 <x-admin::page-actions
                                         :create-url="route('widgets.create')"
                                         :reload-url="route('widgets.index')"
                                 />
                             </div>
                         </div>
-{{--                        <div class="table-responsive">--}}
-{{--                            <table class="table table-bordered mb-0">--}}
-{{--                                <thead>--}}
-{{--                                <tr>--}}
-{{--                                    <th>#</th>--}}
-{{--                                    <th>{{ __('site.department.name') }}</th>--}}
-{{--                                    <th style="width: 400px">{{ __('site.department.positions') }}</th>--}}
-{{--                                    <th></th>--}}
-{{--                                </tr>--}}
-{{--                                </thead>--}}
-{{--                                <tbody>--}}
-{{--                                @foreach($departments as $department)--}}
-{{--                                    <tr id="row-{{ $department->id }}">--}}
-{{--                                        <td style="width: 100px">{{ $loop->iteration }}</td>--}}
-{{--                                        <td style="width: 300px">--}}
-{{--                                            <span>{{ $department->name }}</span><br>--}}
-{{--                                            <span class="font-italic text-black-50">{!! $department->description !!}</span>--}}
-{{--                                        </td>--}}
-{{--                                        <td>--}}
-{{--                                            @foreach($department->positions as $k => $v)--}}
-{{--                                                <div id="row-position-{{ $v->id }}" class="w-100 d-flex justify-content-between align-items-center mb-2">--}}
-{{--                                                    <a href="#"--}}
-{{--                                                       class="editable editable-click editable-empty edit_position"--}}
-{{--                                                       data-type="text"--}}
-{{--                                                       data-placeholder="Required"--}}
-{{--                                                       data-pk="{{ $v->id }}"--}}
-{{--                                                       data-url="{{ route('department.update-position', $v->id) }}"--}}
-{{--                                                       data-title="Enter position name">{{ $v->name }}</a>--}}
-{{--                                                        <x-admin::buttons.delete-button--}}
-{{--                                                                :action="route('department.destroy-position',$v->id)"--}}
-{{--                                                                :title="__('site.button.label_remove')"--}}
-{{--                                                        />--}}
-{{--                                                </div>--}}
-{{--                                            @endforeach--}}
-{{--                                        </td>--}}
-{{--                                        <td class="text-right" style="width: 350px">--}}
-{{--                                            <div class="actions">--}}
-{{--                                                @include('admin.department.create-position', compact('department'))--}}
-{{--                                                <a class="btn btn-outline-gray"--}}
-{{--                                                   href="{{ route('departments.edit', $department) }}">--}}
-{{--                                                    <i class="fas fa-edit"></i>--}}
-{{--                                                </a>--}}
-{{--                                                <x-admin::buttons.delete-button--}}
-{{--                                                        :action="route('departments.destroy',$department)"--}}
-{{--                                                />--}}
-{{--                                            </div>--}}
-{{--                                        </td>--}}
-{{--                                    </tr>--}}
-{{--                                @endforeach--}}
-{{--                                </tbody>--}}
-{{--                            </table>--}}
-{{--                        </div>--}}
+                    </div>
+                </div>
+                <div class="card m-b-30">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover table-bordered mb-0">
+                                <thead class="thead-light">
+                                <tr>
+                                    <th width="60" class="text-center">#</th>
+                                    <th>{{ __('site.widget.name') }}</th>
+                                    <th>{{ __('site.widget.code') }}</th>
+                                    <th width="140">{{ __('site.widget.type') }}</th>
+                                    <th width="140">{{ __('site.widget.status') }}</th>
+                                    <th width="250" class="text-center"></th>
+                                </tr>
+                                </thead>
+
+                                <tbody>
+                                @forelse ($widgets as $widget)
+                                    <tr>
+                                        <td class="text-center">
+                                            {{ $loop->iteration }}
+                                        </td>
+                                        <td>
+                                            {{ $widget->name }}<br>
+                                        </td>
+                                        <td>{{ $widget->slug }}</td>
+                                        <td>
+                                            <span class="badge badge-soft-primary p-2" style="width: 100px">
+                                                {{ $widget->type }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            @if ((int) $widget->status === 1)
+                                                <span class="badge badge-soft-success p-2" style="width: 100px">
+                                                    {{ __('site.status.active') }}
+                                                </span>
+                                            @else
+                                                <span class="badge badge-soft-secondary p-2" style="width: 100px">
+                                                    {{ __('site.status.inactive') }}
+                                                </span>
+                                            @endif
+                                        </td>
+                                        <td class="text-right">
+                                            <div class="actions">
+                                                <a class="btn btn-outline-warning"
+                                                   href="{{ route('widgets.edit', $widget) }}?type={{ $widget->type }}">
+                                                    <i class="fa fa-edit"></i>
+                                                </a>
+                                                @if(auth()->user()->rootAdmin)
+                                                    @if((int) $widget->status_lock === 1)
+                                                        <a class="btn btn-outline-primary" title="lock"
+                                                           href="{{ route('widgets.update_status_lock', $widget->id) }}">
+                                                            <i class="fa fa-lock"></i>
+                                                        </a>
+                                                    @else
+                                                        <a class="btn btn-outline-primary" title="lock"
+                                                           href="{{ route('widgets.update_status_lock', $widget->id) }}">
+                                                            <i class="fa fa-unlock-alt"></i>
+                                                        </a>
+                                                        <x-admin::buttons.delete-button
+                                                                :action="route('widgets.destroy',$widget)"
+                                                        />
+                                                    @endif
+                                                @endif
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="7"
+                                            class="text-center text-muted py-4">
+                                            {{ __('site.widget.no_widget') }}
+                                        </td>
+                                    </tr>
+                                @endforelse
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>

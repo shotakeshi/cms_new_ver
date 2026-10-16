@@ -14,6 +14,7 @@ class Widget extends Model
         'type',
         'settings',
         'status',
+        'status_lock'
     ];
 
     protected $casts = [

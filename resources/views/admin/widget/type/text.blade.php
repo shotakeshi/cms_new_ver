@@ -14,12 +14,17 @@
         <div class="tab-content detail-list border p-3" id="pills-tabContent">
             @foreach($globalLanguages as $key => $language)
                 <div class="tab-pane fade mt-0 {{ $key === 0 ? 'show active' : '' }}" id="{{ $language->slug }}">
+                    @php
+                        $content = $widget?->contents()->where('language_code', $language->slug )->first() ?? [];
+                        $contentLang = $content?->data ?? [];
+                    @endphp
                     <div class="row">
                         <div class="col-lg-12">
                             <x-admin::forms.input
                                     name="{{ $language->slug }}[title]"
                                     label="{{ __('site.widget.text_title') }}"
                                     placeholder="{{ __('site.widget.text_title') }}"
+                                    :value="old($language->slug . '.title', $contentLang['title'] ?? '')"
                             />
                             <x-admin::forms.textarea
                                     name="{{ $language->slug }}[content]"
@@ -28,6 +33,7 @@
                                     rows="5"
                                     required
                                     ckeditor
+                                    :value="old($language->slug . '.content', $contentLang['content'] ?? '')"
                             />
                         </div>
                     </div>

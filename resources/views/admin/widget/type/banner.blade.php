@@ -14,12 +14,19 @@
         <div class="tab-content detail-list border p-3" id="pills-tabContent">
             @foreach($globalLanguages as $key => $language)
                 <div class="tab-pane fade mt-0 {{ $key === 0 ? 'show active' : '' }}" id="{{ $language->slug }}">
+                    @php
+                        $content = $widget?->contents()->where('language_code', $language->slug )->first() ?? [];
+                        $contentLang = $content?->data ?? [];
+                    @endphp
                     <div class="row">
                         <div class="col-lg-2">
                             <x-admin::forms.single_file
                                     name="{{ $language->slug }}[file]"
                                     label="{{ __('site.page.avatar') }}"
                                     accept="image/jpeg,image/png,image/webp"
+                                    :default-file="!empty($contentLang['file'])
+                                                ? asset('storage/' . $contentLang['file'])
+                                                : null"
                             />
                         </div>
                         <div class="col-lg-10">
@@ -28,6 +35,7 @@
                                     name="{{ $language->slug }}[alt]"
                                     label="{{ __('site.widget.alt') }}"
                                     placeholder="{{ __('site.widget.alt') }}"
+                                    :value="old($language->slug . '.alt', $contentLang['alt'] ?? '')"
                             />
                             <div class="row">
                                 <div class="col-lg-8">
@@ -36,6 +44,7 @@
                                             name="{{ $language->slug }}[url]"
                                             label="{{ __('site.widget.url') }}"
                                             placeholder="{{ __('site.widget.url') }}"
+                                            :value="old($language->slug . '.url', $contentLang['url'] ?? '')"
                                     />
                                 </div>
                                 <div class="col-lg-4">
@@ -43,9 +52,9 @@
                                         {{ __('site.widget.target') }}
                                     </label>
                                     <select name="{{ $language->slug }}[target]" class="form-control">
-                                        <option value="_blank">Blank (_blank)</option>
-                                        <option value="_self">Self (_self)</option>
-                                        <option value="_parent">Parent (_parent)</option>
+                                        <option {{ ($contentLang['target'] ?? '_blank') === '_blank' ? 'selected' : '' }} value="_blank">Blank (_blank)</option>
+                                        <option {{ ($contentLang['target'] ?? '_self') === '_self' ? 'selected' : '' }} value="_self">Self (_self)</option>
+                                        <option {{ ($contentLang['target'] ?? '_parent') === '_parent' ? 'selected' : '' }} value="_parent">Parent (_parent)</option>
                                     </select>
                                     <small class="form-text text-muted">{{ __('site.widget.target_example') }}</small>
                                 </div>

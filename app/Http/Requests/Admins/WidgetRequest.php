@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Admins;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class WidgetRequest extends FormRequest
 {
@@ -24,7 +25,8 @@ class WidgetRequest extends FormRequest
                 'required',
                 'string',
                 'max:255',
-                'unique:widgets,slug,' . $this->route('widget'),
+                Rule::unique('widgets', 'slug')
+                    ->ignore($this->route('widget'))
             ],
 
             'type' => [

@@ -8,8 +8,14 @@
                 :name="__('site.widget.title_create')"
                 :url="route('widgets.create')"
         />
-        <form id="widget" action="{{ route('widgets.store') }}" method="POST" enctype="multipart/form-data">
+        <form id="widget"
+              action="{{ isset($widget) && $widget ? route('widgets.update', $widget) : route('widgets.store') }}"
+              method="POST"
+              enctype="multipart/form-data">
             @csrf
+            @if(isset($widget) && $widget)
+                @method('PUT')
+            @endif
             <div class="row">
                 <div class="col-lg-12">
                     <div class="card m-b-30">
@@ -25,6 +31,7 @@
                                             placeholder="{{ __('site.widget.name') }}"
                                             required
                                             onkeyup="generateSlug(this)"
+                                            :value="old('name', $widget->name ?? '')"
                                     />
                                 </div>
                                 <div class="col-lg-4">
@@ -33,6 +40,7 @@
                                             label="{{ __('site.widget.code') }}"
                                             placeholder="{{ __('site.widget.code') }}"
                                             required
+                                            :value="old('slug', $widget->slug ?? '')"
                                     />
                                 </div>
                                 <div class="col-lg-2">
@@ -40,7 +48,7 @@
                                             name="status"
                                             label="{{ __('site.admin.status') }}"
                                             :options="\App\Enums\DefaultStatus::options()"
-                                            :selected="\App\Enums\DefaultStatus::ACTIVE->value"
+                                            :selected="old('status', isset($widget) ? $widget->status : \App\Enums\DefaultStatus::ACTIVE->value)"
                                     />
                                 </div>
                                 <div class="col-lg-2">
@@ -63,7 +71,7 @@
                         <div class="card-body">
                             @include('admin.widget.type.' . request('type'),['globalLanguages' => $globalLanguages])
                             <x-admin::forms.actions
-                                    :back-url="route('widgets.index')"
+                                    :back-url="route('widgets.create')"
                                     show-reset
                             />
                         </div>
