@@ -152,7 +152,6 @@ class WidgetController extends Controller
      */
     public function update(WidgetRequest $request, Widget $widget)
     {
-        dd($request->all());
         DB::beginTransaction();
         try {
             $languages = Language::active()->pluck('slug')->toArray();
@@ -204,10 +203,14 @@ class WidgetController extends Controller
                         }
                     }
                 }
-                $widget->contents()->updateOrCreate(
-                    ['language_code' => $language],
-                    ['data' => $content]
-                );
+                $widget->contents()
+                    ->where('language_code', $language)
+                    ->delete();
+
+                $widget->contents()->create([
+                    'language_code' => $language,
+                    'data' => $content,
+                ]);
             }
             DB::commit();
             toastr()->success(__('site.notification.update_success'));
