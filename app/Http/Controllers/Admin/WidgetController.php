@@ -175,7 +175,6 @@ class WidgetController extends Controller
                             $value,
                             self::IMAGE_PATH
                         );
-
                         continue;
                     }
 
@@ -197,10 +196,9 @@ class WidgetController extends Controller
                 $widget->contents()
                     ->where('language_code', $language)
                     ->delete();
-
                 $widget->contents()->create([
                     'language_code' => $language,
-                    'data' => $content,
+                    'data' => array_values($content),
                 ]);
             }
             DB::commit();
