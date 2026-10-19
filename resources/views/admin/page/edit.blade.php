@@ -122,7 +122,7 @@
                                                 ? asset('storage/' . $pageContent->image)
                                                 : null"
                             />
-                            <input type="hidden" name="remove_image" id="remove_image" value="0" >
+                            Y
                             <x-admin::forms.datetime
                                     name="published_at"
                                     label="{{ __('site.page.published_at') }}"

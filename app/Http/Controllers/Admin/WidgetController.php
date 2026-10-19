@@ -164,17 +164,8 @@ class WidgetController extends Controller
             $widget->update($widgetData);
 
             foreach ($languages as $language) {
-                $contentRecord = $widget->contents()
-                    ->firstOrNew(['language_code' => $language]);
-
-                // Giữ dữ liệu cũ, cập nhật các trường được gửi lên
-                $content = array_merge(
-                    $contentRecord->data ?? [],
-                    $request->input($language, [])
-                );
-
+                $content = $request->input($language, []);
                 $files = $request->file($language, []);
-
                 foreach ($files as $key => $value) {
                     if (
                         $value instanceof \Illuminate\Http\UploadedFile
