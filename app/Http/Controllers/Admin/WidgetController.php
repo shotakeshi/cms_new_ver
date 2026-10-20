@@ -109,9 +109,14 @@ class WidgetController extends Controller
                         }
                     }
                 }
+                if (in_array($widget->type, [WidgetType::SLIDER, WidgetType::BLOCKS, WidgetType::GALLERY, WidgetType::CONTACT], true)) {
+                    $data = array_values($content);
+                } else {
+                    $data = $content;
+                }
                 $widget->contents()->create([
                     'language_code' => $language,
-                    'data' => $content,
+                    'data' => $data,
                 ]);
             }
             DB::commit();
@@ -157,9 +162,8 @@ class WidgetController extends Controller
             $languages = Language::active()->pluck('slug')->toArray();
 
             $widgetData = $request->except(
-                array_merge(['_token', '_method', 'submitter'], $languages)
+                array_merge(['_token', '_method', 'submitter', 'type'], $languages)
             );
-
             // Update widget, giữ nguyên model
             $widget->update($widgetData);
 
