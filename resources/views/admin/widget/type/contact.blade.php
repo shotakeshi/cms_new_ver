@@ -14,42 +14,87 @@
         <div class="tab-content detail-list border p-3" id="pills-tabContent">
             @foreach($globalLanguages as $key => $language)
                 <div class="tab-pane fade mt-0 {{ $key === 0 ? 'show active' : '' }}" id="{{ $language->slug }}">
+                    @php
+                        $content = $widget?->contents()->where('language_code', $language->slug )->first() ?? [];
+                        $contentLang = $content?->data ?? [];
+                    @endphp
                     <div class="repeater-custom-show-hide repeater">
                         <div data-repeater-list="{{ $language->slug }}">
-                            <div data-repeater-item="">
-                                <div class="row">
-                                    <div class="col-lg-4">
-                                        <x-admin::forms.input
-                                                name="{{ $language->slug }}[name][]"
-                                                label="{{ __('site.widget.name') }}"
-                                                placeholder="{{ __('site.widget.name') }}"
-                                        />
-                                    </div>
-                                    <div class="col-lg-7">
-                                        <x-admin::forms.input
-                                                name="{{ $language->slug }}[value][]"
-                                                label="{{ __('site.widget.value') }}"
-                                                placeholder="{{ __('site.widget.value') }}"
-                                        />
-                                    </div>
-                                    <div class="col-lg-1">
+                            @forelse ($contentLang as $content)
+                                <div data-repeater-item="">
+                                    <div class="row">
+                                        <div class="col-lg-4">
+                                            <x-admin::forms.input
+                                                    name="{{ $language->slug }}[name][]"
+                                                    label="{{ __('site.widget.name') }}"
+                                                    placeholder="{{ __('site.widget.name') }}"
+                                                    :value="old($language->slug . '.name', $content['name'] ?? '')"
+                                            />
+                                        </div>
+                                        <div class="col-lg-7">
+                                            <x-admin::forms.input
+                                                    name="{{ $language->slug }}[value][]"
+                                                    label="{{ __('site.widget.value') }}"
+                                                    placeholder="{{ __('site.widget.value') }}"
+                                                    :value="old($language->slug . '.value', $content['value'] ?? '')"
+                                            />
+                                        </div>
+                                        <div class="col-lg-1">
                                         <span data-repeater-delete="" class="btn btn-gradient-danger w-100">
                                             <span class="far fa-trash-alt mr-1"></span> {{ __('site.widget.btn_delete') }}
                                         </span>
-                                        <button type="button"
-                                                class="btn btn-gradient-secondary btn-move-up w-100 mt-3"
-                                                title="Di chuyển lên">
-                                            <i class="fas fa-arrow-up"></i> Up
-                                        </button>
-                                        <button type="button"
-                                                class="btn btn-gradient-primary btn-move-down w-100 mt-3"
-                                                title="Di chuyển xuống">
-                                            <i class="fas fa-arrow-down"></i> Down
-                                        </button>
+                                            <button type="button"
+                                                    class="btn btn-gradient-secondary btn-move-up w-100 mt-3"
+                                                    title="Di chuyển lên">
+                                                <i class="fas fa-arrow-up"></i> Up
+                                            </button>
+                                            <button type="button"
+                                                    class="btn btn-gradient-primary btn-move-down w-100 mt-3"
+                                                    title="Di chuyển xuống">
+                                                <i class="fas fa-arrow-down"></i> Down
+                                            </button>
+                                        </div>
                                     </div>
+                                    <hr>
                                 </div>
-                                <hr>
-                            </div>
+                            @empty
+                                <div data-repeater-item="">
+                                    <div class="row">
+                                        <div class="col-lg-4">
+                                            <x-admin::forms.input
+                                                    name="{{ $language->slug }}[name][]"
+                                                    label="{{ __('site.widget.name') }}"
+                                                    placeholder="{{ __('site.widget.name') }}"
+                                                    :value="old($language->slug . '.name')"
+                                            />
+                                        </div>
+                                        <div class="col-lg-7">
+                                            <x-admin::forms.input
+                                                    name="{{ $language->slug }}[value][]"
+                                                    label="{{ __('site.widget.value') }}"
+                                                    placeholder="{{ __('site.widget.value') }}"
+                                                    :value="old($language->slug . '.value')"
+                                            />
+                                        </div>
+                                        <div class="col-lg-1">
+                                        <span data-repeater-delete="" class="btn btn-gradient-danger w-100">
+                                            <span class="far fa-trash-alt mr-1"></span> {{ __('site.widget.btn_delete') }}
+                                        </span>
+                                            <button type="button"
+                                                    class="btn btn-gradient-secondary btn-move-up w-100 mt-3"
+                                                    title="Di chuyển lên">
+                                                <i class="fas fa-arrow-up"></i> Up
+                                            </button>
+                                            <button type="button"
+                                                    class="btn btn-gradient-primary btn-move-down w-100 mt-3"
+                                                    title="Di chuyển xuống">
+                                                <i class="fas fa-arrow-down"></i> Down
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                </div>
+                            @endforelse
                         </div>
                         <div class="form-group row mb-0">
                             <div class="col-sm-12 text-right">

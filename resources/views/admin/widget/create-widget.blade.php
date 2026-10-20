@@ -6,7 +6,7 @@
     <div class="container-fluid">
         <x-admin::page-title
                 :name="__('site.widget.title_create')"
-                :url="route('widgets.create')"
+                url="{{ isset($widget) && $widget ? route('widgets.index') : route('widgets.create') }}"
         />
         <form id="widget"
               action="{{ isset($widget) && $widget ? route('widgets.update', $widget) : route('widgets.store') }}"
@@ -71,7 +71,7 @@
                         <div class="card-body">
                             @include('admin.widget.type.' . request('type'),['globalLanguages' => $globalLanguages])
                             <x-admin::forms.actions
-                                    :back-url="route('widgets.create')"
+                                    back-url="{{ isset($widget) && $widget ? route('widgets.index') : route('widgets.create') }}"
                                     show-reset
                             />
                         </div>

@@ -24,6 +24,8 @@
                                 <div data-repeater-item="">
                                     <div class="row">
                                         <div class="col-lg-2">
+                                            <input type="hidden" name="{{ $language->slug }}[file][]"
+                                                   value="{{ !empty($content['file']) ? $content['file'] : null }}">
                                             <x-admin::forms.single_file
                                                     name="{{ $language->slug }}[file][]"
                                                     label="{{ __('site.widget.image') }}"
@@ -34,6 +36,8 @@
                                             />
                                         </div>
                                         <div class="col-lg-2">
+                                            <input type="hidden" name="{{ $language->slug }}[file_mobile][]"
+                                                   value="{{ !empty($content['file_mobile']) ? $content['file_mobile'] : null }}">
                                             <x-admin::forms.single_file
                                                     name="{{ $language->slug }}[file_mobile][]"
                                                     label="{{ __('site.widget.image_mobile') }}"
@@ -249,6 +253,11 @@
 
             $(document).ready(function () {
                 updateMoveButtons();
+            });
+
+            $('.dropify').dropify().on('dropify.afterClear', function(event, element) {
+                const name = this.name;
+                $(`input[name="${name}"]`).val(null);
             });
         });
     </script>

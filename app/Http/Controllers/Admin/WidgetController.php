@@ -130,7 +130,7 @@ class WidgetController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Page $page)
+    public function show(Widget $widget)
     {
         return redirect()->route('widgets.index');
     }
@@ -196,17 +196,27 @@ class WidgetController extends Controller
                 $widget->contents()
                     ->where('language_code', $language)
                     ->delete();
+
+                if (in_array($widget->type, [WidgetType::SLIDER, WidgetType::BLOCKS, WidgetType::GALLERY, WidgetType::CONTACT], true)) {
+                    $data = array_values($content);
+                } else {
+                    $data = $content;
+                }
+
                 $widget->contents()->create([
                     'language_code' => $language,
-                    'data' => array_values($content),
+                    'data' => $data,
                 ]);
             }
             DB::commit();
             toastr()->success(__('site.notification.update_success'));
-            if ($request->input('submitter') == self::SAVE_AND_EXIT) {
+            if ($request->input('submitter') === self::SAVE_AND_EXIT) {
                 return redirect()->route('widgets.index');
             }
-            return redirect()->route('widgets.edit', $widget);
+            return redirect()->route('widgets.edit', [
+                'widget' => $widget,
+                'type' => $widget->type,
+            ]);
 
         } catch (\Throwable $e) {
             DB::rollBack();

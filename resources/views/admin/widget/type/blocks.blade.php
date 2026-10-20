@@ -14,56 +14,122 @@
         <div class="tab-content detail-list border p-3" id="pills-tabContent">
             @foreach($globalLanguages as $key => $language)
                 <div class="tab-pane fade mt-0 {{ $key === 0 ? 'show active' : '' }}" id="{{ $language->slug }}">
+                    @php
+                        $content = $widget?->contents()->where('language_code', $language->slug )->first() ?? [];
+                        $contentLang = $content?->data ?? [];
+                    @endphp
                     <div class="repeater-custom-show-hide repeater">
                         <div data-repeater-list="{{ $language->slug }}">
-                            <div data-repeater-item="">
-                                <div class="row">
-                                    <div class="col-lg-2">
-                                        <x-admin::forms.single_file
-                                                name="{{ $language->slug }}[file][]"
-                                                label="{{ __('site.widget.image') }}"
-                                                accept="image/jpeg,image/png,image/webp"
-                                        />
-                                        <hr>
-                                        <x-admin::forms.single_file
-                                                name="{{ $language->slug }}[file_mobile][]"
-                                                label="{{ __('site.widget.image_mobile') }}"
-                                                accept="image/jpeg,image/png,image/webp"
-                                        />
+                            @forelse ($contentLang as $content)
+                                <div data-repeater-item="">
+                                    <div class="row">
+                                        <div class="col-lg-2">
+                                            <input type="hidden" name="{{ $language->slug }}[file][]"
+                                                   value="{{ !empty($content['file']) ? $content['file'] : null }}">
+                                            <x-admin::forms.single_file
+                                                    name="{{ $language->slug }}[file][]"
+                                                    label="{{ __('site.widget.image') }}"
+                                                    accept="image/jpeg,image/png,image/webp"
+                                                    :default-file="!empty($content['file'])
+                                                        ? asset('storage/' . $content['file'])
+                                                        : null"
+                                            />
+                                            <hr>
+                                            <input type="hidden" name="{{ $language->slug }}[file_mobile][]"
+                                                   value="{{ !empty($content['file_mobile']) ? $content['file_mobile'] : null }}">
+                                            <x-admin::forms.single_file
+                                                    name="{{ $language->slug }}[file_mobile][]"
+                                                    label="{{ __('site.widget.image_mobile') }}"
+                                                    accept="image/jpeg,image/png,image/webp"
+                                                    :default-file="!empty($content['file_mobile'])
+                                                        ? asset('storage/' . $content['file_mobile'])
+                                                        : null"
+                                            />
+                                        </div>
+                                        <div class="col-lg-9">
+                                            <x-admin::forms.input
+                                                    name="{{ $language->slug }}[title][]"
+                                                    label="{{ __('site.widget.text_title') }}"
+                                                    placeholder="{{ __('site.widget.text_title') }}"
+                                                    :value="old($language->slug . '.alt', $content['title'] ?? '')"
+                                            />
+                                            <x-admin::forms.textarea
+                                                    name="{{ $language->slug }}[content][]"
+                                                    label="{{ __('site.page.content') }}"
+                                                    placeholder="{{ __('site.page.content') }}"
+                                                    required
+                                                    ckeditor
+                                                    :value="old($language->slug . '.alt', $content['content'] ?? '')"
+                                            />
+                                        </div>
+                                        <div class="col-lg-1">
+                                            <span data-repeater-delete="" class="btn btn-gradient-danger w-100">
+                                                <span class="far fa-trash-alt mr-1"></span> {{ __('site.widget.btn_delete') }}
+                                            </span>
+                                            <button type="button"
+                                                    class="btn btn-gradient-secondary btn-move-up w-100 mt-3"
+                                                    title="Di chuyển lên">
+                                                <i class="fas fa-arrow-up"></i> Up
+                                            </button>
+                                            <button type="button"
+                                                    class="btn btn-gradient-primary btn-move-down w-100 mt-3"
+                                                    title="Di chuyển xuống">
+                                                <i class="fas fa-arrow-down"></i> Down
+                                            </button>
+                                        </div>
                                     </div>
-                                    <div class="col-lg-9">
-                                        <x-admin::forms.input
-                                                name="{{ $language->slug }}[title][]"
-                                                label="{{ __('site.widget.text_title') }}"
-                                                placeholder="{{ __('site.widget.text_title') }}"
-                                        />
-                                        <x-admin::forms.textarea
-                                                name="{{ $language->slug }}[content][]"
-                                                label="{{ __('site.page.content') }}"
-                                                placeholder="{{ __('site.page.content') }}"
-                                                required
-                                                ckeditor
-                                                id="1"
-                                        />
-                                    </div>
-                                    <div class="col-lg-1">
-                                        <span data-repeater-delete="" class="btn btn-gradient-danger w-100">
-                                            <span class="far fa-trash-alt mr-1"></span> {{ __('site.widget.btn_delete') }}
-                                        </span>
-                                        <button type="button"
-                                                class="btn btn-gradient-secondary btn-move-up w-100 mt-3"
-                                                title="Di chuyển lên">
-                                            <i class="fas fa-arrow-up"></i> Up
-                                        </button>
-                                        <button type="button"
-                                                class="btn btn-gradient-primary btn-move-down w-100 mt-3"
-                                                title="Di chuyển xuống">
-                                            <i class="fas fa-arrow-down"></i> Down
-                                        </button>
-                                    </div>
+                                    <hr>
                                 </div>
-                                <hr>
-                            </div>
+                            @empty
+                                <div data-repeater-item="">
+                                    <div class="row">
+                                        <div class="col-lg-2">
+                                            <x-admin::forms.single_file
+                                                    name="{{ $language->slug }}[file][]"
+                                                    label="{{ __('site.widget.image') }}"
+                                                    accept="image/jpeg,image/png,image/webp"
+                                            />
+                                            <hr>
+                                            <x-admin::forms.single_file
+                                                    name="{{ $language->slug }}[file_mobile][]"
+                                                    label="{{ __('site.widget.image_mobile') }}"
+                                                    accept="image/jpeg,image/png,image/webp"
+                                            />
+                                        </div>
+                                        <div class="col-lg-9">
+                                            <x-admin::forms.input
+                                                    name="{{ $language->slug }}[title][]"
+                                                    label="{{ __('site.widget.text_title') }}"
+                                                    placeholder="{{ __('site.widget.text_title') }}"
+                                            />
+                                            <x-admin::forms.textarea
+                                                    name="{{ $language->slug }}[content][]"
+                                                    label="{{ __('site.page.content') }}"
+                                                    placeholder="{{ __('site.page.content') }}"
+                                                    required
+                                                    ckeditor
+                                                    id="1"
+                                            />
+                                        </div>
+                                        <div class="col-lg-1">
+                                            <span data-repeater-delete="" class="btn btn-gradient-danger w-100">
+                                                <span class="far fa-trash-alt mr-1"></span> {{ __('site.widget.btn_delete') }}
+                                            </span>
+                                            <button type="button"
+                                                    class="btn btn-gradient-secondary btn-move-up w-100 mt-3"
+                                                    title="Di chuyển lên">
+                                                <i class="fas fa-arrow-up"></i> Up
+                                            </button>
+                                            <button type="button"
+                                                    class="btn btn-gradient-primary btn-move-down w-100 mt-3"
+                                                    title="Di chuyển xuống">
+                                                <i class="fas fa-arrow-down"></i> Down
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                </div>
+                            @endforelse
                         </div>
                         <div class="form-group row mb-0">
                             <div class="col-sm-12 text-right">
@@ -201,6 +267,11 @@
 
             $(document).ready(function () {
                 updateMoveButtons();
+            });
+
+            $('.dropify').dropify().on('dropify.afterClear', function(event, element) {
+                const name = this.name;
+                $(`input[name="${name}"]`).val(null);
             });
         });
     </script>
