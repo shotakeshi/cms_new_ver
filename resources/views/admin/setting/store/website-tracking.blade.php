@@ -34,7 +34,7 @@
                             <div id="google_tag_id_group">
                                 <div class="form-group mb-3">
                                     <label class="col-form-label">{{ __('site.setting.google_tag_manager_id') }}</label>
-                                    <input type="text" name="google_tag_manager_id" class="form-control" placeholder="Example: G-123ABC4567" value="{{ $settings['google_tag_manager_id'] ?? '' }}">
+                                    <input type="text" name="google_tag_manager_id" class="form-control" placeholder="{{ __('site.setting.google_tag_id_example') }}" value="{{ $settings['google_tag_manager_id'] ?? '' }}">
                                 </div>
                                 <a href="{{ config('utilities.google_tag_url') }}" target="_blank">
                                     <span class="text-primary">{{ config('utilities.google_tag_url') }}</span>

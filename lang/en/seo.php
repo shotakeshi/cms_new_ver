@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'separator' => 'out of',
-    'pre_text' => 'You typed',
-    'post_text' => 'chars available.',
+    'separator' => 'of',
+    'pre_text' => 'Entered',
+    'post_text' => 'characters.',
     'intro_meta_title' => 'Website Title Length - SEO Optimization',
     'content_meta_title' => '
         <h5>Ideal Length for SEO</h5>

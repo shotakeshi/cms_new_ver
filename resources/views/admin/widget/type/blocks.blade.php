@@ -68,13 +68,13 @@
                                             </span>
                                             <button type="button"
                                                     class="btn btn-gradient-secondary btn-move-up w-100 mt-3"
-                                                    title="Di chuyển lên">
-                                                <i class="fas fa-arrow-up"></i> Up
+                                                    title="{{ __('site.widget.move_up') }}">
+                                                <i class="fas fa-arrow-up"></i> {{ __('site.widget.up') }}
                                             </button>
                                             <button type="button"
                                                     class="btn btn-gradient-primary btn-move-down w-100 mt-3"
-                                                    title="Di chuyển xuống">
-                                                <i class="fas fa-arrow-down"></i> Down
+                                                    title="{{ __('site.widget.move_down') }}">
+                                                <i class="fas fa-arrow-down"></i> {{ __('site.widget.down') }}
                                             </button>
                                         </div>
                                     </div>
@@ -117,13 +117,13 @@
                                             </span>
                                             <button type="button"
                                                     class="btn btn-gradient-secondary btn-move-up w-100 mt-3"
-                                                    title="Di chuyển lên">
-                                                <i class="fas fa-arrow-up"></i> Up
+                                                    title="{{ __('site.widget.move_up') }}">
+                                                <i class="fas fa-arrow-up"></i> {{ __('site.widget.up') }}
                                             </button>
                                             <button type="button"
                                                     class="btn btn-gradient-primary btn-move-down w-100 mt-3"
-                                                    title="Di chuyển xuống">
-                                                <i class="fas fa-arrow-down"></i> Down
+                                                    title="{{ __('site.widget.move_down') }}">
+                                                <i class="fas fa-arrow-down"></i> {{ __('site.widget.down') }}
                                             </button>
                                         </div>
                                     </div>
@@ -204,7 +204,7 @@
                     });
                 },
                 hide: function (remove) {
-                    if (confirm('Are you sure you want to remove this item?')) {
+                    if (confirm(@json(__('site.widget.confirm_remove_item')))) {
                         $(this).slideUp(remove);
                     }
                 }

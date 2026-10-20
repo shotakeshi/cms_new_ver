@@ -29,7 +29,7 @@ class PositionRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'value.required' => __('validation.required', ['attribute' => 'Position Name']),
+            'value.required' => __('validation.required', ['attribute' => __('site.department.position_name')]),
         ];
     }
 }

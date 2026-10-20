@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-enum SettingType : string
+enum SettingType: string
 {
     case GENERAL = 'general';
     case WEBSITE_TRACKING = 'website-tracking';
@@ -15,10 +15,10 @@ enum SettingType : string
     public function getName(): string
     {
         return match ($this) {
-            self::GENERAL => 'General Information',
-            self::WEBSITE_TRACKING => 'Website Tracking',
-            self::SEO_CONFIG => 'SEO Configuration',
-            self::SEO_API => 'API',
+            self::GENERAL => __('site.setting.general_information'),
+            self::WEBSITE_TRACKING => __('site.setting.website_tracking'),
+            self::SEO_CONFIG => __('site.setting.seo_config'),
+            self::SEO_API => __('site.setting.api'),
         };
     }
 

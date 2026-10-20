@@ -44,16 +44,16 @@
         <div class="menu-body slimscroll">
             <div id="MetricaDashboard" class="main-icon-menu-pane active">
                 <div class="title-box">
-                    <h6 class="menu-title">Dashboard</h6>
+                    <h6 class="menu-title">{{ __('site.menu.dashboard') }}</h6>
                 </div>
                 <ul class="nav">
-                    <li class="nav-item"><a class="nav-link" href="{{ route('departments.index') }}">Deparment</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('pages.index') }}">Pages</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('admins.index') }}">Admins</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('settings.index') }}">Settings</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('blog-categories.index') }}">Blog Categories</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('blog-posts.index') }}">Blog Posts</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('widgets.index') }}">Widgets</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('departments.index') }}">{{ __('site.menu.department') }}</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('pages.index') }}">{{ __('site.menu.page') }}</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('admins.index') }}">{{ __('site.menu.admin') }}</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('settings.index') }}">{{ __('site.menu.setting') }}</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('blog-categories.index') }}">{{ __('site.menu.blog_category') }}</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('blog-posts.index') }}">{{ __('site.menu.blog_post') }}</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('widgets.index') }}">{{ __('site.menu.widget') }}</a></li>
                 </ul>
             </div><!-- end Dashboards -->
 

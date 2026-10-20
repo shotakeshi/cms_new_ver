@@ -16,17 +16,7 @@ enum WidgetType: string
 
     public function label(): string
     {
-        return match ($this) {
-            self::BANNER => 'Banner',
-            self::TEXT => 'Text',
-            self::BLOCK => 'Block',
-            self::BLOCKS => 'Blocks',
-            self::BUTTON => 'Button',
-            self::GALLERY => 'Gallery',
-            self::CONTACT => 'Contact',
-            self::HTML => 'HTML',
-            self::SLIDER => 'Slider',
-        };
+        return __('site.widget.types.'.$this->value);
     }
 
     public function icon(): string
@@ -46,17 +36,7 @@ enum WidgetType: string
 
     public function description(): string
     {
-        return match ($this) {
-            self::BANNER => 'Banner or promotional section.',
-            self::TEXT => 'Simple text content block.',
-            self::BLOCK => 'Simple text content block.',
-            self::BLOCKS => 'Simple text contents blocks.',
-            self::BUTTON => 'Call-to-action button.',
-            self::GALLERY => 'Display an image gallery.',
-            self::CONTACT => 'Contact information or contact form.',
-            self::HTML => 'Custom HTML content.',
-            self::SLIDER => 'Custom Slider',
-        };
+        return __('site.widget.type_descriptions.'.$this->value);
     }
 
     public static function options(): array

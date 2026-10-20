@@ -54,7 +54,7 @@
                     success: function () {
                         toastr.success(
                             '{{ __('site.notification.update_success') }}',
-                            'Success'
+                            '{{ __('site.notification.success_title') }}'
                         );
 
                         $form[0].reset();
@@ -77,7 +77,7 @@
                         toastr.error(
                             xhr.responseJSON?.message ??
                             '{{ __('site.notification.error') }}',
-                            'Error'
+                            '{{ __('site.notification.error_title') }}'
                         );
                     },
 

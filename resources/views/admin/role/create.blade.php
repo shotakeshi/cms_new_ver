@@ -34,7 +34,7 @@
                                 <div class="d-flex ml-auto pr-2">
                                     <div class="checkbox checkbox-primary form-check-inline">
                                         <input type="checkbox" id="allTreeChecked">
-                                        <label class="badge-custom badge bg-primary-lt" for="allTreeChecked">{{ __('All Permissions') }}</label>
+                                        <label class="badge-custom badge bg-primary-lt" for="allTreeChecked">{{ __('site.role.all_permissions') }}</label>
                                     </div>
                                 </div>
                             </div>
@@ -62,7 +62,7 @@
                                             </li>
                                         @empty
                                             <div class="col-12 text-center">
-                                                No data found
+                                                {{ __('common.messages.no_data') }}
                                             </div>
                                         @endforelse
                                     </ul>

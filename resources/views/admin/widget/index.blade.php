@@ -75,12 +75,12 @@
                                                 </a>
                                                 @if(auth()->user()->rootAdmin)
                                                     @if((int) $widget->status_lock === 1)
-                                                        <a class="btn btn-outline-primary" title="lock"
+                                                        <a class="btn btn-outline-primary" title="{{ __('site.widget.unlock') }}"
                                                            href="{{ route('widgets.update_status_lock', $widget->id) }}">
                                                             <i class="fa fa-lock"></i>
                                                         </a>
                                                     @else
-                                                        <a class="btn btn-outline-primary" title="lock"
+                                                        <a class="btn btn-outline-primary" title="{{ __('site.widget.lock') }}"
                                                            href="{{ route('widgets.update_status_lock', $widget->id) }}">
                                                             <i class="fa fa-unlock-alt"></i>
                                                         </a>

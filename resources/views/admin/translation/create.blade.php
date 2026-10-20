@@ -26,7 +26,7 @@
                             </div>
                             @foreach($globalLanguages as $language)
                                 <div class="form-group">
-                                    <label>Value ({{ strtoupper($language->slug) }}) <span class="text-danger">*</span></label>
+                                    <label>{{ __('site.translation.value') }} ({{ strtoupper($language->slug) }}) <span class="text-danger">*</span></label>
                                     <input type="text"
                                            name="values[{{ $language->slug }}]"
                                            class="form-control @error('values.' . $language->slug) is-invalid @enderror"
