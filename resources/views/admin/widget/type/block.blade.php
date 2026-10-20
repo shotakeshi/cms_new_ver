@@ -20,6 +20,8 @@
                     @endphp
                     <div class="row">
                         <div class="col-lg-2">
+                            <input type="hidden" name="{{ $language->slug }}[file]"
+                                   value="{{ !empty($contentLang['file']) ? $contentLang['file'] : null }}">
                             <x-admin::forms.single_file
                                     name="{{ $language->slug }}[file]"
                                     label="{{ __('site.widget.image') }}"
@@ -29,6 +31,8 @@
                                                 : null"
                             />
                             <hr>
+                            <input type="hidden" name="{{ $language->slug }}[file_mobile]"
+                                   value="{{ !empty($contentLang['file_mobile']) ? $contentLang['file_mobile'] : null }}">
                             <x-admin::forms.single_file
                                     name="{{ $language->slug }}[file_mobile]"
                                     label="{{ __('site.widget.image_mobile') }}"
@@ -73,4 +77,10 @@
     <script src="{{ asset('administrator/phoenix/assets/pages/jquery.form-upload.init.js') }}"></script>
     <script src="{{ asset('administrator/phoenix/assets/js/jquery.core.js') }}"></script>
     <script src="{{ asset('administrator/assets/ckeditor/ckeditor.js') }}"></script>
+    <script>
+        $('.dropify').dropify().on('dropify.afterClear', function(event, element) {
+            const name = this.name;
+            $(`input[name="${name}"]`).val(null);
+        });
+    </script>
 @endpush

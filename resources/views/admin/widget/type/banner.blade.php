@@ -20,6 +20,8 @@
                     @endphp
                     <div class="row">
                         <div class="col-lg-2">
+                            <input type="hidden" name="{{ $language->slug }}[file]"
+                                   value="{{ !empty($contentLang['file']) ? $contentLang['file'] : null }}">
                             <x-admin::forms.single_file
                                     name="{{ $language->slug }}[file]"
                                     label="{{ __('site.page.avatar') }}"
@@ -77,4 +79,10 @@
     <script src="{{ asset('administrator/phoenix/assets/pages/jquery.forms-advanced.js') }}"></script>
     <script src="{{ asset('administrator/phoenix/assets/pages/jquery.form-upload.init.js') }}"></script>
     <script src="{{ asset('administrator/phoenix/assets/js/jquery.core.js') }}"></script>
+    <script>
+        $('.dropify').dropify().on('dropify.afterClear', function(event, element) {
+            const name = this.name;
+            $(`input[name="${name}"]`).val(null);
+        });
+    </script>
 @endpush
