@@ -44,8 +44,7 @@ class BlogCategoryRequest extends FormRequest
 
             'parent_id' => [
                 'nullable',
-                'integer',
-                'exists:blog_categories,id',
+                'integer'
             ],
         ];
     }
