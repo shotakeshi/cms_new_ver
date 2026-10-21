@@ -61,8 +61,8 @@
                                 <thead>
                                 <tr>
                                     <th>#</th>
-                                    <th>Key</th>
-                                    <th style="width:60%">Value</th>
+                                    <th>{{ __('site.translation.key') }}</th>
+                                    <th style="width:60%">{{ __('site.translation.value') }}</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -75,7 +75,7 @@
                                                 <a href="#"
                                                    class="editable editable-click editable-empty edit_translation"
                                                    data-type="text"
-                                                   data-placeholder="Required"
+                                                   data-placeholder="{{ __('site.common.required') }}"
                                                    data-url="{{ route('translation.update', $locale) }}"
                                                    data-pk="{{ $locale.".".$keyTrans }}"
                                                    data-key="{{ $keyTrans }}"

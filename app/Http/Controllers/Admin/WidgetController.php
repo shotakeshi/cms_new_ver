@@ -241,10 +241,9 @@ class WidgetController extends Controller
         return redirect()->back();
     }
 
-    public function updateStatusLock($widget_id)
+    public function updateStatusLock(Widget $widget)
     {
         abort_unless(auth()->user()?->rootAdmin, 403);
-        $widget = Widget::findOrFail($widget_id);
         $widget->update([
             'status_lock' => (int) !$widget->status_lock,
         ]);

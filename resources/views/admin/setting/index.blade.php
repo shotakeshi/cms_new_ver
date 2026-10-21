@@ -46,8 +46,8 @@
                                     </div>
                                     <div class="media-body">
                                         <div class="col-auto">
-                                            <a href="{{ route('settings.create') }}?type={{ \App\Enums\SettingType::SEO_CONFIG->value }}" class="text-primary font-weight-bold font-16">SEO</a><br/>
-                                            <span>SEO</span>
+                                            <a href="{{ route('settings.create') }}?type={{ \App\Enums\SettingType::SEO_CONFIG->value }}" class="text-primary font-weight-bold font-16">{{ __('site.setting.seo') }}</a><br/>
+                                            <span>{{ __('site.setting.seo_note') }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -59,7 +59,7 @@
                                     </div>
                                     <div class="media-body">
                                         <div class="col-auto">
-                                            <a href="{{ route('settings.create') }}?type={{ \App\Enums\SettingType::SEO_API->value }}" class="text-primary font-weight-bold font-16">API</a><br/>
+                                            <a href="{{ route('settings.create') }}?type={{ \App\Enums\SettingType::SEO_API->value }}" class="text-primary font-weight-bold font-16">{{ __('site.setting.api') }}</a><br/>
                                             <span>{{ __('site.setting.api_settings') }}</span>
                                         </div>
                                     </div>
@@ -105,7 +105,7 @@
                 </div>
                 <div class="card m-b-30">
                     <div class="card-header bg-light">
-                        Roles
+                        {{ __('site.setting.role') }}
                     </div>
                     <div class="card-body">
                         <div class="row">

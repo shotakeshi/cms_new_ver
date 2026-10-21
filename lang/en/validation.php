@@ -190,7 +190,13 @@ return [
     */
 
     'attributes' => [
-        'values.vi' => 'Vietnam value',
+        'name' => 'name',
+        'slug' => 'slug',
+        'content' => 'article content',
+        'image' => 'image',
+        'password' => 'password',
+        'code' => 'area code',
+        'values.vi' => 'Vietnamese value',
         'values.en' => 'English value'
     ],
 ];

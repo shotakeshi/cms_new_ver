@@ -47,10 +47,10 @@
                                                     <a href="#"
                                                        class="editable editable-click editable-empty edit_position"
                                                        data-type="text"
-                                                       data-placeholder="Required"
+                                                       data-placeholder="{{ __('site.common.required') }}"
                                                        data-pk="{{ $v->id }}"
                                                        data-url="{{ route('department.update-position', $v->id) }}"
-                                                       data-title="Enter position name">{{ $v->name }}</a>
+                                                       data-title="{{ __('site.department.enter_position_name') }}">{{ $v->name }}</a>
                                                         <x-admin::buttons.delete-button
                                                                 :action="route('department.destroy-position',$v->id)"
                                                                 :title="__('site.button.label_remove')"
@@ -99,11 +99,11 @@
                 return params;
             },
             success: function(response, newValue) {
-                toastr.success('{{ __('site.notification.update_success') }}', "Success");
+                toastr.success('{{ __('site.notification.update_success') }}', '{{ __('site.notification.success_title') }}');
             },
             error: function(response, newValue) {
                 const errors = response.responseJSON?.errors || {};
-                toastr.error(errors.value?.[0], "Error");
+                toastr.error(errors.value?.[0], '{{ __('site.notification.error_title') }}');
             }
         });
     </script>

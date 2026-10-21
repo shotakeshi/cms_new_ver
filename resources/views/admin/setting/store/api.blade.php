@@ -22,7 +22,7 @@
                                 <input type="hidden" name="api_enable" value="0">
                                 <div class="custom-control custom-checkbox">
                                     <input type="checkbox" class="custom-control-input" id="api_enable" name="api_enable" @checked(isset($settings['api_enable']) && $settings['api_enable'] == 1) value="1">
-                                    <label class="custom-control-label" for="api_enable"> API Enable?</label>
+                                    <label class="custom-control-label" for="api_enable">{{ __('site.setting.api_enable') }}</label>
                                 </div>
                             </div>
                         </div>

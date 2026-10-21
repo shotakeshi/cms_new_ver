@@ -15,8 +15,8 @@
             @csrf
             <div class="row">
                 <div class="col-md-2 text-right">
-                    <h4>SEO</h4>
-                    <p class="text-gray">SEO Website</p>
+                    <h4>{{ __('site.setting.seo') }}</h4>
+                    <p class="text-gray">{{ __('site.setting.seo_note') }}</p>
                 </div>
                 <div class="col-sm-10">
                     <div class="card mb-3">

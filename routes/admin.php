@@ -76,7 +76,7 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
         Route::post('update/{locale}', 'update')->name('translation.update');
     });
     Route::controller(WidgetController::class)->prefix('widgets')->group(function () {
-        Route::get('widgets/{widget_id}/status-lock', 'updateStatusLock')->name('widgets.update_status_lock');
+        Route::post('{widget}/status-lock', 'updateStatusLock')->name('widgets.update_status_lock');
     });
 });
 Route::get('/change-language/{locale}', [LanguageController::class, 'changeLanguage'])->name('change-language');
