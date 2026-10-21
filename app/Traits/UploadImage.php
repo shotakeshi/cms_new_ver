@@ -38,7 +38,7 @@ trait UploadImage
                 PATHINFO_FILENAME
             ));
 
-        $filename = $name . '.' . $extension;
+        $filename = $name . '-' . Str::uuid() . '.' . $extension;
 
         return $file->storeAs($folder, $filename, 'public');
     }
@@ -56,7 +56,7 @@ trait UploadImage
                 PATHINFO_FILENAME
             ));
 
-        $filename = $name . '.' . $extension;
+        $filename = $name . '-' . Str::uuid() . '.' . $extension;
 
         return [
             'file' => $file,

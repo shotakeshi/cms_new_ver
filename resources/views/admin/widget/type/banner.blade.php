@@ -53,10 +53,11 @@
                                     <label for="{{ $language->slug }}[target]" class="col-form-label">
                                         {{ __('site.widget.target') }}
                                     </label>
+                                    @php($target = $contentLang['target'] ?? '_blank')
                                     <select name="{{ $language->slug }}[target]" class="form-control">
-                                        <option {{ ($contentLang['target'] ?? '_blank') === '_blank' ? 'selected' : '' }} value="_blank">{{ __('site.widget.target_blank') }}</option>
-                                        <option {{ ($contentLang['target'] ?? '_self') === '_self' ? 'selected' : '' }} value="_self">{{ __('site.widget.target_self') }}</option>
-                                        <option {{ ($contentLang['target'] ?? '_parent') === '_parent' ? 'selected' : '' }} value="_parent">{{ __('site.widget.target_parent') }}</option>
+                                        <option @selected($target === '_blank') value="_blank">{{ __('site.widget.target_blank') }}</option>
+                                        <option @selected($target === '_self') value="_self">{{ __('site.widget.target_self') }}</option>
+                                        <option @selected($target === '_parent') value="_parent">{{ __('site.widget.target_parent') }}</option>
                                     </select>
                                     <small class="form-text text-muted">{{ __('site.widget.target_example') }}</small>
                                 </div>

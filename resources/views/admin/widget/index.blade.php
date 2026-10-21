@@ -75,15 +75,19 @@
                                                 </a>
                                                 @if(auth()->user()->rootAdmin)
                                                     @if((int) $widget->status_lock === 1)
-                                                        <a class="btn btn-outline-primary" title="{{ __('site.widget.unlock') }}"
-                                                           href="{{ route('widgets.update_status_lock', $widget->id) }}">
-                                                            <i class="fa fa-lock"></i>
-                                                        </a>
+                                                        <form action="{{ route('widgets.update_status_lock', $widget) }}" method="POST" class="d-inline">
+                                                            @csrf
+                                                            <button type="submit" class="btn btn-outline-primary" title="{{ __('site.widget.unlock') }}">
+                                                                <i class="fa fa-lock"></i>
+                                                            </button>
+                                                        </form>
                                                     @else
-                                                        <a class="btn btn-outline-primary" title="{{ __('site.widget.lock') }}"
-                                                           href="{{ route('widgets.update_status_lock', $widget->id) }}">
-                                                            <i class="fa fa-unlock-alt"></i>
-                                                        </a>
+                                                        <form action="{{ route('widgets.update_status_lock', $widget) }}" method="POST" class="d-inline">
+                                                            @csrf
+                                                            <button type="submit" class="btn btn-outline-primary" title="{{ __('site.widget.lock') }}">
+                                                                <i class="fa fa-unlock-alt"></i>
+                                                            </button>
+                                                        </form>
                                                         <x-admin::buttons.delete-button
                                                                 :action="route('widgets.destroy',$widget)"
                                                         />

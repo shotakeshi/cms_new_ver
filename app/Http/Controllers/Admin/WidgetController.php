@@ -10,6 +10,7 @@ use App\Traits\UploadImage;
 use Illuminate\Http\Request;
 use App\Http\Requests\Admins\WidgetRequest;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 class WidgetController extends Controller
 {
     use UploadImage;
@@ -68,6 +69,7 @@ class WidgetController extends Controller
      */
     public function store(WidgetRequest $request)
     {
+        $uploadedFiles = [];
         DB::beginTransaction();
         try {
             $languages = Language::active()->pluck('slug')->toArray();
@@ -86,7 +88,7 @@ class WidgetController extends Controller
                         $value instanceof \Illuminate\Http\UploadedFile
                         && $value->isValid()
                     ) {
-                        $content[$key] = $this->uploadImage(
+                        $content[$key] = $uploadedFiles[] = $this->uploadImage(
                             $value,
                             self::IMAGE_PATH
                         );
@@ -100,7 +102,7 @@ class WidgetController extends Controller
                                 $file instanceof \Illuminate\Http\UploadedFile
                                 && $file->isValid()
                             ) {
-                                $content[$key][$fieldName] =
+                                $content[$key][$fieldName] = $uploadedFiles[] =
                                     $this->uploadImage(
                                         $file,
                                         self::IMAGE_PATH
@@ -127,6 +129,7 @@ class WidgetController extends Controller
             return redirect()->route('widgets.edit',$widget);
         } catch (\Exception $e) {
             DB::rollBack();
+            $this->deleteImages($uploadedFiles);
             toastr()->error(__('site.notification.create_fail'));
             return redirect()->back()->withInput();
         }
@@ -157,9 +160,14 @@ class WidgetController extends Controller
      */
     public function update(WidgetRequest $request, Widget $widget)
     {
+        $uploadedFiles = [];
+        $newImages = [];
         DB::beginTransaction();
         try {
             $languages = Language::active()->pluck('slug')->toArray();
+            $oldImages = $this->imagePaths(
+                $widget->contents->whereIn('language_code', $languages)->pluck('data')->all()
+            );
 
             $widgetData = $request->except(
                 array_merge(['_token', '_method', 'submitter', 'type'], $languages)
@@ -175,7 +183,7 @@ class WidgetController extends Controller
                         $value instanceof \Illuminate\Http\UploadedFile
                         && $value->isValid()
                     ) {
-                        $content[$key] = $this->uploadImage(
+                        $content[$key] = $uploadedFiles[] = $this->uploadImage(
                             $value,
                             self::IMAGE_PATH
                         );
@@ -188,7 +196,7 @@ class WidgetController extends Controller
                                 $file instanceof \Illuminate\Http\UploadedFile
                                 && $file->isValid()
                             ) {
-                                $content[$key][$fieldName] =
+                                $content[$key][$fieldName] = $uploadedFiles[] =
                                     $this->uploadImage(
                                         $file,
                                         self::IMAGE_PATH
@@ -211,8 +219,10 @@ class WidgetController extends Controller
                     'language_code' => $language,
                     'data' => $data,
                 ]);
+                $newImages = array_merge($newImages, $this->imagePaths($data));
             }
             DB::commit();
+            $this->deleteImages(array_diff($oldImages, $newImages));
             toastr()->success(__('site.notification.update_success'));
             if ($request->input('submitter') === self::SAVE_AND_EXIT) {
                 return redirect()->route('widgets.index');
@@ -224,6 +234,7 @@ class WidgetController extends Controller
 
         } catch (\Throwable $e) {
             DB::rollBack();
+            $this->deleteImages($uploadedFiles);
             report($e);
             toastr()->error(__('site.notification.update_fail'));
             return redirect()->back()->withInput();
@@ -236,19 +247,56 @@ class WidgetController extends Controller
     public function destroy(Widget $widget)
     {
         abort_unless(auth()->user()?->rootAdmin, 403);
+        $images = $this->imagePaths($widget->contents->pluck('data')->all());
         $widget->delete();
+        $this->deleteImages($images);
         toastr()->success(__('site.notification.delete_success'));
         return redirect()->back();
     }
 
-    public function updateStatusLock($widget_id)
+    public function updateStatusLock(Widget $widget)
     {
         abort_unless(auth()->user()?->rootAdmin, 403);
-        $widget = Widget::findOrFail($widget_id);
         $widget->update([
             'status_lock' => (int) !$widget->status_lock,
         ]);
         toastr()->success(__('site.notification.update_success'));
         return redirect()->back();
+    }
+
+    /**
+     * Collect the stored image paths (`file`, `file_mobile`) from widget content data.
+     */
+    private function imagePaths(mixed $data): array
+    {
+        if (! is_array($data)) {
+            return [];
+        }
+
+        $paths = [];
+        foreach ($data as $key => $value) {
+            if (in_array($key, ['file', 'file_mobile'], true) && is_string($value) && $value !== '') {
+                $paths[] = $value;
+            } elseif (is_array($value)) {
+                $paths = array_merge($paths, $this->imagePaths($value));
+            }
+        }
+
+        return array_values(array_unique($paths));
+    }
+
+    /**
+     * Delete widget images from the public disk; paths outside the widget folder are ignored.
+     */
+    private function deleteImages(array $paths): void
+    {
+        $paths = array_filter(
+            $paths,
+            fn ($path) => is_string($path) && str_starts_with($path, self::IMAGE_PATH.'/')
+        );
+
+        if ($paths) {
+            Storage::disk('public')->delete(array_values($paths));
+        }
     }
 }

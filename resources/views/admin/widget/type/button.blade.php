@@ -45,14 +45,14 @@
                             </label>
                             <div class="radio">
                                 <input type="radio" name="{{ $language->slug }}[target]" id="radio" value="_parent"
-                                       checked="{{ ($contentLang['target'] ?? '_parent') === '_parent' ? 'checked' : '' }}">
+                                       @checked(($contentLang['target'] ?? '_parent') === '_parent')>
                                 <label for="radio">
                                     {{ __('site.widget.open_in_parent') }}
                                 </label>
                             </div>
                             <div class="radio radio-primary">
                                 <input type="radio" name="{{ $language->slug }}[target]" id="radio1" value="_blank"
-                                       checked="{{ ($contentLang['target'] ?? '_blank') === '_blank' ? 'checked' : '' }}">
+                                       @checked(($contentLang['target'] ?? '_blank') === '_blank')>
                                 <label for="radio1">
                                     {{ __('site.widget.open_in_new_tab') }}
                                 </label>
