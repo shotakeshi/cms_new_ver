@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\LandingPageController;
 use App\Http\Controllers\Admin\TranslationController;
 use App\Http\Controllers\Admin\PageController;
 use App\Http\Controllers\Admin\PermissionGroupController;
@@ -40,7 +41,8 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
         'widgets' => WidgetController::class,
         'settings' => SettingController::class,
         'blog-categories' => BlogCategoryController::class,
-        'blog-posts' => BlogPostController::class
+        'blog-posts' => BlogPostController::class,
+        'landing-pages' => LandingPageController::class,
     ]);
     Route::controller(AdminController::class)->group(function () {
         Route::get('profile', 'profile')->name('admin.profile');
