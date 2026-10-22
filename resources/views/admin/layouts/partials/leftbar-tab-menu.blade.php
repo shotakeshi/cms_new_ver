@@ -21,6 +21,7 @@
                     <li class="nav-item"><a class="nav-link" href="{{ route('blog-categories.index') }}">{{ __('site.menu.blog_category') }}</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('blog-posts.index') }}">{{ __('site.menu.blog_post') }}</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('widgets.index') }}">{{ __('site.menu.widget') }}</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('landing-pages.index') }}">{{ __('site.menu.landing-page') }}</a></li>
                 </ul>
             </div><!-- end Dashboards -->
         </div><!--end menu-body-->

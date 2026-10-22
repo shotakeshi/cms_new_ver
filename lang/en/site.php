@@ -340,6 +340,7 @@ return [
         'blog_category' => 'Blog Categories',
         'blog_post' => 'Blog Posts',
         'widget' => 'Widgets',
+        'landing-page' => 'Landing Pages',
     ],
     'footer' => [
         'crafted_with' => 'Crafted with',

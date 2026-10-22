@@ -12,12 +12,11 @@ enum ActivityModule: string
     case PAGE  = 'page';
     case PAGE_CONTENT  = 'page_content';
     case ADMIN   = 'admin';
-
     case BLOG_POST    = 'blog_post';
-
     case BLOG_CATEGORY = 'blog_category';
-
     case BLOG_CATEGORY_CONTENT = 'blog_category_content';
     case BLOG_POSTS   = 'blog_posts';
     case BLOG_POSTS_CONTENT = 'blog_posts_content';
+    case LANDING_PAGE = 'landing_page';
+    case LANDING_PAGE_CONTENT = 'landing_page_content';
 }
