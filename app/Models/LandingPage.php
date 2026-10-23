@@ -23,7 +23,7 @@ class LandingPage extends Model
     public const ACTIVITY_MODULE = ActivityModule::LANDING_PAGE->value;
 
     protected $fillable = [
-        'status', 'admin_id', 'slug', 'deleted_at'
+        'status', 'admin_id', 'deleted_at'
     ];
 
     protected $casts = [

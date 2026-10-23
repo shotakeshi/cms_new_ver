@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use TheJano\LaravelFilterable\Traits\HasFilterableTrait;
 use App\Traits\LogsActivity;
 use App\Enums\ActivityModule;
+use Illuminate\Support\Str;
 
 class LandingPageContent extends Model
 {

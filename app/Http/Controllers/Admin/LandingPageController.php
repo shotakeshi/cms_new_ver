@@ -72,20 +72,19 @@ class LandingPageController extends Controller
     {
         DB::beginTransaction();
         try {
-            $landingPage = $this->page->create($request->input());
+            $landingPage = $this->landingPage->create($request->input());
             // sync Image and request
             $request['image'] = $this->uploadImage(
                 $request->file('file'),
                 self::IMAGE_PATH
             );
-            $landingPageContent = $landingPage->contents()->create($request->except('tags'));
-            $this->makeTags($landingPageContent, $request->tags);
+            $landingPage->contents()->create($request->all());
             DB::commit();
             toastr()->success(__('site.notification.create_success'));
             if($request['submitter'] == self::SAVE_AND_EXIT) {
-                return redirect()->route('pages.index');
+                return redirect()->route('landing-pages.index');
             }
-            return redirect()->route('pages.edit',$landingPage);
+            return redirect()->route('landing-pages.edit',$landingPage);
         } catch (\Exception $e) {
             DB::rollBack();
             toastr()->error(__('site.notification.create_fail'));

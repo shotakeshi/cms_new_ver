@@ -17,7 +17,7 @@
         <tbody>
         @forelse($landingPages as $landingPage)
             @php
-                $contents = $pageContents[$page->id] ?? [];
+                $contents = $pageContents[$landingPage->id] ?? [];
                 $fallbackContent = collect($contents)->first();
                 $currentContent = $contents[$appLocale] ?? $fallbackContent;
                 $landingPageName = $currentContent['name'] ?? '';
