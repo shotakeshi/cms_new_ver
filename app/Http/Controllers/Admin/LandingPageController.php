@@ -68,7 +68,7 @@ class LandingPageController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(PageRequest $request): RedirectResponse
+    public function store(Request $request): RedirectResponse
     {
         DB::beginTransaction();
         try {

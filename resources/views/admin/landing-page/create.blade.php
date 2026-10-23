@@ -14,7 +14,7 @@
         <x-admin::page-title
                 :name="__('site.landing-pages.create_title')"
         />
-        <form id="page" action="{{ route('pages.store') }}" method="POST" enctype="multipart/form-data">
+        <form id="page" action="{{ route('landing-pages.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="row">
                 <div class="col-lg-7">
@@ -52,7 +52,58 @@
                             />
                         </div>
                     </div>
-
+                    <div class="card">
+                        <div class="card-header">
+                            {{ __('site.landing-pages.more') }}
+                        </div>
+                        <div class="card-body">
+                            <div class="repeater-custom-show-hide repeater">
+                                <div data-repeater-list="more">
+                                    <div data-repeater-item="">
+                                        <div class="row">
+                                            <div class="col-lg-10">
+                                                <x-admin::forms.input
+                                                        name="more[name][]"
+                                                        label="{{ __('site.landing-pages.more_name') }}"
+                                                        placeholder="{{ __('site.landing-pages.more_name') }}"
+                                                />
+                                                <x-admin::forms.textarea
+                                                        name="more[content][]"
+                                                        label="{{ __('site.landing-pages.more_content') }}"
+                                                        placeholder="{{ __('site.landing-pages.more_content') }}"
+                                                        rows="5"
+                                                        ckeditor
+                                                />
+                                            </div>
+                                            <div class="col-lg-2">
+                                                <span data-repeater-delete="" class="btn btn-gradient-danger w-100">
+                                                    <span class="far fa-trash-alt mr-1"></span> {{ __('site.widget.btn_delete') }}
+                                                </span>
+                                                <button type="button"
+                                                        class="btn btn-gradient-secondary btn-move-up w-100 mt-3"
+                                                        title="{{ __('site.widget.move_up') }}">
+                                                    <i class="fas fa-arrow-up"></i> {{ __('site.widget.up') }}
+                                                </button>
+                                                <button type="button"
+                                                        class="btn btn-gradient-primary btn-move-down w-100 mt-3"
+                                                        title="{{ __('site.widget.move_down') }}">
+                                                    <i class="fas fa-arrow-down"></i> {{ __('site.widget.down') }}
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <hr>
+                                    </div>
+                                </div>
+                                <div class="form-group row mb-0">
+                                    <div class="col-sm-12 text-right">
+                                        <span data-repeater-create="" class="btn btn-outline-secondary btn-md">
+                                            <span class="fa fa-plus"></span> {{ __('site.widget.add_row') }}
+                                        </span>
+                                    </div><!--end col-->
+                                </div><!--end row-->
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="col-lg-5">
                     <div class="card">
@@ -124,8 +175,8 @@
     <script src="{{ asset('administrator/phoenix/assets/pages/jquery.forms-advanced.js') }}"></script>
     <script src="{{ asset('administrator/phoenix/assets/pages/jquery.form-upload.init.js') }}"></script>
     <script src="{{ asset('administrator/phoenix/assets/js/jquery.core.js') }}"></script>
-    <script src="{{ asset('administrator/phoenix/plugins/bootstrap-tagsinput/bootstrap-tagsinput.js') }}"></script>
     <script src="{{ asset('administrator/assets/ckeditor/ckeditor.js') }}"></script>
+    <script src="{{ asset('administrator/phoenix/plugins/repeater/jquery.repeater.min.js') }}"></script>
     <script>
         function generateSlug(input){
             const slug = document.getElementById("slug");
@@ -155,9 +206,121 @@
             validate: true
         });
 
-        $('#published_at').bootstrapMaterialDatePicker({
-            format : 'DD/MM/Y - HH:mm',
-            minDate: new Date()
+        $(document).ready(function () {
+            'use strict';
+            $('.repeater-default').repeater();
+            $('.repeater-custom-show-hide').repeater({
+                show: function () {
+                    const $this = $(this);
+
+                    $this.slideDown(function () {
+                        // Dọn wrapper được clone từ Dropify
+                        $this.find('.dropify-wrapper').each(function () {
+                            const $wrapper = $(this);
+                            const $input = $wrapper.find('input.dropify');
+
+                            if ($input.length) {
+                                $wrapper.before($input);
+                            }
+
+                            $wrapper.remove();
+                        });
+
+                        // Reset input file vừa clone
+                        $this.find('input.dropify').each(function () {
+                            $(this)
+                                .removeClass('dropify-initialized')
+                                .removeAttr('data-default-file');
+                        });
+
+                        // Hiển thị item rồi khởi tạo lại
+                        $this.slideDown(function () {
+                            $this.find('input.dropify').dropify();
+                        });
+
+                        $this.find('textarea.ckeditor').each(function () {
+                            const textarea = this;
+                            textarea.id = 'ckeditor_' + Date.now() + '_' +
+                                Math.random().toString(36).substring(2, 8);
+                            // Khởi tạo CKEditor nếu chưa tồn tại
+                            if (!CKEDITOR.instances[textarea.id]) {
+                                CKEDITOR.replace(textarea, {
+                                    removePlugins: 'exportpdf'
+                                });
+                            }
+                        });
+                    });
+                },
+                hide: function (remove) {
+                    if (confirm(@json(__('site.widget.confirm_remove_item')))) {
+                        $(this).slideUp(remove);
+                    }
+                }
+            });
+
+            $(document).on('click', '.btn-move-up', function () {
+                const $item = $(this).closest('[data-repeater-item]');
+                const $prev = $item.prev('[data-repeater-item]');
+
+                if ($prev.length) {
+                    $item.insertBefore($prev);
+                }
+
+                updateMoveButtons();
+            });
+
+            $(document).on('click', '.btn-move-down', function () {
+                const $item = $(this).closest('[data-repeater-item]');
+                const $next = $item.next('[data-repeater-item]');
+
+                if ($next.length) {
+                    $item.insertAfter($next);
+                }
+
+                updateMoveButtons();
+            });
+
+            function updateMoveButtons() {
+                $('.repeater').each(function () {
+                    const $items = $(this).find('[data-repeater-list]')
+                        .first()
+                        .children('[data-repeater-item]');
+
+                    $items.each(function (index) {
+                        const $item = $(this);
+
+                        $item.find('.btn-move-up, .btn-move-down')
+                            .prop('disabled', false);
+
+                        // Item đầu tiên: khóa nút lên
+                        if (index === 0) {
+                            $item.find('.btn-move-up').prop('disabled', true);
+                        }
+
+                        // Item cuối cùng: khóa nút xuống
+                        if (index === $items.length - 1) {
+                            $item.find('.btn-move-down').prop('disabled', true);
+                        }
+                    });
+                });
+            }
+
+            $(document).on(
+                'click',
+                '[data-repeater-create], [data-repeater-delete]',
+                function () {
+                    setTimeout(updateMoveButtons, 100);
+                }
+            );
+
+            $(document).ready(function () {
+                updateMoveButtons();
+            });
+
+            $('.dropify').dropify().on('dropify.afterClear', function(event, element) {
+                const name = this.name;
+                $(`input[name="${name}"]`).val(null);
+            });
         });
     </script>
 @endpush

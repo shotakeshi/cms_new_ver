@@ -333,6 +333,9 @@ return [
     'landing-pages' => [
         'title' => 'Landing Pages',
         'create_title' => 'Create Landing Page',
+        'more_name' => 'More Name',
+        'more_content' => 'More Content',
+        'more' => 'More'
     ],
     'no_data' => 'No data available',
     'menu' => [
