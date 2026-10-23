@@ -1,6 +1,6 @@
 @extends('admin.layouts.app')
 @section('title')
-    {{ __('site.page.title') }}
+    {{ __('site.landing-pages.title') }}
 @endsection
 @push('styles')
     <link href="{{ asset('administrator/phoenix/plugins/dropify/css/dropify.min.css') }}" rel="stylesheet">
@@ -12,7 +12,7 @@
 @section('content')
     <div class="container-fluid">
         <x-admin::page-title
-                :name="__('site.page.create_title')"
+                :name="__('site.landing-pages.create_title')"
         />
         <form id="page" action="{{ route('pages.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
@@ -52,6 +52,33 @@
                             />
                         </div>
                     </div>
+
+                </div>
+                <div class="col-lg-5">
+                    <div class="card">
+                        <div class="card-header">
+                            <strong class="italic">{{ __('site.language_default') . ': ' . $currentLanguage->name }}</strong>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-6">
+                                    <x-admin::forms.single_file
+                                            name="file"
+                                            label="{{ __('site.page.avatar') }}"
+                                            accept="image/jpeg,image/png,image/webp"
+                                    />
+                                </div>
+                                <div class="col-6">
+                                    <x-admin::forms.radio-enums
+                                            name="status"
+                                            label="{{ __('site.admin.status') }}"
+                                            :options="\App\Enums\DefaultStatus::options()"
+                                            :selected="\App\Enums\DefaultStatus::ACTIVE->value"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="card">
                         <div class="card-header">
                             {{ __('site.page.seo') }} | {{ __('site.page.seo_config') }}
@@ -75,49 +102,8 @@
                                     label="{{ __('site.page.meta_keywords') }}"
                                     placeholder="{{ __('site.page.meta_keywords') }}"
                             />
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-5">
-                    <div class="card">
-                        <div class="card-header">
-                            <strong class="italic">{{ __('site.language_default') . ': ' . $currentLanguage->name }}</strong>
-                        </div>
-                        <div class="card-body">
-                            <x-admin::forms.single_file
-                                    name="file"
-                                    label="{{ __('site.page.avatar') }}"
-                                    accept="image/jpeg,image/png,image/webp"
-                            />
-                            <x-admin::forms.tagsinput
-                                    name="tags"
-                                    label="{{ __('site.tags') }}"
-                                    placeholder="{{ __('site.tags') }}"
-                            />
-                            <x-admin::forms.datetime
-                                    name="published_at"
-                                    label="{{ __('site.page.published_at') }}"
-                                    placeholder="dd/mm/yyyy - hh:mm"
-                            />
-                            <div class="row">
-                                <div class="col-6">
-                                    <x-admin::forms.radio-enums
-                                            name="status"
-                                            label="{{ __('site.admin.status') }}"
-                                            :options="\App\Enums\DefaultStatus::options()"
-                                            :selected="\App\Enums\DefaultStatus::ACTIVE->value"
-                                    />
-                                </div>
-                                <div class="col-6">
-                                    <x-admin::forms.radio-enums
-                                            name="status_comment"
-                                            label="{{ __('site.page.status_comment') }}"
-                                            :options="\App\Enums\DefaultStatus::options()"
-                                    />
-                                </div>
-                            </div>
                             <x-admin::forms.actions
-                                    :back-url="route('pages.index')"
+                                    :back-url="route('landing-pages.index')"
                                     show-reset
                             />
                         </div>

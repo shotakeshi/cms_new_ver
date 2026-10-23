@@ -54,7 +54,7 @@ class LandingPageController extends Controller
                 ];
             });
         });
-        return view('admin.landingpage.index', compact('landingPages', 'landingPageContents'));
+        return view('admin.landing-page.index', compact('landingPages', 'landingPageContents'));
     }
 
     /**
@@ -62,7 +62,7 @@ class LandingPageController extends Controller
      */
     public function create(): View
     {
-        return view('admin.page.create');
+        return view('admin.landing-page.create');
     }
 
     /**

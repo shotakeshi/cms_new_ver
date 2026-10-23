@@ -1,6 +1,6 @@
 @extends('admin.layouts.app')
 @section('title')
-    {{ __('site.page.title') }}
+    {{ __('site.landing-page.title') }}
 @endsection
 @section('content')
     <div class="container-fluid">
@@ -11,7 +11,7 @@
             <div class="col-lg-12">
                 <div class="card m-b-30">
                     <div class="card-body">
-                        @include('admin.page._filters')
+                        @include('admin.landing-page._filters')
                     </div>
                 </div>
             </div> <!-- end col -->
@@ -20,7 +20,7 @@
             <div class="col-lg-12">
                 <div class="card m-b-30">
                     <div class="card-body">
-                        @include('admin.page._table')
+                        @include('admin.landing-page._table')
                     </div>
                 </div>
             </div> <!-- end col -->

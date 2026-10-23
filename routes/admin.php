@@ -78,5 +78,10 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
     Route::controller(WidgetController::class)->prefix('widgets')->group(function () {
         Route::post('{widget}/status-lock', 'updateStatusLock')->name('widgets.update_status_lock');
     });
+    Route::controller(LandingPageController::class)->prefix('landing-pages')->group(function () {
+        Route::get('trash/list', 'trash')->name('landing-pages.trash');
+        Route::get('trash/restore/{page_id}', 'restore')->name('landing-pages.restore');
+        Route::delete('trash/force-delete/{page_id}', 'forceDelete')->name('landing-pages.force-delete');
+    });
 });
 Route::get('/change-language/{locale}', [LanguageController::class, 'changeLanguage'])->name('change-language');

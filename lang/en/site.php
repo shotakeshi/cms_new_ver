@@ -330,6 +330,10 @@ return [
             'blocks' => 'List of simple text content blocks.',
         ],
     ],
+    'landing-pages' => [
+        'title' => 'Landing Pages',
+        'create_title' => 'Create Landing Page',
+    ],
     'no_data' => 'No data available',
     'menu' => [
         'dashboard' => 'Dashboard',
