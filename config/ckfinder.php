@@ -22,7 +22,7 @@
 
 $config = array();
 
-$config['loadRoutes'] = true;
+$config['loadRoutes'] = false;
 
 $config['authentication'] = '\App\Http\Middleware\CustomCKFinderAuth';
 

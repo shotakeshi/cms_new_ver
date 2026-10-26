@@ -13,11 +13,16 @@
 <script src="{{ asset('administrator/phoenix/plugins/sweet-alert2/sweetalert2.min.js') }}"></script>
 <script src="{{ asset('administrator/phoenix/assets/pages/jquery.sweet-alert.init.js') }}"></script>
 <script src="{{ asset('administrator/phoenix/assets/js/delete-confirm.js') }}"></script>
+@include('ckfinder::setup')
 <!-- Plugins js -->
 @stack('scripts')
+<script>
+    if (typeof CKEDITOR !== 'undefined') {
+        CKFinder.setupCKEditor();
+    }
+</script>
 <!-- App js -->
 <script src="{{ asset('administrator/phoenix/assets/js/app.js') }}?v={{ time() }}"></script>
-@include('ckfinder::setup')
 <script>
     window.trans = {
         delete: "{{ __('site.button.confirm_delete') }}",

@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\WidgetController;
 use App\Http\Controllers\Admin\BlogCategoryController;
 use App\Http\Controllers\Admin\BlogPostController;
+use CKSource\CKFinderBridge\Controller\CKFinderController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('admin')->middleware('guest:admin')->group(function () {
@@ -82,6 +83,10 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
         Route::get('trash/list', 'trash')->name('landing-pages.trash');
         Route::get('trash/restore/{page_id}', 'restore')->name('landing-pages.restore');
         Route::delete('trash/force-delete/{page_id}', 'forceDelete')->name('landing-pages.force-delete');
+    });
+    Route::controller(CKFinderController::class)->prefix('ckfinder')->group(function () {
+        Route::any('connector', 'requestAction')->name('ckfinder_connector');
+        Route::any('browser', 'browserAction')->name('ckfinder_browser');
     });
 });
 Route::get('/change-language/{locale}', [LanguageController::class, 'changeLanguage'])->name('change-language');
