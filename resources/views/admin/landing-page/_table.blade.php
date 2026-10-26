@@ -17,7 +17,7 @@
         <tbody>
         @forelse($landingPages as $landingPage)
             @php
-                $contents = $pageContents[$landingPage->id] ?? [];
+                $contents = $landingPageContents[$landingPage->id] ?? [];
                 $fallbackContent = collect($contents)->first();
                 $currentContent = $contents[$appLocale] ?? $fallbackContent;
                 $landingPageName = $currentContent['name'] ?? '';
@@ -52,14 +52,9 @@
                     <div style="height: 22px">
                         <div class="row-action hidden-div">
                             @if($isTrashPage)
-                                {{-- Restore --}}
-                                <a
-                                        class="border-right text-primary border-gray pr-2 mr-1"
-                                        href="{{ route('landing-pages.restore', $landingPage) }}"
-                                >
+                                <a class="border-right text-primary border-gray pr-2 mr-1" href="{{ route('landing-pages.restore', $landingPage) }}">
                                     {{ __('site.button.restore') }}
                                 </a>
-
                                 {{-- Permanent Delete --}}
                                 <x-admin::buttons.delete-button
                                         :action="route('landing-pages.force-delete', $landingPage)"
@@ -68,22 +63,16 @@
                                 />
                             @else
                                 {{-- Edit --}}
-                                <a
-                                        class="border-right text-primary border-gray pr-2 mr-1"
-                                        href="{{ route('landing-pages.edit', $landingPage) }}"
-                                >
+                                <a class="border-right text-primary border-gray pr-2 mr-1" href="{{ route('landing-pages.edit', $landingPage) }}">
                                     {{ __('site.button.edit') }}
                                 </a>
-
                                 {{-- Trash --}}
-                                <a
-                                        href="javascript:void(0)"
-                                        onclick="event.preventDefault(); document.getElementById('delete-form-{{ $landingPage->id }}').submit();"
-                                        class="border-right text-danger border-gray pr-2 mr-1"
+                                <a href="javascript:void(0)"
+                                  onclick="event.preventDefault(); document.getElementById('delete-form-{{ $landingPage->id }}').submit();"
+                                  class="border-right text-danger border-gray pr-2 mr-1"
                                 >
                                     {{ __('site.button.trash') }}
                                 </a>
-
                                 <form
                                         id="delete-form-{{ $landingPage->id }}"
                                         action="{{ route('landing-pages.destroy', $landingPage) }}"
@@ -97,16 +86,12 @@
                         </div>
                     </div>
                 </td>
-
                 {{-- Status --}}
                 <td class="text-center">
                     @if($isTrash)
-                        <span
-                                class="badge badge-soft-danger p-2"
-                                style="width: 100px"
-                        >
-                    {{ __('site.filter.trash') }}
-                </span>
+                        <span class="badge badge-soft-danger p-2" style="width: 100px">
+                            {{ __('site.filter.trash') }}
+                        </span>
                     @else
                         <span class="{{ $landingPage->status_class }} p-1" style="width: 100px">
                             {{ $landingPage->status_name }}
@@ -136,7 +121,6 @@
                         @endforeach
                     @endunless
                 </td>
-
                 {{-- Dates --}}
                 <td class="text-right">
                     <span class="text-gray font-italic">
@@ -156,7 +140,7 @@
             </tr>
         @empty
             <tr>
-                <td colspan="7" class="text-center">
+                <td colspan="6" class="text-center">
                     {{ __('site.no_data') }}
                 </td>
             </tr>

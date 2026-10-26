@@ -1,6 +1,6 @@
 @extends('admin.layouts.app')
 @section('title')
-    {{ __('site.landing-page.title') }}
+    {{ __('site.landing-pages.title') }}
 @endsection
 @section('content')
     <div class="container-fluid">

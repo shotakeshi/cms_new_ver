@@ -1,6 +1,6 @@
 @extends('admin.layouts.app')
 @section('title')
-    {{ __('site.page.title') }}
+    {{ __('site.landing-pages.title') }}
 @endsection
 @push('styles')
     <link href="{{ asset('administrator/phoenix/plugins/dropify/css/dropify.min.css') }}" rel="stylesheet">
@@ -12,9 +12,9 @@
 @section('content')
     <div class="container-fluid">
         <x-admin::page-title
-                :name="__('site.page.update_title')"
+                :name="__('site.landing-pages.update_title')"
         />
-        <form id="page" action="{{ route('pages.update', $page) }}?ref_lang={{ $refLang }}" method="POST" enctype="multipart/form-data">
+        <form id="page" action="{{ route('landing-pages.update', $landingPage) }}?ref_lang={{ $refLang }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')
             <div class="row">
@@ -37,7 +37,7 @@
                                     name="name"
                                     label="{{ __('site.page.name') }}"
                                     placeholder="{{ __('site.page.name') }}"
-                                    :value="$pageContent?->name"
+                                    :value="$landingPageContent?->name"
                                     required
                                     onkeyup="generateSlug(this)"
                             />
@@ -45,14 +45,14 @@
                                     name="slug"
                                     label="{{ __('site.page.slug') }}"
                                     placeholder="{{ __('site.page.slug') }}"
-                                    :value="$page?->slug"
+                                    :value="$landingPageContent?->slug"
                                     required
                             />
                             <x-admin::forms.textarea
                                     name="description"
                                     label="{{ __('site.page.description') }}"
                                     placeholder="{{ __('site.page.description') }}"
-                                    :value="$pageContent?->description"
+                                    :value="$landingPageContent?->description"
                                     rows="5"
                             />
                             <x-admin::forms.textarea
@@ -60,7 +60,7 @@
                                     label="{{ __('site.page.content') }}"
                                     placeholder="{{ __('site.page.content') }}"
                                     rows="5"
-                                    :value="$pageContent?->content"
+                                    :value="$landingPageContent?->content"
                                     required
                                     ckeditor
                             />
@@ -68,30 +68,103 @@
                     </div>
                     <div class="card">
                         <div class="card-header">
-                            {{ __('site.page.seo') }} | {{ __('site.page.seo_config') }}
+                            {{ __('site.landing-pages.more') }}
                         </div>
                         <div class="card-body">
-                            <x-admin::forms.input
-                                    name="meta_title"
-                                    label="{{ __('site.page.meta_title') }}"
-                                    placeholder="{{ __('site.page.meta_title') }}"
-                                    :value="$pageContent?->meta_title"
-                                    maxlength="60"
-                            />
-                            <x-admin::forms.textarea
-                                    name="meta_description"
-                                    label="{{ __('site.page.meta_description') }}"
-                                    placeholder="{{ __('site.page.meta_description') }}"
-                                    rows="5"
-                                    maxlength="150"
-                                    :value="$pageContent?->meta_description"
-                            />
-                            <x-admin::forms.tagsinput
-                                    name="meta_keywords"
-                                    label="{{ __('site.page.meta_keywords') }}"
-                                    placeholder="{{ __('site.page.meta_keywords') }}"
-                                    :value="$pageContent?->meta_keywords"
-                            />
+                            <div class="repeater-custom-show-hide repeater">
+                                <div data-repeater-list="more">
+                                    @php
+                                        $moreItems = old('more', $landingPageContent->more ?? []);
+                                        if (is_string($moreItems)) {
+                                            $moreItems = json_decode($moreItems, true) ?? [];
+                                        }
+                                        if (!is_array($moreItems)) {
+                                            $moreItems = [];
+                                        }
+                                        $moreItems = array_values($moreItems);
+                                    @endphp
+                                    @forelse($moreItems as $more)
+                                        <div data-repeater-item="">
+                                            <div class="row">
+                                                <div class="col-lg-10">
+                                                    <x-admin::forms.input
+                                                            name="more[name][]"
+                                                            label="{{ __('site.landing-pages.more_name') }}"
+                                                            placeholder="{{ __('site.landing-pages.more_name') }}"
+                                                            :value="$more['name']"
+                                                    />
+                                                    <x-admin::forms.textarea
+                                                            name="more[content][]"
+                                                            label="{{ __('site.landing-pages.more_content') }}"
+                                                            placeholder="{{ __('site.landing-pages.more_content') }}"
+                                                            rows="5"
+                                                            ckeditor
+                                                            :value="$more['content']"
+                                                    />
+                                                </div>
+                                                <div class="col-lg-2">
+                                                <span data-repeater-delete="" class="btn btn-gradient-danger w-100">
+                                                    <span class="far fa-trash-alt mr-1"></span> {{ __('site.widget.btn_delete') }}
+                                                </span>
+                                                    <button type="button"
+                                                            class="btn btn-gradient-secondary btn-move-up w-100 mt-3"
+                                                            title="{{ __('site.widget.move_up') }}">
+                                                        <i class="fas fa-arrow-up"></i> {{ __('site.widget.up') }}
+                                                    </button>
+                                                    <button type="button"
+                                                            class="btn btn-gradient-primary btn-move-down w-100 mt-3"
+                                                            title="{{ __('site.widget.move_down') }}">
+                                                        <i class="fas fa-arrow-down"></i> {{ __('site.widget.down') }}
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <hr>
+                                        </div>
+                                    @empty
+                                        <div data-repeater-item="">
+                                            <div class="row">
+                                                <div class="col-lg-10">
+                                                    <x-admin::forms.input
+                                                            name="more[name][]"
+                                                            label="{{ __('site.landing-pages.more_name') }}"
+                                                            placeholder="{{ __('site.landing-pages.more_name') }}"
+                                                    />
+                                                    <x-admin::forms.textarea
+                                                            name="more[content][]"
+                                                            label="{{ __('site.landing-pages.more_content') }}"
+                                                            placeholder="{{ __('site.landing-pages.more_content') }}"
+                                                            rows="5"
+                                                            ckeditor
+                                                    />
+                                                </div>
+                                                <div class="col-lg-2">
+                                                <span data-repeater-delete="" class="btn btn-gradient-danger w-100">
+                                                    <span class="far fa-trash-alt mr-1"></span> {{ __('site.widget.btn_delete') }}
+                                                </span>
+                                                    <button type="button"
+                                                            class="btn btn-gradient-secondary btn-move-up w-100 mt-3"
+                                                            title="{{ __('site.widget.move_up') }}">
+                                                        <i class="fas fa-arrow-up"></i> {{ __('site.widget.up') }}
+                                                    </button>
+                                                    <button type="button"
+                                                            class="btn btn-gradient-primary btn-move-down w-100 mt-3"
+                                                            title="{{ __('site.widget.move_down') }}">
+                                                        <i class="fas fa-arrow-down"></i> {{ __('site.widget.down') }}
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <hr>
+                                        </div>
+                                    @endforelse
+                                </div>
+                                <div class="form-group row mb-0">
+                                    <div class="col-sm-12 text-right">
+                                        <span data-repeater-create="" class="btn btn-outline-secondary btn-md">
+                                            <span class="fa fa-plus"></span> {{ __('site.widget.add_row') }}
+                                        </span>
+                                    </div><!--end col-->
+                                </div><!--end row-->
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -105,7 +178,7 @@
                             @foreach($globalLanguages as $language)
                                 @if($language->slug != $refLang)
                                     <div>
-                                        <a href="{{ route('pages.edit', $page) }}?ref_lang={{ $language->slug }}">
+                                        <a href="{{ route('landing-pages.edit', $landingPage) }}?ref_lang={{ $language->slug }}">
                                             <img alt="{{ $language->name }}" style="max-width: 20px" src="{{ asset('flags/'.$language->slug.'.png') }}">
                                             <span>{{ $language->name }}</span>
                                             <i class="font-16 far fa-edit text-primary pt-2"></i>
@@ -118,22 +191,9 @@
                                     name="file"
                                     label="{{ __('site.page.avatar') }}"
                                     accept="image/jpeg,image/png,image/webp"
-                                    :default-file="$pageContent?->image
-                                                ? asset('storage/' . $pageContent->image)
+                                    :default-file="$landingPageContent?->image
+                                                ? asset('storage/' . $landingPageContent->image)
                                                 : null"
-                            />
-                            Y
-                            <x-admin::forms.datetime
-                                    name="published_at"
-                                    label="{{ __('site.page.published_at') }}"
-                                    placeholder="dd/mm/yyyy - hh:mm"
-                                    :value="$page->published_at"
-                            />
-                            <x-admin::forms.tagsinput
-                                    name="tags"
-                                    label="{{ __('site.tags') }}"
-                                    placeholder="{{ __('site.tags') }}"
-                                    :value="$tagNames ?? ''"
                             />
                             <div class="row">
                                 <div class="col-6">
@@ -141,20 +201,41 @@
                                             name="status"
                                             label="{{ __('site.admin.status') }}"
                                             :options="\App\Enums\DefaultStatus::options()"
-                                            :selected="$page->status"
-                                    />
-                                </div>
-                                <div class="col-6">
-                                    <x-admin::forms.radio-enums
-                                            name="status_comment"
-                                            label="{{ __('site.page.status_comment') }}"
-                                            :options="\App\Enums\DefaultStatus::options()"
-                                            :selected="$page->status_comment"
+                                            :selected="$landingPage->status"
                                     />
                                 </div>
                             </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            {{ __('site.page.seo') }} | {{ __('site.page.seo_config') }}
+                        </div>
+                        <div class="card-body">
+                            <x-admin::forms.input
+                                    name="meta_title"
+                                    label="{{ __('site.page.meta_title') }}"
+                                    placeholder="{{ __('site.page.meta_title') }}"
+                                    :value="$landingPageContent?->meta_title"
+                                    maxlength="60"
+                            />
+                            <x-admin::forms.textarea
+                                    name="meta_description"
+                                    label="{{ __('site.page.meta_description') }}"
+                                    placeholder="{{ __('site.page.meta_description') }}"
+                                    rows="5"
+                                    maxlength="150"
+                                    :value="$landingPageContent?->meta_description"
+                            />
+                            <x-admin::forms.tagsinput
+                                    name="meta_keywords"
+                                    label="{{ __('site.page.meta_keywords') }}"
+                                    placeholder="{{ __('site.page.meta_keywords') }}"
+                                    :value="$landingPageContent?->meta_keywords"
+                            />
                             <x-admin::forms.actions
-                                    :back-url="route('pages.index')"
+                                    :back-url="route('landing-pages.index')"
                             />
                         </div>
                     </div>
@@ -176,6 +257,7 @@
     <script src="{{ asset('administrator/phoenix/assets/js/jquery.core.js') }}"></script>
     <script src="{{ asset('administrator/phoenix/plugins/bootstrap-tagsinput/bootstrap-tagsinput.js') }}"></script>
     <script src="{{ asset('administrator/assets/ckeditor/ckeditor.js') }}"></script>
+    <script src="{{ asset('administrator/phoenix/plugins/repeater/jquery.repeater.min.js') }}"></script>
     <script>
         $('.dropify').dropify().on('dropify.afterClear', function(event, element) {
             document.getElementById('remove_image').value = 1;
@@ -209,9 +291,121 @@
             validate: true
         });
 
-        $('#published_at').bootstrapMaterialDatePicker({
-            format : 'DD/MM/Y - HH:mm',
-            minDate: new Date()
+        $(document).ready(function () {
+            'use strict';
+            $('.repeater-default').repeater();
+            $('.repeater-custom-show-hide').repeater({
+                show: function () {
+                    const $this = $(this);
+
+                    $this.slideDown(function () {
+                        // Dọn wrapper được clone từ Dropify
+                        $this.find('.dropify-wrapper').each(function () {
+                            const $wrapper = $(this);
+                            const $input = $wrapper.find('input.dropify');
+
+                            if ($input.length) {
+                                $wrapper.before($input);
+                            }
+
+                            $wrapper.remove();
+                        });
+
+                        // Reset input file vừa clone
+                        $this.find('input.dropify').each(function () {
+                            $(this)
+                                .removeClass('dropify-initialized')
+                                .removeAttr('data-default-file');
+                        });
+
+                        // Hiển thị item rồi khởi tạo lại
+                        $this.slideDown(function () {
+                            $this.find('input.dropify').dropify();
+                        });
+
+                        $this.find('textarea.ckeditor').each(function () {
+                            const textarea = this;
+                            textarea.id = 'ckeditor_' + Date.now() + '_' +
+                                Math.random().toString(36).substring(2, 8);
+                            // Khởi tạo CKEditor nếu chưa tồn tại
+                            if (!CKEDITOR.instances[textarea.id]) {
+                                CKEDITOR.replace(textarea, {
+                                    removePlugins: 'exportpdf'
+                                });
+                            }
+                        });
+                    });
+                },
+                hide: function (remove) {
+                    if (confirm(@json(__('site.widget.confirm_remove_item')))) {
+                        $(this).slideUp(remove);
+                    }
+                }
+            });
+
+            $(document).on('click', '.btn-move-up', function () {
+                const $item = $(this).closest('[data-repeater-item]');
+                const $prev = $item.prev('[data-repeater-item]');
+
+                if ($prev.length) {
+                    $item.insertBefore($prev);
+                }
+
+                updateMoveButtons();
+            });
+
+            $(document).on('click', '.btn-move-down', function () {
+                const $item = $(this).closest('[data-repeater-item]');
+                const $next = $item.next('[data-repeater-item]');
+
+                if ($next.length) {
+                    $item.insertAfter($next);
+                }
+
+                updateMoveButtons();
+            });
+
+            function updateMoveButtons() {
+                $('.repeater').each(function () {
+                    const $items = $(this).find('[data-repeater-list]')
+                        .first()
+                        .children('[data-repeater-item]');
+
+                    $items.each(function (index) {
+                        const $item = $(this);
+
+                        $item.find('.btn-move-up, .btn-move-down')
+                            .prop('disabled', false);
+
+                        // Item đầu tiên: khóa nút lên
+                        if (index === 0) {
+                            $item.find('.btn-move-up').prop('disabled', true);
+                        }
+
+                        // Item cuối cùng: khóa nút xuống
+                        if (index === $items.length - 1) {
+                            $item.find('.btn-move-down').prop('disabled', true);
+                        }
+                    });
+                });
+            }
+
+            $(document).on(
+                'click',
+                '[data-repeater-create], [data-repeater-delete]',
+                function () {
+                    setTimeout(updateMoveButtons, 100);
+                }
+            );
+
+            $(document).ready(function () {
+                updateMoveButtons();
+            });
+
+            $('.dropify').dropify().on('dropify.afterClear', function(event, element) {
+                const name = this.name;
+                $(`input[name="${name}"]`).val(null);
+            });
         });
     </script>
 @endpush

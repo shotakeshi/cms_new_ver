@@ -42,20 +42,6 @@
                 </div>
             </li>
         </ul><!--end topbar-nav-->
-        <ul class="list-unstyled topbar-nav mb-0">
-            <li>
-                <a href="#">
-                    <span class="responsive-logo">
-                        <img src="{{ asset('administrator/assets/images/logo-sm.png') }}" alt="logo-small" class="logo-sm align-self-center" height="40">
-                    </span>
-                </a>
-            </li>
-            <li>
-                <button class="button-menu-mobile nav-link waves-effect waves-light">
-                    <i data-feather="menu" class="align-self-center"></i>
-                </button>
-            </li>
-        </ul>
     </nav>
     <!-- end navbar-->
 </div>

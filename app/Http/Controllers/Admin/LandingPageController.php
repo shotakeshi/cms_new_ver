@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Filters\Filterable\LandingPagesFilterable;
 use App\Helpers\LanguageHelper;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admins\PageRequest;
+use App\Http\Requests\Admins\LandingPageRequest;
 use App\Models\LandingPage;
 use App\Models\Language;
 use App\Traits\UploadImage;
@@ -48,7 +48,7 @@ class LandingPageController extends Controller
         // Iterate over pages and their associated contents
         $landingPages->each(function ($landingPage) use (&$landingPageContents) {
             $landingPage->contents->each(function ($content) use (&$landingPageContents) {
-                $landingPageContents[$content->page_id][$content->language_code] = [
+                $landingPageContents[$content->landing_page_id][$content->language_code] = [
                     'name'  => $content->name,
                     'image' => $content->image
                 ];
@@ -68,7 +68,7 @@ class LandingPageController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request): RedirectResponse
+    public function store(LandingPageRequest $request): RedirectResponse
     {
         DB::beginTransaction();
         try {
@@ -103,7 +103,7 @@ class LandingPageController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Page $landingPage): View|RedirectResponse
+    public function edit(LandingPage $landingPage): View|RedirectResponse
     {
         // Returns 'en' if present, null if not
         $refLang = request('ref_lang') ?? config('app.locale');
@@ -112,26 +112,16 @@ class LandingPageController extends Controller
         if($languageVersionName) //check ref_lang
         {
             $landingPageContent = $landingPage->content($refLang);
-            if ($landingPageContent) {
-                $tags = $landingPageContent->tags()
-                    ->with([
-                        'translations' => fn ($q) => $q->locale($refLang),
-                    ])
-                    ->get();
-                $tagNames = $tags->pluck('translations.0.name')
-                    ->filter()
-                    ->implode(',');
-            }
-            return view('admin.page.edit', compact('page', 'pageContent', 'languageVersionName', 'refLang', 'tagNames'));
+            return view('admin.landing-page.edit', compact('landingPage', 'landingPageContent', 'languageVersionName', 'refLang'));
         }
         toastr()->error(__('site.page.language_does_not_exists'));
-        return redirect()->route('pages.index');
+        return redirect()->route('landing-pages.index');
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(PageRequest $request, Page $landingPage): RedirectResponse
+    public function update(LandingPageRequest $request, LandingPage $landingPage): RedirectResponse
     {
         DB::beginTransaction();
         try {
@@ -145,15 +135,14 @@ class LandingPageController extends Controller
                 self::IMAGE_PATH,
                 $landingPage->image
             );
-            $landingPageContent = $landingPage->contents()->updateOrCreate(
-                ['language_code' => $request->language_code, 'page_id' => $landingPage->id],
-                $request->except('tags')
+            $landingPage->contents()->updateOrCreate(
+                ['language_code' => $request->language_code, 'landing_page_id' => $landingPage->id],
+                $request->all()
             );
-            $this->makeTags($landingPageContent, $request->tags);
             DB::commit();
             toastr()->success(__('site.notification.update_success'));
             if($request['submitter'] == self::SAVE_AND_EXIT) {
-                return redirect()->route('pages.index');
+                return redirect()->route('landing-pages.index');
             }
             return redirect()->back();
         } catch (\Exception $e) {
@@ -166,14 +155,14 @@ class LandingPageController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Page $landingPage): RedirectResponse
+    public function destroy(LandingPage $landingPage): RedirectResponse
     {
         DB::beginTransaction();
         try {
             $landingPage->delete();
             toastr()->success(__('site.notification.move_to_trash_success'));
             DB::commit();
-            return redirect()->route('pages.index');
+            return redirect()->route('landing-pages.index');
         } catch (\Exception $e) {
             DB::rollBack();
             toastr()->error(__('site.notification.move_to_trash_fail'));
@@ -185,24 +174,24 @@ class LandingPageController extends Controller
     {
         $landingPageTrash = true;
         $landingPageContents = [];
-        $landingPages = $this->page->onlyTrashed()->with('contents','admin')->get();
+        $landingPages = $this->landingPage->onlyTrashed()->with('contents','admin')->get();
         // Initialize the pageContents array
         // Iterate over pages and their associated contents
         $landingPages->each(function ($landingPage) use (&$landingPageContents) {
             $landingPage->contents->each(function ($content) use (&$landingPageContents) {
-                $landingPageContents[$content->page_id][$content->language_code] = [
+                $landingPageContents[$content->landing_page_id][$content->language_code] = [
                     'name'  => $content->name,
                     'image' => $content->image
                 ];
             });
         });
-        return view('admin.page.index', compact('pages', 'pageContents','pageTrash'));
+        return view('admin.landing-page.index', compact('landingPages', 'landingPageContents','landingPageTrash'));
     }
 
     // Restore a soft-deleted item
     public function restore($landingPageId): RedirectResponse
     {
-        $landingPage = Page::withTrashed()->find($landingPageId);
+        $landingPage = LandingPage::withTrashed()->find($landingPageId);
         if ($landingPage) {
             $landingPage->restore();
             toastr()->success(__('site.notification.restored'));
@@ -217,7 +206,7 @@ class LandingPageController extends Controller
     {
         try {
             DB::transaction(function () use ($id) {
-                $landingPage = Page::withTrashed()->findOrFail($id);
+                $landingPage = LandingPage::withTrashed()->findOrFail($id);
                 $landingPage->forceDelete();
             });
             toastr()->success(__('site.notification.delete_success'));

@@ -175,6 +175,7 @@
     <script src="{{ asset('administrator/phoenix/assets/pages/jquery.forms-advanced.js') }}"></script>
     <script src="{{ asset('administrator/phoenix/assets/pages/jquery.form-upload.init.js') }}"></script>
     <script src="{{ asset('administrator/phoenix/assets/js/jquery.core.js') }}"></script>
+    <script src="{{ asset('administrator/phoenix/plugins/bootstrap-tagsinput/bootstrap-tagsinput.js') }}"></script>
     <script src="{{ asset('administrator/assets/ckeditor/ckeditor.js') }}"></script>
     <script src="{{ asset('administrator/phoenix/plugins/repeater/jquery.repeater.min.js') }}"></script>
     <script>
