@@ -26,7 +26,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-7">
+                <div class="col-lg-8">
                     <div class="card">
                         <div class="card-header">
                             {{ __('site.page.detail') }}
@@ -168,7 +168,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-5">
+                <div class="col-lg-4">
                     <div class="card">
                         <div class="card-header">
                             {{ __('site.page.detail') }}
@@ -207,7 +207,41 @@
                             </div>
                         </div>
                     </div>
+                    <div class="card">
+                        <div class="card-header">
+                            {{ __('site.landing-pages.widgets') }}
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-unsyled m-0 pl-0 transaction-history">
+                                @forelse($widgets as $widget)
+                                    <li class="widget-item align-items-center d-flex justify-content-between">
+                                        <label class="widget-row-label mb-0">
+                                            <div class="media align-items-center">
+                                                <input
+                                                        type="checkbox"
+                                                        name="more[widgets][{{ $widget->id }}]"
+                                                        value="{{ $widget->id }}"
+                                                        class="widget-checkbox"
+                                                >
+                                                <span class="custom-checkbox"></span>
 
+                                                <div class="media-body align-self-center">
+                                                    <div class="transaction-data">
+                                                        <h3 class="m-0">{{ $widget->name }}</h3>
+                                                        <p class="text-muted mb-0">{{ $widget->slug }}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <span class="widget-type">{{ $widget->type }}</span>
+                                        </label>
+                                    </li>
+                                @empty
+                                    <p>No Widget</p>
+                                @endforelse
+                            </ul>
+                        </div>
+                    </div>
                     <div class="card">
                         <div class="card-header">
                             {{ __('site.page.seo') }} | {{ __('site.page.seo_config') }}

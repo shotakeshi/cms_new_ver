@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admins\LandingPageRequest;
 use App\Models\LandingPage;
 use App\Models\Language;
+use App\Models\Widget;
 use App\Traits\UploadImage;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -62,7 +63,8 @@ class LandingPageController extends Controller
      */
     public function create(): View
     {
-        return view('admin.landing-page.create');
+        $widgets = Widget::active()->get();
+        return view('admin.landing-page.create', compact('widgets'));
     }
 
     /**
@@ -105,6 +107,7 @@ class LandingPageController extends Controller
      */
     public function edit(LandingPage $landingPage): View|RedirectResponse
     {
+        $widgets = Widget::active()->get();
         // Returns 'en' if present, null if not
         $refLang = request('ref_lang') ?? config('app.locale');
         $languageVersionName = LanguageHelper::getLanguageNameBySlug($refLang);
@@ -112,7 +115,7 @@ class LandingPageController extends Controller
         if($languageVersionName) //check ref_lang
         {
             $landingPageContent = $landingPage->content($refLang);
-            return view('admin.landing-page.edit', compact('landingPage', 'landingPageContent', 'languageVersionName', 'refLang'));
+            return view('admin.landing-page.edit', compact('landingPage', 'landingPageContent', 'languageVersionName', 'refLang', 'widgets'));
         }
         toastr()->error(__('site.page.language_does_not_exists'));
         return redirect()->route('landing-pages.index');

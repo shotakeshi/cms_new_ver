@@ -8,6 +8,90 @@
     <link href="{{ asset('administrator/phoenix/plugins/timepicker/bootstrap-material-datetimepicker.css') }}" rel="stylesheet">
     <link href="{{ asset('administrator/phoenix/plugins/bootstrap-tagsinput/bootstrap-tagsinput.css') }}?v=1" rel="stylesheet">
     <link href="{{ asset('administrator/phoenix/plugins/bootstrap-touchspin/css/jquery.bootstrap-touchspin.min.css') }}" rel="stylesheet" />
+    <style>
+        /* Widget item */
+        .widget-item {
+            padding: 14px 16px;
+            margin-bottom: 10px;
+            background: #fff;
+            border: 1px solid #e9edf3;
+            border-radius: 10px;
+            transition: all 0.2s ease;
+        }
+
+        .widget-row-label {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            cursor: pointer;
+        }
+
+        .widget-item:hover {
+            border-color: #9bbcff;
+            background: #f8faff;
+        }
+
+        .widget-checkbox {
+            position: absolute;
+            opacity: 0;
+            width: 1px;
+            height: 1px;
+        }
+
+        .custom-checkbox {
+            width: 21px;
+            height: 21px;
+            flex-shrink: 0;
+            margin-right: 14px;
+            border: 2px solid #cbd2dc;
+            border-radius: 6px;
+            background: #fff;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .custom-checkbox::after {
+            content: "";
+            width: 5px;
+            height: 10px;
+            border: solid #fff;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg) scale(0);
+        }
+
+        .widget-checkbox:checked + .custom-checkbox {
+            background: #377dff;
+            border-color: #377dff;
+        }
+
+        .widget-checkbox:checked + .custom-checkbox::after {
+            transform: rotate(45deg) scale(1);
+        }
+
+        .widget-item:has(.widget-checkbox:checked) {
+            border-color: #377dff;
+            background: #f3f7ff;
+        }
+
+        .widget-type {
+            color: #377dff;
+            background: #edf4ff;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        .transaction-history li{
+            padding: 15px !important;
+        }
+
+        .transaction-history li:last-of-type{
+            border: 1px solid #e9edf3 !important;
+        }
+    </style>
 @endpush
 @section('content')
     <div class="container-fluid">
@@ -17,7 +101,7 @@
         <form id="page" action="{{ route('landing-pages.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="row">
-                <div class="col-lg-7">
+                <div class="col-lg-8">
                     <div class="card">
                         <div class="card-header">
                             {{ __('site.page.detail') }}
@@ -105,7 +189,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-5">
+                <div class="col-lg-4">
                     <div class="card">
                         <div class="card-header">
                             <strong class="italic">{{ __('site.language_default') . ': ' . $currentLanguage->name }}</strong>
@@ -128,6 +212,41 @@
                                     />
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            {{ __('site.landing-pages.widgets') }}
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-unsyled m-0 pl-0 transaction-history">
+                                @forelse($widgets as $widget)
+                                    <li class="widget-item align-items-center d-flex justify-content-between">
+                                        <label class="widget-row-label mb-0">
+                                            <div class="media align-items-center">
+                                                <input
+                                                        type="checkbox"
+                                                        name="more[widgets][{{ $widget->id }}]"
+                                                        value="{{ $widget->id }}"
+                                                        class="widget-checkbox"
+                                                >
+                                                <span class="custom-checkbox"></span>
+
+                                                <div class="media-body align-self-center">
+                                                    <div class="transaction-data">
+                                                        <h3 class="m-0">{{ $widget->name }}</h3>
+                                                        <p class="text-muted mb-0">{{ $widget->slug }}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <span class="widget-type">{{ $widget->type }}</span>
+                                        </label>
+                                    </li>
+                                @empty
+                                    <p>No Widget</p>
+                                @endforelse
+                            </ul>
                         </div>
                     </div>
                     <div class="card">

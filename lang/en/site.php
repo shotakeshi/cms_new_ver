@@ -335,7 +335,8 @@ return [
         'create_title' => 'Create Landing Page',
         'more_name' => 'More Name',
         'more_content' => 'More Content',
-        'more' => 'More'
+        'more' => 'More',
+        'widgets' => 'Widgets',
     ],
     'no_data' => 'No data available',
     'menu' => [
