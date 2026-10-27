@@ -331,6 +331,15 @@ return [
         ],
     ],
     'no_data' => 'Không có dữ liệu',
+    'service-pages' => [
+        'title' => 'Trang dịch vụ',
+        'create_title' => 'Tạo trang dịch vụ',
+        'update_title' => 'Cập nhật trang dịch vụ',
+        'more_name' => 'Tên mục',
+        'more_content' => 'Nội dung mục',
+        'more' => 'Thông tin thêm',
+        'widgets' => 'Widget',
+    ],
     'menu' => [
         'dashboard' => 'Bảng điều khiển',
         'department' => 'Phòng ban',
@@ -340,6 +349,7 @@ return [
         'blog_category' => 'Chuyên mục bài viết',
         'blog_post' => 'Bài viết',
         'widget' => 'Widget',
+        'service-page' => 'Trang dịch vụ',
     ],
     'footer' => [
         'crafted_with' => 'Được tạo với',
