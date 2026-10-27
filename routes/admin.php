@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\LandingPageController;
+use App\Http\Controllers\Admin\ServicePageController;
 use App\Http\Controllers\Admin\TranslationController;
 use App\Http\Controllers\Admin\PageController;
 use App\Http\Controllers\Admin\PermissionGroupController;
@@ -44,6 +45,7 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
         'blog-categories' => BlogCategoryController::class,
         'blog-posts' => BlogPostController::class,
         'landing-pages' => LandingPageController::class,
+        'service-pages' => ServicePageController::class,
     ]);
     Route::controller(AdminController::class)->group(function () {
         Route::get('profile', 'profile')->name('admin.profile');
@@ -83,6 +85,11 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
         Route::get('trash/list', 'trash')->name('landing-pages.trash');
         Route::get('trash/restore/{landing_page_id}', 'restore')->name('landing-pages.restore');
         Route::delete('trash/force-delete/{landing_page_id}', 'forceDelete')->name('landing-pages.force-delete');
+    });
+    Route::controller(ServicePageController::class)->prefix('service-pages')->group(function () {
+        Route::get('trash/list', 'trash')->name('service-pages.trash');
+        Route::get('trash/restore/{service_page_id}', 'restore')->name('service-pages.restore');
+        Route::delete('trash/force-delete/{service_page_id}', 'forceDelete')->name('service-pages.force-delete');
     });
     Route::controller(CKFinderController::class)->prefix('ckfinder')->group(function () {
         Route::any('connector', 'requestAction')->name('ckfinder_connector');
