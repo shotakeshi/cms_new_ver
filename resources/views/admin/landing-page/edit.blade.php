@@ -8,6 +8,90 @@
     <link href="{{ asset('administrator/phoenix/plugins/timepicker/bootstrap-material-datetimepicker.css') }}" rel="stylesheet">
     <link href="{{ asset('administrator/phoenix/plugins/bootstrap-tagsinput/bootstrap-tagsinput.css') }}?v=1" rel="stylesheet">
     <link href="{{ asset('administrator/phoenix/plugins/bootstrap-touchspin/css/jquery.bootstrap-touchspin.min.css') }}" rel="stylesheet" />
+    <style>
+        /* Widget item */
+        .widget-item {
+            padding: 14px 16px;
+            margin-bottom: 10px;
+            background: #fff;
+            border: 1px solid #e9edf3;
+            border-radius: 10px;
+            transition: all 0.2s ease;
+        }
+
+        .widget-row-label {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            cursor: pointer;
+        }
+
+        .widget-item:hover {
+            border-color: #9bbcff;
+            background: #f8faff;
+        }
+
+        .widget-checkbox {
+            position: absolute;
+            opacity: 0;
+            width: 1px;
+            height: 1px;
+        }
+
+        .custom-checkbox {
+            width: 21px;
+            height: 21px;
+            flex-shrink: 0;
+            margin-right: 14px;
+            border: 2px solid #cbd2dc;
+            border-radius: 6px;
+            background: #fff;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .custom-checkbox::after {
+            content: "";
+            width: 5px;
+            height: 10px;
+            border: solid #fff;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg) scale(0);
+        }
+
+        .widget-checkbox:checked + .custom-checkbox {
+            background: #377dff;
+            border-color: #377dff;
+        }
+
+        .widget-checkbox:checked + .custom-checkbox::after {
+            transform: rotate(45deg) scale(1);
+        }
+
+        .widget-item:has(.widget-checkbox:checked) {
+            border-color: #377dff;
+            background: #f3f7ff;
+        }
+
+        .widget-type {
+            color: #377dff;
+            background: #edf4ff;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        .transaction-history li{
+            padding: 15px !important;
+        }
+
+        .transaction-history li:last-of-type{
+            border: 1px solid #e9edf3 !important;
+        }
+    </style>
 @endpush
 @section('content')
     <div class="container-fluid">
@@ -219,12 +303,17 @@
                                             <div class="media align-items-center">
                                                 <input
                                                         type="checkbox"
-                                                        name="more[widgets][{{ $widget->id }}]"
+                                                        name="widgets[]"
                                                         value="{{ $widget->id }}"
                                                         class="widget-checkbox"
+                                                        @checked(
+                                                            in_array(
+                                                                (int) $landingPage->id,
+                                                                array_map('intval', data_get($widget->settings, 'landing_page_ids', []))
+                                                            )
+                                                        )
                                                 >
                                                 <span class="custom-checkbox"></span>
-
                                                 <div class="media-body align-self-center">
                                                     <div class="transaction-data">
                                                         <h3 class="m-0">{{ $widget->name }}</h3>
@@ -232,7 +321,6 @@
                                                     </div>
                                                 </div>
                                             </div>
-
                                             <span class="widget-type">{{ $widget->type }}</span>
                                         </label>
                                     </li>

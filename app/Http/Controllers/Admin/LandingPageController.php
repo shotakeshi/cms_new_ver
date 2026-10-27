@@ -81,6 +81,9 @@ class LandingPageController extends Controller
                 self::IMAGE_PATH
             );
             $landingPage->contents()->create($request->all());
+
+            $this->updateWidgets($request->all(), $landingPage->id);
+
             DB::commit();
             toastr()->success(__('site.notification.create_success'));
             if($request['submitter'] == self::SAVE_AND_EXIT) {
@@ -142,6 +145,9 @@ class LandingPageController extends Controller
                 ['language_code' => $request->language_code, 'landing_page_id' => $landingPage->id],
                 $request->all()
             );
+
+            $this->updateWidgets($request->all(), $landingPage->id);
+
             DB::commit();
             toastr()->success(__('site.notification.update_success'));
             if($request['submitter'] == self::SAVE_AND_EXIT) {
@@ -217,5 +223,24 @@ class LandingPageController extends Controller
             toastr()->error(__('site.notification.delete_fail'));
         }
         return redirect()->back();
+    }
+
+    private function updateWidgets($request, $landingPageId)
+    {
+        $selectedIds = $request['widgets'] ?? [];
+
+        Widget::get()->each(function ($widget) use ($landingPageId, $selectedIds) {
+            $settings = $widget->settings ?? [];
+            $pageIds = $settings['landing_page_ids'] ?? [];
+
+            $pageIds = array_map('intval', $pageIds);
+
+            $pageIds = in_array($widget->id, $selectedIds)
+                ? array_unique([...$pageIds, (int) $landingPageId])
+                : array_diff($pageIds, [(int) $landingPageId]);
+
+            $settings['landing_page_ids'] = array_values($pageIds);
+            $widget->update(['settings' => $settings]);
+        });
     }
 }
