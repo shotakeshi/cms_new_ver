@@ -279,6 +279,7 @@
                                                 ? asset('storage/' . $landingPageContent->image)
                                                 : null"
                             />
+                            <input type="hidden" name="remove_image" id="remove_image" value="0">
                             <div class="row">
                                 <div class="col-6">
                                     <x-admin::forms.radio-enums

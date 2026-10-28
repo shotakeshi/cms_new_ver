@@ -340,6 +340,14 @@ return [
         'templates' => 'Landing Page Template',
         'update_title' => 'Update Landing Page',
     ],
+    'service-pages' => [
+        'title' => 'Service Pages',
+        'create_title' => 'Create Service Page',
+        'more_name' => 'More Name',
+        'more_content' => 'More Content',
+        'more' => 'More',
+        'widgets' => 'Widgets',
+    ],
     'no_data' => 'No data available',
     'menu' => [
         'dashboard' => 'Dashboard',
@@ -351,6 +359,7 @@ return [
         'blog_post' => 'Blog Posts',
         'widget' => 'Widgets',
         'landing-page' => 'Landing Pages',
+        'service-page' => 'Service Pages',
     ],
     'footer' => [
         'crafted_with' => 'Crafted with',

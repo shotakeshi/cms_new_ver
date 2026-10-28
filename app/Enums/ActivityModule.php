@@ -19,4 +19,6 @@ enum ActivityModule: string
     case BLOG_POSTS_CONTENT = 'blog_posts_content';
     case LANDING_PAGE = 'landing_page';
     case LANDING_PAGE_CONTENT = 'landing_page_content';
+    case SERVICE_PAGE = 'service_page';
+    case SERVICE_PAGE_CONTENT = 'service_page_content';
 }

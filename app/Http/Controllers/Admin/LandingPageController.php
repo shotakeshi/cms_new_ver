@@ -13,6 +13,7 @@ use App\Traits\UploadImage;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class LandingPageController extends Controller
@@ -72,6 +73,7 @@ class LandingPageController extends Controller
      */
     public function store(LandingPageRequest $request): RedirectResponse
     {
+        $uploadedImage = null;
         DB::beginTransaction();
         try {
             $landingPage = $this->landingPage->create($request->input());
@@ -80,6 +82,7 @@ class LandingPageController extends Controller
                 $request->file('file'),
                 self::IMAGE_PATH
             );
+            $uploadedImage = $request['image'];
             $landingPage->contents()->create($request->all());
 
             $this->updateWidgets($request->all(), $landingPage->id);
@@ -92,6 +95,10 @@ class LandingPageController extends Controller
             return redirect()->route('landing-pages.edit',$landingPage);
         } catch (\Exception $e) {
             DB::rollBack();
+            if(! empty($uploadedImage)) {
+                Storage::disk('public')->delete($uploadedImage);
+            }
+            report($e);
             toastr()->error(__('site.notification.create_fail'));
             return redirect()->back()->withInput();
         }
@@ -114,7 +121,6 @@ class LandingPageController extends Controller
         // Returns 'en' if present, null if not
         $refLang = request('ref_lang') ?? config('app.locale');
         $languageVersionName = LanguageHelper::getLanguageNameBySlug($refLang);
-        $tagNames = '';
         if($languageVersionName) //check ref_lang
         {
             $landingPageContent = $landingPage->content($refLang);
@@ -129,18 +135,24 @@ class LandingPageController extends Controller
      */
     public function update(LandingPageRequest $request, LandingPage $landingPage): RedirectResponse
     {
+        $uploadedImage = null;
         DB::beginTransaction();
         try {
             $landingPage->update($request->input());
+            $oldContent = $landingPage->content($request->language_code);
             // sync Image and request
             if($request['remove_image'] == self::REMOVE_IMAGE){
                 $request['image'] = null;
             }
-            $request['image'] = $this->uploadImage(
-                $request->file('file'),
-                self::IMAGE_PATH,
-                $landingPage->image
-            );
+            if ($request->hasFile('file')) {
+                $uploadedImage = $this->uploadImage(
+                    $request->file('file'),
+                    self::IMAGE_PATH,
+                    $oldContent?->image
+                );
+                $request['image'] = $uploadedImage;
+            }
+          
             $landingPage->contents()->updateOrCreate(
                 ['language_code' => $request->language_code, 'landing_page_id' => $landingPage->id],
                 $request->all()
@@ -156,6 +168,10 @@ class LandingPageController extends Controller
             return redirect()->back();
         } catch (\Exception $e) {
             DB::rollBack();
+            if(! empty($uploadedImage)) {
+                Storage::disk('public')->delete($uploadedImage);
+            }
+            report($e);
             toastr()->error(__('site.notification.update_fail'));
             return redirect()->back()->withInput();
         }
