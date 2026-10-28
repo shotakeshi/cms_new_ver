@@ -23,11 +23,12 @@ class LandingPage extends Model
     public const ACTIVITY_MODULE = ActivityModule::LANDING_PAGE->value;
 
     protected $fillable = [
-        'status', 'admin_id', 'deleted_at'
+        'status', 'admin_id', 'deleted_at', 'settings'
     ];
 
     protected $casts = [
-        'status' => 'boolean'
+        'status' => 'boolean',
+        'settings' => 'array',
     ];
 
     // Optionally, specify the name of the 'deleted_at' column

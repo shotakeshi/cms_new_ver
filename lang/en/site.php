@@ -337,6 +337,8 @@ return [
         'more_content' => 'More Content',
         'more' => 'More',
         'widgets' => 'Widgets',
+        'templates' => 'Landing Page Template',
+        'update_title' => 'Update Landing Page',
     ],
     'no_data' => 'No data available',
     'menu' => [

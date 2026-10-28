@@ -293,6 +293,24 @@
                     </div>
                     <div class="card">
                         <div class="card-header">
+                            {{ __('site.landing-pages.templates') }}
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <select name="settings[template_id]" id="template" class="form-control">
+                                    @foreach (config('landing-pages.templates') as $key => $template)
+                                        <option value="{{ $key }}"
+                                                @selected( old( 'settings.template_id', data_get($landingPage?->settings, 'template_id', 'default') ) === $key )
+                                        >
+                                            {{ $template['name'] }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
                             {{ __('site.landing-pages.widgets') }}
                         </div>
                         <div class="card-body">
