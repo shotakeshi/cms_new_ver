@@ -304,9 +304,15 @@
                                             <div class="media align-items-center">
                                                 <input
                                                         type="checkbox"
-                                                        name="more[widgets][{{ $widget->id }}]"
+                                                        name="widgets[]"
                                                         value="{{ $widget->id }}"
                                                         class="widget-checkbox"
+                                                        @checked(
+                                                            in_array(
+                                                                (int) $servicePage->id,
+                                                                array_map('intval', data_get($widget->settings, 'service_page_ids', []))
+                                                            )
+                                                        )
                                                 >
                                                 <span class="custom-checkbox"></span>
 

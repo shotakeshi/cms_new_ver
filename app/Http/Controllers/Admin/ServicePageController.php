@@ -89,7 +89,8 @@ class ServicePageController extends Controller
                 self::IMAGE_PATH
             );
             $uploadedImage = $request['image'];
-            $servicePage->contents()->create($request->except(['file', 'remove_image', 'submitter']));
+            $servicePage->contents()->create($request->except(['file', 'remove_image', 'submitter', 'widgets']));
+            $this->updateWidgets($request->input('widgets', []), $servicePage->id);
             DB::commit();
             toastr()->success(__('site.notification.create_success'));
             if ($request['submitter'] == self::SAVE_AND_EXIT) {
@@ -146,9 +147,8 @@ class ServicePageController extends Controller
         try {
             $servicePage->update($request->input());
             $oldContent = $servicePage->content($request->language_code);
-            $data = $request->except(['file', 'remove_image', 'submitter']);
-            $removeImage = $request['remove_image'] == self::REMOVE_IMAGE;
-            if ($removeImage) {
+            $data = $request->except(['file', 'remove_image', 'submitter', 'widgets']);
+            if ($request['remove_image'] == self::REMOVE_IMAGE) {
                 $data['image'] = null;
             }
             if ($request->hasFile('file')) {
@@ -163,6 +163,7 @@ class ServicePageController extends Controller
                 ['language_code' => $request->language_code, 'service_page_id' => $servicePage->id],
                 $data
             );
+            $this->updateWidgets($request->input('widgets', []), $servicePage->id);
             DB::commit();
             toastr()->success(__('site.notification.update_success'));
             if ($request['submitter'] == self::SAVE_AND_EXIT) {
@@ -251,4 +252,22 @@ class ServicePageController extends Controller
 
         return redirect()->back();
     }
+
+    private function updateWidgets(array $widgetSelectedIds, int $servicePageId): void
+    {
+        $widgetSelectedIds = array_map('intval', $widgetSelectedIds);
+
+        Widget::query()->get()->each(function (Widget $widget) use ($servicePageId, $widgetSelectedIds) {
+            $settings = $widget->settings ?? [];
+            $currentPageIds = array_map('intval', $settings['service_page_ids'] ?? []);
+
+            $currentPageIds = in_array($widget->id, $widgetSelectedIds)
+                ? array_unique([... $currentPageIds, $servicePageId])
+                : array_diff($currentPageIds, [$servicePageId]);
+
+            $settings['service_page_ids'] = array_values($currentPageIds);
+            $widget->update(['settings' => $settings]);
+        });
+    }
+
 }

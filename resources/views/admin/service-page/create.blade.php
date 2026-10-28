@@ -226,7 +226,7 @@
                                             <div class="media align-items-center">
                                                 <input
                                                         type="checkbox"
-                                                        name="more[widgets][{{ $widget->id }}]"
+                                                        name="widgets[]"
                                                         value="{{ $widget->id }}"
                                                         class="widget-checkbox"
                                                 >

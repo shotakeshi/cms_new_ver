@@ -85,6 +85,14 @@ class ServicePageRequest extends FormRequest
                 'nullable',
                 'string',
             ],
+            'widgets' => [
+                'nullable',
+                'array',
+            ],
+            'widgets.*' => [
+                'integer',
+                'exists:widgets,id',
+            ],
         ];
     }
 }
