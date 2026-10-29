@@ -22,8 +22,8 @@ return new class extends Migration
             $table->tinyText('meta_title')->nullable();
             $table->tinyText('meta_description')->nullable();
             $table->tinyText('meta_keywords')->nullable();
-            $table->unique(['product_category_id', 'language_code']);
-            $table->unique(['language_code', 'slug']);
+            $table->unique(['product_category_id', 'language_code'], 'product_category_contents_lang_unique');
+            $table->unique(['language_code', 'slug'], 'product_category_contents_lang_slug_unique');
             $table->foreign('product_category_id')->references('id')->on('product_categories')->onDelete('cascade');
             $table->timestamps();
         });
