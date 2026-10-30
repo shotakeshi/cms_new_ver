@@ -116,6 +116,22 @@ return [
         'schedule' => 'Lên lịch xuất bản',
         'publish' => 'Xuất bản',
     ],
+    'product_status' => [
+        'draft' => 'Bản nháp',
+        'pending' => 'Chờ phê duyệt',
+        'approved' => 'Đã phê duyệt',
+        'active' => 'Đang kinh doanh',
+        'inactive' => 'Tạm ngừng kinh doanh',
+        'out_of_stock' => 'Hết hàng',
+        'discontinued' => 'Ngừng kinh doanh',
+        'archived' => 'Đã lưu trữ',
+    ],
+    'product_category_status' => [
+        'active' => 'Đang hoạt động',
+        'inactive' => 'Ngừng hoạt động',
+        'pending' => 'Chờ phê duyệt',
+        'archived' => 'Đã lưu trữ',
+    ],
     'permission' => [
         'title' => 'Quản lý quyền truy cập',
         'create_title' => 'Tạo mới quyền truy cập',

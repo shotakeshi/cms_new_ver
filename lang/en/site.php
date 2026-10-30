@@ -116,6 +116,22 @@ return [
         'schedule' => 'Scheduled',
         'publish' => 'Published',
     ],
+    'product_status' => [
+        'draft' => 'Draft',
+        'pending' => 'Pending Approval',
+        'approved' => 'Approved',
+        'active' => 'Active',
+        'inactive' => 'Temporarily Discontinued',
+        'out_of_stock' => 'Out of Stock',
+        'discontinued' => 'Discontinued',
+        'archived' => 'Archived',
+    ],
+    'product_category_status' => [
+        'active' => 'Active',
+        'inactive' => 'Inactive',
+        'pending' => 'Pending Approval',
+        'archived' => 'Archived',
+    ],
     'permission' => [
         'title' => 'Permission Management',
         'create_title' => 'Create Permission',
