@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('product_category_attributes', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('product_category_id');
-            $table->unsignedBigInteger('attribute_id');
+            $table->unsignedBigInteger('product_attribute_id');
             $table->foreign('product_category_id')->references('id')->on('product_categories')->onDelete('cascade');
-            $table->foreign('attribute_id')->references('id')->on('product_attributes')->onDelete('cascade');
-            $table->unique(['product_category_id', 'attribute_id'], 'product_category_attributes_unique');
+            $table->foreign('product_attribute_id')->references('id')->on('product_attributes')->onDelete('cascade');
+            $table->unique(['product_category_id', 'product_attribute_id'], 'product_category_attributes_unique');
             $table->timestamps();
         });
     }
